@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://www.justgomarket.com.br/sitemap.xml
