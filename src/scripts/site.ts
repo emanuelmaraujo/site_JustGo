@@ -257,6 +257,11 @@ function countUp(el: HTMLElement) {
   };
   el.textContent = '0';
   requestAnimationFrame(frame);
+  // Garante o valor final mesmo se a aba estiver em segundo plano
+  window.setTimeout(() => {
+    el.textContent = String(target);
+    holder.style.filter = '';
+  }, duration + 100);
 }
 
 function initReveals() {

@@ -212,7 +212,6 @@ const total = questions.length;
     const fill = root.querySelector<HTMLElement>('.dg-progress-fill')!;
     const count = root.querySelector<HTMLElement>('[data-dg-count]')!;
     const mode = new URLSearchParams(location.search).get('perfil') === 'morador' ? 'morador' : 'sindico';
-    let index = 0;
     let started = false;
 
     root.querySelectorAll<HTMLElement>('[data-mode-text]').forEach((el) => {
@@ -220,7 +219,6 @@ const total = questions.length;
     });
 
     const show = (i: number, dir: 'next' | 'prev' = 'next') => {
-      index = i;
       root.dataset.dir = dir;
       screens.forEach((s, j) => s.classList.toggle('is-active', j === i));
       const progress = Math.min(i, questions.length) / (questions.length + 1);
@@ -301,6 +299,11 @@ const total = questions.length;
         if (t < 1) requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);
+      // Garante o valor final mesmo se a aba estiver em segundo plano
+      window.setTimeout(() => {
+        scoreEl.textContent = String(score);
+        gauge.style.strokeDashoffset = String(100 - score);
+      }, 1500);
     };
 
     root.querySelector('[data-dg-restart]')?.addEventListener('click', () => {

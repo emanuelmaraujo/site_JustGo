@@ -23,3 +23,6 @@ Thumbs.db
 site.zip
 edições.txt
 node_modules
+
+# Material baixado do Google Drive (processado para src/assets)
+drive/
