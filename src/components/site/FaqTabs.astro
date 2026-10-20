@@ -14,9 +14,13 @@ interface Props {
   sindico: Item[];
   morador: Item[];
   id: string;
+  /** Nível do título de cada aba (2 numa página só de FAQ; 3 dentro de uma seção com h2) */
+  level?: 2 | 3;
 }
 
-const { sindico, morador, id } = Astro.props;
+const { sindico, morador, id, level = 3 } = Astro.props;
+const TitleTag = level === 2 ? 'h2' : 'h3';
+const itemLevel = level === 2 ? 'h3' : 'h4';
 const tabs = [
   { key: 'sindico', label: 'Para síndicos', items: sindico },
   { key: 'morador', label: 'Para moradores', items: morador },
@@ -50,8 +54,8 @@ const tabs = [
         aria-labelledby={`${id}-tab-${t.key}`}
         data-hidden-js={i === 0 ? undefined : ''}
       >
-        <h3 class="ft-nojs-title">{t.label}</h3>
-        <Accordion items={t.items} id={`${id}-${t.key}`} />
+        <TitleTag class="ft-nojs-title">{t.label}</TitleTag>
+        <Accordion items={t.items} id={`${id}-${t.key}`} headingLevel={itemLevel} />
       </div>
     ))
   }
@@ -76,8 +80,15 @@ const tabs = [
       border: 1px solid var(--line);
     }
 
+    /* Com JS, o título da aba vira rótulo só para leitores de tela */
     :global(.js) .ft-nojs-title {
-      display: none;
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
     }
 
     :global(.js) .ft-panel[data-hidden-js] {

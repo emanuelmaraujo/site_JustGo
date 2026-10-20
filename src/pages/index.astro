@@ -412,11 +412,8 @@ const security = [
       animation-delay: 650ms;
     }
 
-    /* Na primeira visita, o hero começa depois que as portas se abrem */
-    :global(.intro-first) .hero {
-      --split-delay: 1150ms;
-    }
-
+    /* Na primeira visita, o H1 se monta por baixo das portas (sem atrasar o LCP);
+       rótulo e CTAs entram quando as portas se abrem */
     :global(.intro-first) .hero-status {
       animation-delay: 1200ms;
     }

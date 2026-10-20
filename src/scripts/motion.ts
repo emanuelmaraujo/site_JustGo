@@ -110,6 +110,8 @@ function parallax(mm: gsap.MatchMedia) {
 }
 
 /* ---------------- word-light: o manifesto acende com a leitura ---------------- */
+// 0.46 mantém contraste ≥ 3:1 (texto grande, WCAG AA) mesmo no estado "apagado"
+const WORD_DIM = 0.46;
 function wordLight(mm: gsap.MatchMedia) {
   document.querySelectorAll<HTMLElement>('[data-word-light]').forEach((el) => {
     const words = el.querySelectorAll('.wl-w');
@@ -117,7 +119,7 @@ function wordLight(mm: gsap.MatchMedia) {
     mm.add(DESKTOP, () => {
       gsap.fromTo(
         words,
-        { opacity: 0.18 },
+        { opacity: WORD_DIM },
         {
           opacity: 1,
           ease: 'none',
@@ -129,7 +131,7 @@ function wordLight(mm: gsap.MatchMedia) {
     mm.add('(max-width: 1023px)', () => {
       gsap.fromTo(
         words,
-        { opacity: 0.18 },
+        { opacity: WORD_DIM },
         {
           opacity: 1,
           ease: 'none',

@@ -13,6 +13,8 @@ export default defineConfig({
     build: {
         format: 'file',
         assets: 'site-assets',
+        // CSS inline: elimina requisições bloqueantes na cadeia crítica (LCP)
+        inlineStylesheets: 'always',
     },
     integrations: [
         sitemap({
