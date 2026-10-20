@@ -249,13 +249,19 @@ const regions = [
     }
 
     .lf-input[aria-invalid='true'] {
-      border-color: #f0a08e;
+      border-color: var(--fg);
     }
 
     .lf-err {
       min-height: 0;
       font-size: 0.8125rem;
-      color: #f0a08e;
+      color: var(--fg);
+    }
+
+    .lf-err::before {
+      content: '! ';
+      font-weight: 700;
+      color: var(--jg-green);
     }
 
     .lf-err:empty {

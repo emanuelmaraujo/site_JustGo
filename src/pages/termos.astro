@@ -1,57 +1,51 @@
 ---
+/** Termos de uso — mesmo conteúdo, com o novo visual. */
 import BaseLayout from '@layouts/BaseLayout.astro';
-import Header from '@components/Header.astro';
-import Footer from '@components/Footer.astro';
-
-const schemas: Record<string, unknown>[] = [];
+import Section from '@components/ui/Section.astro';
+import PageHero from '@components/site/PageHero.astro';
+import { crumbs } from '@lib/schema';
 ---
 
 <BaseLayout
   title="Termos de Uso"
   description="Termos de Uso dos serviços da Just Go Market — Mercado Autônomo para Condomínios. Condições de uso, compras, pagamentos e monitoramento."
-  schemas={schemas}
+  schemas={[crumbs(['Termos de uso', '/termos'])]}
 >
-  <Header currentPath="/termos" />
+  <PageHero eyebrow="Última atualização: Março de 2026" title="Termos de Uso" crumbs={[{ name: 'Termos de uso', href: '/termos' }]} />
 
-  <main>
-    <section class="legal-section">
-      <div class="container">
-        <div class="legal-content">
-          <h1>Termos de Uso — Just Go Market</h1>
-          <span class="last-update">Última atualização: Março de 2026</span>
+  <Section theme="light" tight>
+    <div class="container-narrow">
+      <div class="prose">
+    <h2>O Serviço de Mercado Autônomo</h2>
+    <p>A Just Go Market oferece um serviço de mercado autônomo para compra de produtos de conveniência em unidades instaladas dentro de condomínios residenciais no Distrito Federal. Ao utilizar nossos serviços, você concorda com estes termos.</p>
+    <p>Nosso mercado autônomo funciona 24 horas por dia, 7 dias por semana. A compra é realizada diretamente nos totens de autoatendimento, sem necessidade de atendimento presencial.</p>
 
-          <h2>O Serviço de Mercado Autônomo</h2>
-          <p>A Just Go Market oferece um serviço de mercado autônomo para compra de produtos de conveniência em unidades instaladas dentro de condomínios residenciais no Distrito Federal. Ao utilizar nossos serviços, você concorda com estes termos.</p>
-          <p>Nosso mercado autônomo funciona 24 horas por dia, 7 dias por semana. A compra é realizada diretamente nos totens de autoatendimento, sem necessidade de atendimento presencial.</p>
+    <h2>Compras, Pagamentos e Preços no Mercado Autônomo</h2>
+    <p>As compras são realizadas diretamente no totem de autoatendimento do mercado autônomo mediante:</p>
+    <ul>
+      <li>Leitura do código de barras dos produtos no scanner do totem</li>
+      <li>Pagamento via Pix ou cartão de crédito ou débito</li>
+    </ul>
+    <p>Os preços dos produtos são exibidos nas prateleiras e confirmados no totem antes do pagamento. Em caso de divergência, o valor do totem prevalece. Todos os preços incluem impostos aplicáveis.</p>
 
-          <h2>Compras, Pagamentos e Preços no Mercado Autônomo</h2>
-          <p>As compras são realizadas diretamente no totem de autoatendimento do mercado autônomo mediante:</p>
-          <ul>
-            <li>Leitura do código de barras dos produtos no scanner do totem</li>
-            <li>Pagamento via cartão de crédito ou débito</li>
-          </ul>
-          <p>Os preços dos produtos são exibidos nas prateleiras e confirmados no totem antes do pagamento. Em caso de divergência, o valor do totem prevalece. Todos os preços incluem impostos aplicáveis.</p>
+    <h2>Monitoramento e Segurança</h2>
+    <p>O espaço do mercado autônomo é monitorado 24 horas por câmeras de segurança para a proteção dos produtos e dos moradores. As imagens são armazenadas conforme previsto em nossa Política de Privacidade.</p>
+    <p>O acesso ao mercado autônomo pode ser controlado via aplicativo ou QR Code exclusivo para moradores, conforme a opção escolhida pelo condomínio.</p>
 
-          <h2>Monitoramento e Segurança</h2>
-          <p>O espaço do mercado autônomo é monitorado 24 horas por câmeras de segurança para a proteção dos produtos e dos moradores. As imagens são armazenadas conforme previsto em nossa Política de Privacidade.</p>
-          <p>O acesso ao mercado autônomo pode ser controlado via aplicativo ou QR Code exclusivo para moradores, conforme a opção escolhida pelo condomínio.</p>
+    <h2>Bebidas Alcoólicas</h2>
+    <p>As geladeiras de bebidas alcoólicas possuem trava inteligente. É necessária a verificação de maioridade via totem ou App para acessar esses produtos. A venda de bebidas alcoólicas a menores de 18 anos é proibida por lei.</p>
 
-          <h2>Bebidas Alcoólicas</h2>
-          <p>As geladeiras de bebidas alcoólicas possuem trava inteligente. É necessária a verificação de maioridade via totem ou App para acessar esses produtos. A venda de bebidas alcoólicas a menores de 18 anos é proibida por lei.</p>
+    <h2>Estornos e Reclamações</h2>
+    <p>Caso tenha algum problema com um produto ou cobrança no mercado autônomo, entre em contato com nosso suporte via WhatsApp (número disponível na loja e no totem). Realizamos estornos imediatos quando comprovada a falha.</p>
 
-          <h2>Estornos e Reclamações</h2>
-          <p>Caso tenha algum problema com um produto ou cobrança no mercado autônomo, entre em contato com nosso suporte via WhatsApp (número disponível na loja e no totem). Realizamos estornos imediatos quando comprovada a falha.</p>
+    <h2>Alterações nos Termos de Uso</h2>
+    <p>Podemos atualizar estes termos periodicamente. As alterações entram em vigor na data de sua publicação nesta página. Recomendamos que visite esta página regularmente para estar ciente das condições vigentes.</p>
 
-          <h2>Alterações nos Termos de Uso</h2>
-          <p>Podemos atualizar estes termos periodicamente. As alterações entram em vigor na data de sua publicação nesta página. Recomendamos que visite esta página regularmente para estar ciente das condições vigentes.</p>
-
-          <h2>Contato</h2>
-          <p>Para dúvidas sobre estes termos, entre em contato:<br />
-          <a href="mailto:justgomarket@justgomarket.com.br" style="color: var(--color-green);">justgomarket@justgomarket.com.br</a></p>
-        </div>
+    <h2>Contato</h2>
+    <p>Para dúvidas sobre estes termos, entre em contato:<br />
+    <a href="mailto:justgomarket@justgomarket.com.br">justgomarket@justgomarket.com.br</a></p>
+  
       </div>
-    </section>
-  </main>
-
-  <Footer />
+    </div>
+  </Section>
 </BaseLayout>

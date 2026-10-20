@@ -1,75 +1,69 @@
 ---
+/** FAQ — abas Síndico/Morador. Conteúdo em src/content/faq. */
 import BaseLayout from '@layouts/BaseLayout.astro';
-import Header from '@components/Header.astro';
-import Footer from '@components/Footer.astro';
-import WhatsAppFloat from '@components/WhatsAppFloat.astro';
-import CTASticky from '@components/CTASticky.astro';
-import FAQ from '@components/FAQ.astro';
-import { faqPageSchema, breadcrumbSchema } from '@lib/schema';
+import Section from '@components/ui/Section.astro';
+import Button from '@components/ui/Button.astro';
+import PageHero from '@components/site/PageHero.astro';
+import FaqTabs from '@components/site/FaqTabs.astro';
+import CtaFinal from '@components/site/CtaFinal.astro';
+import { getFaqs } from '@lib/content';
+import { whatsappUrl } from '@lib/site';
+import { crumbs, faqPageSchema } from '@lib/schema';
 
-const syndicFaqs = [
-  { question: 'Quanto custa para o condomínio ter uma Just Go Market?', answer: 'Absolutamente nada. A Just Go Market opera no modelo de Custo Zero. Nós arcamos com 100% do investimento de implantação (estrutura, equipamentos, tecnologia) e com todos os custos operacionais (estoque, manutenção, sistemas). O condomínio cede apenas o espaço e um ponto de energia.' },
-  { question: 'Qual o tamanho de espaço necessário?', answer: 'Nossa estrutura modular é flexível. O modelo padrão ocupa cerca de 15m² a 18m². Precisamos apenas de um local com piso nivelado e acesso a um ponto de energia elétrica. Podemos instalar em áreas internas ou externas.' },
-  { question: 'O condomínio tem alguma responsabilidade sobre a operação?', answer: 'Nenhuma. A gestão é 100% nossa. Não temos funcionários fixos no local. O condomínio não tem vínculo trabalhista nem responsabilidade sobre o estoque ou o atendimento.' },
-  { question: 'Como funciona a segurança e o controle de acesso?', answer: 'Monitoramento 24h por câmeras HD. O acesso pode ser livre ou controlado via aplicativo/QR Code exclusivo para moradores. Temos seguro próprio contra danos e furtos.' },
-  { question: 'E se houver furto ou vandalismo?', answer: 'O risco é nosso. Nossos sistemas de monitoramento inibem a maioria das ocorrências. Caso algo aconteça, nossa equipe trata diretamente sem envolver a administração. O condomínio está isento de prejuízo financeiro.' },
-  { question: 'O consumo de energia é pago pelo condomínio?', answer: 'Não. Instalamos um medidor individual e reembolsamos o valor exato do consumo ao condomínio mensalmente, ou definimos uma taxa fixa em contrato.' },
-  { question: 'Qual o prazo de contrato?', answer: 'Nosso contrato padrão é de 36 meses, necessário para amortizar o investimento inicial em estrutura e tecnologia.' },
-];
-
-const residentFaqs = [
-  { question: 'Como eu faço para comprar?', answer: 'É simples: entre no mercado (acesso livre ou via App/QR Code), escolha seus produtos, escaneie o código de barras no totem e pague com cartão. Pronto!' },
-  { question: 'Preciso baixar algum aplicativo?', answer: 'Para comprar, não! O pagamento é feito no totem com cartão. O app só é necessário para acesso controlado ou destravar a geladeira de bebidas alcoólicas.' },
-  { question: 'A loja funciona 24 horas?', answer: 'Sim! 24 horas por dia, 7 dias por semana, incluindo feriados. A conveniência está sempre disponível.' },
-  { question: 'Como compro bebidas alcoólicas?', answer: 'As geladeiras de alcoólicos têm trava inteligente. Basta verificar maioridade no totem ou App — é rápido e seguro.' },
-  { question: 'E se eu tiver problema com um produto ou pagamento?', answer: 'Temos suporte via WhatsApp em tempo real. O número está na loja e no totem. Fazemos estornos imediatos se necessário.' },
-  { question: 'Posso sugerir produtos?', answer: 'Com certeza! Temos canal de sugestões via WhatsApp. Analisamos os pedidos semanalmente para ajustar o mix da sua loja.' },
-  { question: 'Aceita dinheiro ou PIX?', answer: 'Aceitamos Cartão de Crédito e Débito. Alguns totens aceitam PIX via QR Code. Vale Refeição/Alimentação ainda não são aceitos.' },
-];
-
-const allFaqs = [...syndicFaqs, ...residentFaqs];
-
-const schemas = [
-  faqPageSchema(allFaqs),
-  breadcrumbSchema([
-    { name: 'Home', url: 'https://www.justgomarket.com.br/' },
-    { name: 'FAQ', url: 'https://www.justgomarket.com.br/faq/' },
-  ]),
-];
+const faqs = await getFaqs();
 ---
 
 <BaseLayout
-  title="Perguntas Frequentes sobre Mercado Autônomo em Condomínios"
-  description="Tire todas as suas dúvidas sobre o mercado autônomo Just Go Market. Custos, instalação, segurança, operação e mais. Perguntas frequentes para síndicos e moradores."
-  schemas={schemas}
+  title="Perguntas frequentes sobre o mercado autônomo no condomínio"
+  description="Custos, espaço, segurança, energia, contrato, formas de pagamento e como comprar: as respostas para síndicos e moradores sobre a Just Go Market."
+  schemas={[faqPageSchema(faqs.all), crumbs(['Perguntas frequentes', '/faq'])]}
 >
-  <Header currentPath="/faq" />
+  <PageHero
+    eyebrow="Perguntas frequentes"
+    title="Respostas diretas, para síndicos e moradores."
+    lead="As dúvidas que mais ouvimos — do custo para o condomínio à forma de pagamento no totem."
+    crumbs={[{ name: 'Perguntas frequentes', href: '/faq' }]}
+  />
 
-  <main>
-    <section class="inner-hero">
-      <div class="container">
-        <h1>Perguntas Frequentes sobre o Mercado Autônomo Just Go Market</h1>
-        <p>Tudo o que síndicos e moradores precisam saber sobre instalação, custos, segurança e operação do minimercado inteligente.</p>
+  <Section theme="light" tight>
+    <div class="container-narrow">
+      <FaqTabs id="faq-page" sindico={faqs.sindico} morador={faqs.morador} />
+      <div class="faq-more" data-reveal>
+        <p>Não encontrou o que procurava?</p>
+        <Button
+          href={whatsappUrl('Olá! Tenho uma dúvida sobre a Just Go Market.')}
+          variant="secondary"
+          icon="whatsapp"
+          external
+          origin="faq_duvida"
+        >
+          Perguntar no WhatsApp
+        </Button>
       </div>
-    </section>
+    </div>
+  </Section>
 
-    <section class="section-faq" style="padding-top: 80px;">
-      <div class="container">
-        <h2 class="text-center" style="margin-bottom: 40px;">Para Síndicos e Administradores</h2>
-        <FAQ items={syndicFaqs} id="faq-syndic" />
-
-        <h2 class="text-center" style="margin: 60px 0 40px;">Para Moradores</h2>
-        <FAQ items={residentFaqs} id="faq-resident" />
-
-        <div class="text-center" style="margin-top: 60px;">
-          <p>Ainda tem dúvidas? Fale diretamente com nossa equipe.</p>
-          <a href="/#contato" class="btn btn-primary btn-glow">Falar com um Consultor</a>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <Footer />
-  <WhatsAppFloat />
-  <CTASticky />
+  <CtaFinal origin="faq_cta" />
 </BaseLayout>
+
+<style>
+  @layer components {
+    .faq-more {
+      margin-top: 64px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px 32px;
+      padding: 28px 32px;
+      border: 1px solid var(--line);
+      border-radius: var(--r-card);
+    }
+
+    .faq-more p {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      color: var(--fg);
+    }
+  }
+</style>

@@ -23,6 +23,7 @@ import CtaFinal from '@components/site/CtaFinal.astro';
 import Marquee from '@components/site/Marquee.astro';
 import { CTA, FACTS, PREMIUM_BRANDS } from '@lib/site';
 import { getFaqs, getCuradoria } from '@lib/content';
+import { BUY_STEPS } from '@lib/model';
 import { serviceSchema, faqPageSchema, localBusinessSchema } from '@lib/schema';
 
 const faqs = await getFaqs();
@@ -32,21 +33,6 @@ const schemas = [
   serviceSchema(),
   localBusinessSchema('Brasília', { lat: -15.7975, lng: -47.8919 }),
   faqPageSchema(faqs.all),
-];
-
-const steps = [
-  {
-    title: 'Entre',
-    text: 'Acesso livre ou por QR Code e aplicativo do condomínio. A loja fica aberta 24 horas, todos os dias.',
-  },
-  {
-    title: 'Escolha e escaneie',
-    text: 'Pegue o que precisa e passe o código de barras no totem. Sem fila, sem espera.',
-  },
-  {
-    title: 'Pague e siga',
-    text: `${FACTS.payment}, direto no totem — sem precisar de aplicativo. Em menos de dois minutos, você está de volta em casa.`,
-  },
 ];
 
 const model = [
@@ -183,7 +169,7 @@ const security = [
         </div>
         <p class="lead" data-reveal>Sem fila, sem caixa, sem aplicativo para comprar. Ir, pegar e seguir.</p>
       </div>
-      <StickySteps steps={steps} />
+      <StickySteps steps={BUY_STEPS} />
     </div>
   </Section>
 

@@ -434,6 +434,39 @@ function initStickySteps() {
 }
 
 /* ------------------------------------------------------------------ */
+/* Progresso de leitura em linhas (timeline) e na barra do blog        */
+/* ------------------------------------------------------------------ */
+function initScrollProgress() {
+  const els = Array.from(document.querySelectorAll<HTMLElement>('[data-scroll-progress]'));
+  if (!els.length) return;
+  let ticking = false;
+  const update = () => {
+    const vh = window.innerHeight;
+    els.forEach((el) => {
+      const target = el.dataset.scrollProgress ? document.querySelector<HTMLElement>(el.dataset.scrollProgress) : el;
+      if (!target) return;
+      const r = target.getBoundingClientRect();
+      const page = el.hasAttribute('data-progress-page');
+      const p = page ? -r.top / Math.max(1, r.height - vh) : (vh * 0.6 - r.top) / r.height;
+      el.style.setProperty('--progress', String(Math.max(0, Math.min(1, p))));
+    });
+    ticking = false;
+  };
+  update();
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!ticking) {
+        requestAnimationFrame(update);
+        ticking = true;
+      }
+    },
+    { passive: true },
+  );
+  window.addEventListener('resize', update, { passive: true });
+}
+
+/* ------------------------------------------------------------------ */
 /* Indicador de andar, WhatsApp flutuante e CTA sticky mobile          */
 /* ------------------------------------------------------------------ */
 function initFloating() {
@@ -574,6 +607,7 @@ function boot() {
   initTabs();
   initBeforeAfter();
   initStickySteps();
+  initScrollProgress();
   initFloating();
   initFloorIndicator();
   initClock();

@@ -1,0 +1,102 @@
+---
+/**
+ * Curadoria — galeria editorial por categoria. Não é e-commerce:
+ * mostra o tipo de produto e o padrão, sem preços.
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Section from '@components/ui/Section.astro';
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import SplitWords from '@components/ui/SplitWords.astro';
+import Photo from '@components/ui/Photo.astro';
+import Button from '@components/ui/Button.astro';
+import PageHero from '@components/site/PageHero.astro';
+import CtaFinal from '@components/site/CtaFinal.astro';
+import Marquee from '@components/site/Marquee.astro';
+import { getCuradoria } from '@lib/content';
+import { PREMIUM_BRANDS, whatsappUrl } from '@lib/site';
+import { crumbs } from '@lib/schema';
+
+const universes = await getCuradoria();
+---
+
+<BaseLayout
+  title="Curadoria: adega, empório e despensa 24h no condomínio"
+  description="Vinhos selecionados, chocolates, queijos, azeites e o essencial do dia a dia, 24 horas, no térreo do seu condomínio em Brasília. Conheça a curadoria da Just Go Market."
+  schemas={[crumbs(['Curadoria', '/curadoria'])]}
+>
+  <PageHero
+    eyebrow="Curadoria"
+    title="O essencial, a um passo. E o <span class='hl'>especial</span> também."
+    lead="Cada loja recebe uma seleção pensada para quem mora ali — da adega ao café da manhã — e ajustada ao que os moradores pedem."
+    crumbs={[{ name: 'Curadoria', href: '/curadoria' }]}
+  />
+
+  <div data-track-view="curadoria_view">
+    {
+      universes.map((u, i) => (
+        <Section theme={i % 2 === 0 ? 'dark' : 'ink'} id={u.photo.name.replace('curadoria-', '')} tight={i > 0}>
+          <div class:list={['container split', i % 2 === 1 && 'reverse']}>
+            <Photo {...u.photo} ratio="4/5" unveil parallax sizes="(min-width: 1024px) 50vw, 100vw" />
+            <div class="split-copy">
+              <p class="index-num">
+                {String(i + 1).padStart(2, '0')}/{String(universes.length).padStart(2, '0')}
+              </p>
+              <Eyebrow>{u.kicker}</Eyebrow>
+              <SplitWords tag="h2">{u.title}</SplitWords>
+              <p class="lead" data-reveal>
+                {u.long}
+              </p>
+              <ul class="list-check" data-reveal>
+                {u.items.map((item) => <li>{item}</li>)}
+              </ul>
+              {u.confirm && <p class="todo">[CONFIRMAR] {u.confirm}</p>}
+            </div>
+          </div>
+        </Section>
+      ))
+    }
+  </div>
+
+  <Section theme="light">
+    <div class="container split">
+      <div class="split-copy">
+        <Eyebrow>Mix sob medida</Eyebrow>
+        <SplitWords tag="h2">Cada prédio tem o seu mix.</SplitWords>
+        <p class="lead" data-reveal>
+          Acompanhamos o que sai e o que falta. Itens procurados ganham espaço; o que não gira dá lugar a novidades.
+          Moradores sugerem produtos pelo WhatsApp e a gente avalia toda semana.
+        </p>
+        <div data-reveal>
+          <Button
+            href={whatsappUrl('Olá! Quero sugerir um produto para a Just Go do meu condomínio.')}
+            variant="secondary"
+            icon="whatsapp"
+            external
+            origin="curadoria_sugestao"
+          >
+            Sugerir um produto
+          </Button>
+        </div>
+      </div>
+      <div class="mix-note" data-reveal>
+        {
+          PREMIUM_BRANDS.length > 0 ? (
+            <Marquee brands={PREMIUM_BRANDS} />
+          ) : (
+            <p class="todo">[CONFIRMAR] Lista de marcas premium efetivamente vendidas, para a faixa de marcas.</p>
+          )
+        }
+      </div>
+    </div>
+  </Section>
+
+  <CtaFinal title="Quer essa curadoria no seu condomínio?" origin="curadoria_cta" />
+</BaseLayout>
+
+<style>
+  @layer components {
+    .mix-note {
+      align-self: center;
+    }
+  }
+</style>
