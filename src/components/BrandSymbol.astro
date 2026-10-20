@@ -1,0 +1,31 @@
+---
+/**
+ * Símbolo da Just Go Market (sacola + letra G, traço fluido),
+ * desenhado em traço para poder ser animado.
+ * draw = true → o traço se desenha quando entra na tela.
+ */
+interface Props {
+  class?: string;
+  draw?: boolean;
+  strokeWidth?: number;
+  label?: string;
+}
+
+const { class: className = '', draw = false, strokeWidth = 10, label } = Astro.props;
+---
+
+<svg
+  class:list={['brand-symbol', className]}
+  viewBox="0 0 100 100"
+  fill="none"
+  stroke="currentColor"
+  stroke-width={strokeWidth}
+  stroke-linejoin="round"
+  data-draw={draw ? '' : undefined}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+>
+  <path d="M81 30C79 18 70 12 60 12H40C30 12 22 19 20 29L13 75C12 83 17 89 25 89H75C83 89 88 83 87 75"></path>
+  <path d="M27 46C41 58 56 58 70 50C76 46 80 48 81 53L87 75"></path>
+</svg>

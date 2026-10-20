@@ -1,7 +1,6 @@
 ---
 import SchemaOrg from '@components/SchemaOrg.astro';
 import Analytics from '@components/Analytics.astro';
-import Preloader from '@components/Preloader.astro';
 import { buildSEO, type SEOProps } from '@lib/seo';
 import { organizationSchema } from '@lib/schema';
 
@@ -57,6 +56,15 @@ import '../styles/global.css';
   <meta name="twitter:description" content={seo.description} />
   <meta name="twitter:image" content={seo.ogImage} />
 
+  <meta name="theme-color" content="#010502" />
+
+  <!-- Motion: ativa animações só se o usuário não pediu "reduzir movimento" -->
+  <script is:inline>
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('motion');
+    }
+  </script>
+
   <!-- Favicon -->
   <link rel="icon" href="/assets/images/favicon.png" type="image/png" />
   <link rel="apple-touch-icon" href="/assets/images/favicon.png" />
@@ -65,7 +73,7 @@ import '../styles/global.css';
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;600;700;800&family=Wix+Madefor+Display:wght@400;500;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700&family=Wix+Madefor+Display:wght@400;500;600;700&display=swap"
     rel="stylesheet"
   />
 
@@ -77,7 +85,9 @@ import '../styles/global.css';
 </head>
 
 <body>
-  <Preloader />
   <slot />
+  <script>
+    import '../scripts/motion';
+  </script>
 </body>
 </html>
