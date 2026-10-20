@@ -1,0 +1,127 @@
+---
+/**
+ * FAQ em abas Síndico/Morador (tablist acessível: setas, Home/End).
+ * Sem JS, as duas listas aparecem, cada uma com o seu título.
+ */
+import Accordion from '@components/ui/Accordion.astro';
+
+interface Item {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  sindico: Item[];
+  morador: Item[];
+  id: string;
+  /** Nível do título de cada aba (2 numa página só de FAQ; 3 dentro de uma seção com h2) */
+  level?: 2 | 3;
+}
+
+const { sindico, morador, id, level = 3 } = Astro.props;
+const TitleTag = level === 2 ? 'h2' : 'h3';
+const itemLevel = level === 2 ? 'h3' : 'h4';
+const tabs = [
+  { key: 'sindico', label: 'Para síndicos', items: sindico },
+  { key: 'morador', label: 'Para moradores', items: morador },
+];
+---
+
+<div class="ft" data-tabs>
+  <div class="ft-list" role="tablist" aria-label="Público">
+    {
+      tabs.map((t, i) => (
+        <button
+          type="button"
+          role="tab"
+          class="ft-tab"
+          id={`${id}-tab-${t.key}`}
+          aria-controls={`${id}-panel-${t.key}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? 0 : -1}
+        >
+          {t.label}
+        </button>
+      ))
+    }
+  </div>
+  {
+    tabs.map((t, i) => (
+      <div
+        class="ft-panel"
+        role="tabpanel"
+        id={`${id}-panel-${t.key}`}
+        aria-labelledby={`${id}-tab-${t.key}`}
+        data-hidden-js={i === 0 ? undefined : ''}
+      >
+        <TitleTag class="ft-nojs-title">{t.label}</TitleTag>
+        <Accordion items={t.items} id={`${id}-${t.key}`} headingLevel={itemLevel} />
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  @layer components {
+    .ft-list {
+      display: none;
+    }
+
+    .ft-nojs-title {
+      margin: 32px 0 12px;
+    }
+
+    :global(.js) .ft-list {
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      margin-bottom: 32px;
+      border-radius: var(--r-pill);
+      border: 1px solid var(--line);
+    }
+
+    /* Com JS, o título da aba vira rótulo só para leitores de tela */
+    :global(.js) .ft-nojs-title {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
+
+    :global(.js) .ft-panel[data-hidden-js] {
+      display: none;
+    }
+
+    :global(.js) .ft-panel {
+      animation: ft-in var(--dur-m) var(--ease-out-expo);
+    }
+
+    @keyframes ft-in {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+    }
+
+    .ft-tab {
+      min-height: 44px;
+      padding: 0 22px;
+      border-radius: var(--r-pill);
+      font-family: var(--font-display);
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--fg-2);
+      transition:
+        background-color var(--dur-s) var(--ease-soft),
+        color var(--dur-s) var(--ease-soft);
+    }
+
+    .ft-tab[aria-selected='true'] {
+      background: var(--fg);
+      color: var(--bg);
+    }
+  }
+</style>

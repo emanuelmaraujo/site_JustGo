@@ -1,0 +1,169 @@
+---
+/**
+ * sticky-steps: à esquerda os passos rolam; à direita o totem fica fixo e muda
+ * de estado a cada passo. Barra de progresso vertical fina em verde.
+ * Mobile: cada passo traz a própria ilustração (sem sticky).
+ */
+import TotemMockup from '@components/ui/TotemMockup.astro';
+
+interface Step {
+  title: string;
+  text: string;
+  detail?: string;
+}
+
+interface Props {
+  steps: Step[];
+}
+
+const { steps } = Astro.props;
+---
+
+<div class="ss" data-sticky-steps>
+  <div class="ss-col">
+  <span class="ss-progress" aria-hidden="true"><span class="ss-progress-fill"></span></span>
+  <ol class="ss-steps">
+    {
+      steps.map((step, i) => (
+        <li class="ss-step" data-step={i + 1}>
+          <p class="ss-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</p>
+          <h3 class="ss-title">{step.title}</h3>
+          <p class="ss-text">{step.text}</p>
+          {step.detail && <p class="ss-detail">{step.detail}</p>}
+          <div class="ss-inline hide-desktop">
+            <TotemMockup state={(i + 1) as 1 | 2 | 3} />
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+  </div>
+  <div class="ss-visual hide-mobile">
+    <div class="ss-sticky">
+      <TotemMockup state={1} class="ss-totem" />
+    </div>
+  </div>
+</div>
+
+<style>
+  @layer components {
+    .ss {
+      display: grid;
+      gap: 48px;
+    }
+
+    .ss-col {
+      position: relative;
+      padding-left: 32px;
+    }
+
+    .ss-steps {
+      display: grid;
+      gap: 72px;
+    }
+
+    .ss-progress {
+      position: absolute;
+      left: 0;
+      top: 8px;
+      bottom: 8px;
+      width: 1px;
+      background: var(--line);
+    }
+
+    .ss-progress-fill {
+      position: absolute;
+      inset: 0;
+      background: var(--jg-green);
+      transform-origin: top;
+      transform: scaleY(var(--progress, 1));
+    }
+
+    :global(.js) .ss-progress-fill {
+      --progress: 0;
+    }
+
+    .ss-num {
+      font-family: var(--font-title);
+      font-size: 0.875rem;
+      color: var(--fg-3);
+      font-variant-numeric: tabular-nums;
+      transition: color var(--dur-s) var(--ease-soft);
+    }
+
+    .ss-title {
+      margin-top: 14px;
+      font-family: var(--font-title);
+      font-size: clamp(2.25rem, 4.6vw, 4rem);
+      font-weight: 600;
+      letter-spacing: var(--tracking-h2);
+      line-height: 1;
+    }
+
+    .ss-text {
+      margin-top: 20px;
+      max-width: 40ch;
+      font-size: 1.125rem;
+    }
+
+    .ss-detail {
+      margin-top: 12px;
+      font-size: var(--fs-small);
+      color: var(--fg-3);
+    }
+
+    .ss-inline {
+      margin-top: 32px;
+      max-width: 240px;
+    }
+
+    @media (min-width: 768px) {
+      .ss {
+        grid-template-columns: 6fr 5fr;
+        gap: clamp(48px, 8vw, 120px);
+      }
+
+      .ss-col {
+        padding-left: 48px;
+      }
+
+      .ss-steps {
+        gap: 0;
+      }
+
+      .ss-step {
+        min-height: 78vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      /* Passo inativo: cor terciária (6,2:1) em vez de opacidade, para manter AA */
+      :global(.js) .ss-step:not(.is-active) :is(.ss-title, .ss-text) {
+        color: var(--fg-3);
+      }
+
+      .ss-title,
+      .ss-text {
+        transition: color var(--dur-m) var(--ease-soft);
+      }
+
+      .ss-step.is-active .ss-num {
+        color: var(--jg-green);
+      }
+
+      .ss-sticky {
+        position: sticky;
+        top: calc(50vh - min(32vh, 290px));
+        height: min(64vh, 580px);
+        display: grid;
+        place-items: center;
+      }
+
+      .ss-sticky :global(.ss-totem) {
+        height: 100%;
+        width: auto;
+      }
+    }
+  }
+</style>

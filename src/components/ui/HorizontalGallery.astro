@@ -1,0 +1,177 @@
+---
+/**
+ * Galeria horizontal (pin-horizontal).
+ * Base (mobile, sem JS, reduced-motion): carrossel com scroll-snap nativo.
+ * Desktop ≥1024px com motion: a seção é fixada e o trilho anda na horizontal
+ * conforme o scroll (motion.ts), com parallax interno nas fotos.
+ */
+import Photo from '@components/ui/Photo.astro';
+
+interface Item {
+  title: string;
+  kicker: string;
+  text: string;
+  photo: { name: string; alt: string; placeholder?: string };
+  note?: string;
+}
+
+interface Props {
+  items: Item[];
+  label: string;
+}
+
+const { items, label } = Astro.props;
+const total = String(items.length).padStart(2, '0');
+---
+
+<div class="hg" data-hgallery>
+  <ul class="hg-track" aria-label={label} tabindex="0">
+    {
+      items.map((item, i) => (
+        <li class="hg-panel">
+          <div class="hg-media">
+            <Photo
+              {...item.photo}
+              ratio="4/5"
+              sizes="(min-width: 1024px) 34vw, 82vw"
+              parallax
+            />
+          </div>
+          <div class="hg-copy">
+            <p class="hg-count" aria-hidden="true">
+              <span>{String(i + 1).padStart(2, '0')}</span>/{total}
+            </p>
+            <p class="hg-kicker">{item.kicker}</p>
+            <h3 class="hg-title">{item.title}</h3>
+            <p class="hg-text">{item.text}</p>
+            {item.note && <p class="hg-note">{item.note}</p>}
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  @layer components {
+    .hg {
+      position: relative;
+    }
+
+    .hg-track {
+      display: flex;
+      gap: clamp(16px, 2.5vw, 32px);
+      padding-inline: var(--gutter);
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--gutter);
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+      outline-offset: -2px;
+    }
+
+    .hg-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hg-panel {
+      flex: 0 0 82vw;
+      max-width: 420px;
+      scroll-snap-align: start;
+      display: grid;
+      gap: 24px;
+      align-content: start;
+    }
+
+    .hg-media {
+      border-radius: var(--r-media);
+      overflow: hidden;
+    }
+
+    .hg-media :global(.photo-img) {
+      transition: transform 1.2s var(--ease-out-expo);
+    }
+
+    .hg-count {
+      font-family: var(--font-display);
+      font-size: 0.8125rem;
+      letter-spacing: 0.08em;
+      color: var(--fg-3);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .hg-count span {
+      color: var(--fg);
+    }
+
+    .hg-kicker {
+      margin-top: 18px;
+      font-family: var(--font-display);
+      font-size: var(--fs-label);
+      letter-spacing: var(--tracking-label);
+      text-transform: uppercase;
+      color: var(--accent-text);
+    }
+
+    .hg-title {
+      margin-top: 10px;
+      font-family: var(--font-title);
+      font-size: clamp(2.25rem, 4vw, 3.75rem);
+      font-weight: 600;
+      letter-spacing: var(--tracking-h2);
+      line-height: 1;
+    }
+
+    .hg-text {
+      margin-top: 16px;
+      max-width: 38ch;
+    }
+
+    .hg-note {
+      margin-top: 12px;
+      font-size: var(--fs-small);
+      color: var(--fg-3);
+    }
+
+    .hg-copy {
+      transition: transform var(--dur-m) var(--ease-out-expo);
+    }
+
+    @media (min-width: 1024px) {
+      .hg-panel {
+        flex-basis: min(980px, 72vw);
+        max-width: none;
+        grid-template-columns: 5fr 4fr;
+        gap: clamp(32px, 4vw, 64px);
+        align-items: end;
+      }
+
+      .hg-copy {
+        padding-bottom: 8px;
+      }
+
+      /* Mantém o painel dentro da tela durante o pin (≈70% da altura) */
+      .hg-media {
+        width: 100%;
+        max-width: 56vh;
+      }
+
+      @media (hover: hover) {
+        .hg-panel:hover .hg-media :global(.photo-img) {
+          transform: scale(1.04);
+        }
+
+        .hg-panel:hover .hg-copy {
+          transform: translateY(-8px);
+        }
+      }
+    }
+
+    /* Com o pin ativo (motion.ts), o trilho deixa de rolar sozinho */
+    :global(.hg.is-pinned) .hg-track {
+      overflow: visible;
+      scroll-snap-type: none;
+      width: max-content;
+    }
+  }
+</style>

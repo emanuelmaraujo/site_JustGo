@@ -1,0 +1,167 @@
+---
+/**
+ * Fotografia com otimização automática (AVIF/WebP, srcset) a partir de
+ * src/assets/fotos/<name>.(jpg|png|webp|avif).
+ *
+ * Enquanto o arquivo não existir, renderiza um placeholder elegante e marcado
+ * ([FOTO: …]) na proporção final — nunca uma imagem que finja ser uma loja real.
+ *
+ * illustrative → legenda "Imagem ilustrativa" (fotos geradas/renderizadas da loja)
+ * unveil       → revelação com máscara ao entrar na tela (image-unveil)
+ * parallax     → a foto se move mais devagar que a moldura (motion.ts)
+ */
+import type { ImageMetadata } from 'astro';
+import { Picture } from 'astro:assets';
+import BrandSymbol from '@components/BrandSymbol.astro';
+
+interface Props {
+  name: string;
+  alt: string;
+  ratio?: string;
+  sizes?: string;
+  priority?: boolean;
+  placeholder?: string;
+  illustrative?: boolean;
+  unveil?: boolean;
+  parallax?: boolean;
+  rounded?: boolean;
+  class?: string;
+  position?: string;
+}
+
+const {
+  name,
+  alt,
+  ratio = '4/5',
+  sizes = '(min-width: 1024px) 50vw, 100vw',
+  priority = false,
+  placeholder,
+  illustrative = false,
+  unveil = false,
+  parallax = false,
+  rounded = true,
+  class: className = '',
+  position = 'center',
+} = Astro.props;
+
+const files = import.meta.glob<{ default: ImageMetadata }>('/src/assets/fotos/*.{jpg,jpeg,png,webp,avif}', {
+  eager: true,
+});
+const match = Object.entries(files).find(([path]) => path.split('/').pop()!.replace(/\.[^.]+$/, '') === name);
+const image = match?.[1].default;
+
+const allWidths = [480, 720, 960, 1280, 1600, 1920, 2400];
+const widths = image ? allWidths.filter((w) => w <= image.width).concat(image.width < 480 ? [image.width] : []) : [];
+---
+
+<figure
+  class:list={['photo', rounded && 'photo-rounded', className]}
+  style={`--ratio:${ratio};--pos:${position}`}
+  data-unveil={unveil ? '' : undefined}
+  data-parallax={parallax ? '' : undefined}
+>
+  {
+    image ? (
+      <Picture
+        src={image}
+        alt={alt}
+        formats={['avif', 'webp']}
+        widths={widths}
+        sizes={sizes}
+        loading={priority ? 'eager' : 'lazy'}
+        decoding={priority ? 'sync' : 'async'}
+        fetchpriority={priority ? 'high' : 'auto'}
+        class="photo-img"
+      />
+    ) : (
+      <div class="photo-ph" role="img" aria-label={alt}>
+        <BrandSymbol class="photo-ph-symbol" tone="ink" />
+        <span class="photo-ph-label">
+          [FOTO: {placeholder ?? alt}]
+        </span>
+      </div>
+    )
+  }
+  {illustrative && image && <figcaption class="photo-note">Imagem ilustrativa</figcaption>}
+</figure>
+
+<style>
+  @layer components {
+    .photo {
+      position: relative;
+      aspect-ratio: var(--ratio);
+      overflow: hidden;
+      background: var(--jg-ink-2);
+      isolation: isolate;
+    }
+
+    .photo-rounded {
+      border-radius: var(--r-media);
+    }
+
+    .photo :global(picture),
+    .photo :global(.photo-img) {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .photo :global(.photo-img) {
+      object-fit: cover;
+      object-position: var(--pos);
+    }
+
+    .photo[data-parallax] :global(.photo-img) {
+      inset: -8% 0;
+      height: 116%;
+    }
+
+    .photo-ph {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(120% 80% at 70% 20%, rgba(160, 226, 97, 0.06), transparent 60%),
+        linear-gradient(160deg, var(--jg-ink-3), var(--jg-black));
+      border: 1px solid rgba(255, 253, 252, 0.08);
+      border-radius: inherit;
+    }
+
+    .photo-ph :global(.photo-ph-symbol) {
+      position: absolute;
+      width: 46%;
+      max-width: 320px;
+      opacity: 0.9;
+    }
+
+    .photo-ph-label {
+      position: relative;
+      align-self: end;
+      justify-self: start;
+      max-width: 34ch;
+      font-family: var(--font-display);
+      font-size: 0.8125rem;
+      line-height: 1.45;
+      letter-spacing: 0.01em;
+      color: var(--jg-ash);
+    }
+
+    .photo-note {
+      position: absolute;
+      right: 14px;
+      bottom: 12px;
+      z-index: 2;
+      padding: 4px 10px;
+      border-radius: var(--r-pill);
+      background: rgba(1, 5, 2, 0.55);
+      backdrop-filter: blur(8px);
+      color: var(--jg-mist);
+      font-family: var(--font-display);
+      font-size: 0.6875rem;
+      letter-spacing: 0.04em;
+    }
+  }
+</style>

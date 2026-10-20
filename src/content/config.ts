@@ -44,7 +44,43 @@ const blog = defineCollection({
     }),
 });
 
+/** Perguntas frequentes por público (síndico / morador). Respostas aceitam HTML simples. */
+const faq = defineCollection({
+    type: 'data',
+    schema: z.object({
+        audience: z.enum(['sindico', 'morador']),
+        title: z.string(),
+        items: z.array(z.object({
+            question: z.string(),
+            answer: z.string(),
+            /** Aparece no resumo da home */
+            featured: z.boolean().default(false),
+        })),
+    }),
+});
+
+/** Universos da curadoria (adega, empório, despensa, bem-estar). */
+const curadoria = defineCollection({
+    type: 'data',
+    schema: z.object({
+        order: z.number(),
+        title: z.string(),
+        kicker: z.string(),
+        text: z.string(),
+        long: z.string(),
+        items: z.array(z.string()),
+        photo: z.object({
+            name: z.string(),
+            alt: z.string(),
+            placeholder: z.string(),
+        }),
+        confirm: z.string().optional(),
+    }),
+});
+
 export const collections = {
     cidades,
     blog,
+    faq,
+    curadoria,
 };

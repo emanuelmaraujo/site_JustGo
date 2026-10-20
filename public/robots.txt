@@ -1,8 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /site.zip
-Disallow: /edições.txt
-Disallow: /edições.txt
-Disallow: /*.zip$
 
-Sitemap: https://www.justgomarket.com.br/sitemap-index.xml
+Sitemap: https://justgomarket.com.br/sitemap-index.xml

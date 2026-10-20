@@ -1,0 +1,123 @@
+---
+/**
+ * Elementos fixos globais:
+ * - WhatsApp flutuante (traço, círculo preto com borda verde, tooltip);
+ *   some enquanto o CTA final está visível.
+ * - CTA sticky mobile: barra inferior "Agendar visita", aparece depois do hero.
+ */
+import Icon from '@components/Icon.astro';
+import Button from '@components/ui/Button.astro';
+import { CTA, whatsappUrl, WHATSAPP_DEFAULT_TEXT } from '@lib/site';
+---
+
+<a
+  href={whatsappUrl(WHATSAPP_DEFAULT_TEXT)}
+  class="wa-float"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Falar no WhatsApp (abre em nova aba)"
+  data-track="whatsapp_click"
+  data-origin="float"
+  data-wa-float
+>
+  <Icon name="whatsapp" size={24} />
+  <span class="wa-tip" aria-hidden="true">Falar no WhatsApp</span>
+</a>
+
+<div class="m-cta" data-mobile-cta>
+  <Button href={CTA.primaryHref} block track="cta_agendar_visita" origin="sticky_mobile" data-lead-open>
+    {CTA.primary}
+  </Button>
+</div>
+
+<style>
+  @layer components {
+    .wa-float {
+      position: fixed;
+      right: clamp(16px, 2.4vw, 32px);
+      bottom: clamp(16px, 2.4vw, 32px);
+      z-index: 90;
+      width: 56px;
+      height: 56px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--jg-black);
+      color: var(--jg-green);
+      border: 1px solid var(--jg-green);
+      transition:
+        transform var(--dur-m) var(--ease-out-expo),
+        opacity var(--dur-s) var(--ease-soft),
+        bottom var(--dur-m) var(--ease-out-expo);
+    }
+
+    .wa-float.is-away {
+      opacity: 0;
+      transform: translateY(16px) scale(0.9);
+      pointer-events: none;
+    }
+
+    .wa-tip {
+      position: absolute;
+      right: calc(100% + 12px);
+      top: 50%;
+      padding: 8px 14px;
+      border-radius: var(--r-pill);
+      background: var(--jg-offwhite);
+      color: var(--jg-black);
+      font-family: var(--font-display);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      white-space: nowrap;
+      opacity: 0;
+      transform: translate(8px, -50%);
+      transition:
+        opacity var(--dur-xs) var(--ease-soft),
+        transform var(--dur-s) var(--ease-out-expo);
+      pointer-events: none;
+    }
+
+    .wa-float:hover .wa-tip,
+    .wa-float:focus-visible .wa-tip {
+      opacity: 1;
+      transform: translate(0, -50%);
+    }
+
+    .m-cta {
+      display: none;
+    }
+
+    @media (max-width: 767px) {
+      .m-cta {
+        display: block;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 95;
+        padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+        background: rgba(1, 5, 2, 0.8);
+        -webkit-backdrop-filter: blur(14px);
+        backdrop-filter: blur(14px);
+        border-top: 1px solid rgba(255, 253, 252, 0.08);
+        transform: translateY(110%);
+        transition: transform var(--dur-m) var(--ease-out-expo);
+        --fg: var(--jg-offwhite);
+      }
+
+      :global(html:not(.js)) .m-cta,
+      .m-cta.is-visible {
+        transform: none;
+      }
+
+      :global(html:not(.js)) .wa-float,
+      :global(body:has(.m-cta.is-visible)) .wa-float {
+        bottom: 92px;
+      }
+
+      .wa-tip {
+        display: none;
+      }
+    }
+  }
+</style>

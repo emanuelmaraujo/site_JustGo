@@ -1,8 +1,10 @@
 // SEO Utility Library — Just Go Market
-// Generates consistent, keyword-driven SEO metadata
+// Gera metadados consistentes. O <title> carrega a palavra-chave; o H1 pode ser de marca.
 
 export interface SEOProps {
     title?: string;
+    /** Título completo, sem sufixo automático (ex.: home). */
+    fullTitle?: string;
     description?: string;
     canonical?: string;
     ogImage?: string;
@@ -13,45 +15,47 @@ export interface SEOProps {
 
 const BRAND = 'Just Go Market';
 const BRAND_SUFFIX = 'Mercado Autônomo para Condomínios';
-const DEFAULT_DESCRIPTION = 'Mercado autônomo premium para condomínios em Brasília e DF. Instalação gratuita, operação 24h, custo zero para o condomínio. Tecnologia Scan & Go.';
-const DEFAULT_OG_IMAGE = 'https://justgomarket.com.br/assets/images/mini-mercado-autonomo-condominio-brasilia.jpg';
 const SITE_URL = 'https://justgomarket.com.br';
+const DEFAULT_TITLE = 'Mercado Autônomo Premium para Condomínios em Brasília | Just Go Market';
+const DEFAULT_DESCRIPTION =
+    'Mercado autônomo 24h com curadoria premium para condomínios de alto padrão em Brasília. Instalado e operado pela Just Go Market, sem custo para o condomínio.';
+const DEFAULT_OG_IMAGE = `${SITE_URL}/assets/images/og-just-go-market.png`;
 
-export function generateTitle(title?: string, city?: string): string {
+export function generateTitle(title?: string, city?: string, fullTitle?: string): string {
+    if (fullTitle) return fullTitle;
     if (title) {
-        const cityPart = city ? ` em ${city}` : '';
-        return `${title}${cityPart} | ${BRAND} — ${BRAND_SUFFIX}`;
+        const cityPart = city && !title.includes(city) ? ` em ${city}` : '';
+        return `${title}${cityPart} | ${BRAND}`;
     }
-    return `${BRAND} — ${BRAND_SUFFIX} | Brasília e DF`;
+    return DEFAULT_TITLE;
 }
 
 export function generateDescription(description?: string): string {
     return description || DEFAULT_DESCRIPTION;
 }
 
+/**
+ * URL canônica sem barra final e sem .html — exatamente a forma que o
+ * .htaccess serve (ele redireciona /pagina/ → /pagina com 301).
+ */
 export function generateCanonical(path: string): string {
-    // Remove query params e hashes
-    const pathWithoutQuery = path.split('?')[0].split('#')[0];
-
-    // Remove index.html e .html
-    let cleanPath = pathWithoutQuery
+    const clean = path
+        .split('?')[0]
+        .split('#')[0]
         .replace(/\/index\.html$/, '')
-        .replace(/\.html$/, '');
+        .replace(/\.html$/, '')
+        .replace(/\/+$/, '');
 
-    // Assegura trailing slash (comportamento nativo de diretórios)
-    if (!cleanPath.endsWith('/')) {
-        cleanPath = `${cleanPath}/`;
-    }
+    return clean === '' ? `${SITE_URL}/` : `${SITE_URL}${clean}`;
+}
 
-    if (cleanPath === '' || cleanPath === '/') {
-        return `${SITE_URL}/`;
-    }
-
-    return `${SITE_URL}${cleanPath}`;
+export function absoluteUrl(path: string): string {
+    if (/^https?:\/\//.test(path)) return path;
+    return `${SITE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
 }
 
 export function generateOGImage(ogImage?: string): string {
-    return ogImage || DEFAULT_OG_IMAGE;
+    return ogImage ? absoluteUrl(ogImage) : DEFAULT_OG_IMAGE;
 }
 
 export interface FullSEO {
@@ -65,7 +69,7 @@ export interface FullSEO {
 
 export function buildSEO(props: SEOProps, currentPath: string): FullSEO {
     return {
-        title: generateTitle(props.title, props.city),
+        title: generateTitle(props.title, props.city, props.fullTitle),
         description: generateDescription(props.description),
         canonical: props.canonical || generateCanonical(currentPath),
         ogImage: generateOGImage(props.ogImage),

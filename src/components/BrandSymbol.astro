@@ -1,0 +1,57 @@
+---
+/**
+ * Símbolo da Just Go Market — a sacola que é um "G", com o traço-sorriso.
+ * Linha central traçada sobre o arquivo oficial (apresentacao/logo.png):
+ * um único traço contínuo — contorno da sacola e, em seguida, o sorriso —
+ * o que permite desenhá-lo (draw-stroke) sem distorcer a marca.
+ *
+ * Regras do manual (6.3): não rotacionar, não distorcer, não recolorir.
+ * A espessura e a proporção são fixas; a cor padrão é o verde oficial.
+ * `tone` existe só para o grafismo tom sobre tom (background/pattern).
+ */
+import { SYMBOL_PATH, SYMBOL_STROKE, SYMBOL_VIEWBOX } from '@lib/brand';
+
+interface Props {
+  class?: string;
+  draw?: boolean;
+  tone?: 'green' | 'soft' | 'ink';
+  label?: string;
+  id?: string;
+}
+
+const { class: className = '', draw = false, tone = 'green', label, id } = Astro.props;
+
+const colors = {
+  green: 'var(--jg-green)',
+  soft: 'var(--jg-green-soft)',
+  ink: 'var(--jg-ink-2)',
+};
+
+---
+
+<svg
+  class:list={['brand-symbol', className]}
+  id={id}
+  viewBox={SYMBOL_VIEWBOX}
+  fill="none"
+  stroke={colors[tone]}
+  stroke-width={SYMBOL_STROKE}
+  stroke-linejoin="round"
+  stroke-linecap="butt"
+  data-draw={draw ? '' : undefined}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  focusable="false"
+>
+  <path d={SYMBOL_PATH} pathLength="1"></path>
+</svg>
+
+<style>
+  @layer components {
+    .brand-symbol {
+      aspect-ratio: 1;
+      overflow: visible;
+    }
+  }
+</style>

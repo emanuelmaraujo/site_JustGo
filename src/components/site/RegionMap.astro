@@ -1,0 +1,145 @@
+---
+/**
+ * Mapa estilizado em monocromo (SVG estático, sem Google Maps).
+ * Posiciona as regiões atendidas a partir das coordenadas dos JSONs;
+ * a região atual ganha o ponto verde pulsante. Ilustrativo, fora de escala.
+ */
+interface Region {
+  name: string;
+  slug: string;
+  coords: { lat: number; lng: number };
+}
+
+interface Props {
+  regions: Region[];
+  current: string;
+}
+
+const { regions, current } = Astro.props;
+
+// Caixa aproximada do DF central (fora de escala, só para composição)
+const box = { minLng: -48.12, maxLng: -47.78, minLat: -15.9, maxLat: -15.7 };
+const W = 480;
+const H = 360;
+const pad = 48;
+const x = (lng: number) => pad + ((lng - box.minLng) / (box.maxLng - box.minLng)) * (W - pad * 2);
+const y = (lat: number) => pad + ((box.maxLat - lat) / (box.maxLat - box.minLat)) * (H - pad * 2);
+
+const points = regions.map((r) => ({
+  ...r,
+  px: Math.max(pad, Math.min(W - pad, x(r.coords.lng))),
+  py: Math.max(pad, Math.min(H - pad, y(r.coords.lat))),
+}));
+---
+
+<figure class="rmap">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Mapa ilustrativo das regiões atendidas, com destaque para ${regions.find((r) => r.slug === current)?.name}`}>
+    <defs>
+      <pattern id="rmap-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+        <path d="M24 0H0V24" fill="none" stroke="currentColor" stroke-opacity="0.07"></path>
+      </pattern>
+    </defs>
+    <rect width={W} height={H} fill="url(#rmap-grid)"></rect>
+    <!-- Lago Paranoá (traço livre, ilustrativo) -->
+    <path
+      class="rmap-lake"
+      d="M330 70c-18 22-10 48 6 66s30 40 18 62-40 28-46 50 10 42 32 46"
+      fill="none"
+      pathLength="1"></path>
+    <!-- Eixo Monumental (ilustrativo) -->
+    <path class="rmap-axis" d="M200 168H372" pathLength="1"></path>
+    {
+      points.map((p) => (
+        <a href={`/${p.slug}`} class:list={['rmap-pt', p.slug === current && 'is-current']} aria-label={p.name}>
+          {p.slug === current && <circle cx={p.px} cy={p.py} r="14" class="rmap-pulse" />}
+          <circle cx={p.px} cy={p.py} r={p.slug === current ? 6 : 4} class="rmap-dot" />
+          <text x={p.px + 12} y={p.py + 4}>
+            {p.name}
+          </text>
+        </a>
+      ))
+    }
+  </svg>
+  <figcaption>Mapa ilustrativo, fora de escala.</figcaption>
+</figure>
+
+<style>
+  @layer components {
+    .rmap {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: var(--r-card);
+      overflow: hidden;
+      color: var(--fg);
+      background: var(--surface);
+    }
+
+    .rmap svg {
+      width: 100%;
+      height: auto;
+    }
+
+    .rmap-lake,
+    .rmap-axis {
+      stroke: currentColor;
+      stroke-opacity: 0.25;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+    }
+
+    .rmap-dot {
+      fill: var(--fg-3);
+    }
+
+    .rmap-pt.is-current .rmap-dot {
+      fill: var(--jg-green);
+    }
+
+    .rmap-pulse {
+      fill: var(--jg-green);
+      opacity: 0.25;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: rmap-pulse 2.4s var(--ease-out-expo) infinite;
+    }
+
+    @keyframes rmap-pulse {
+      from {
+        transform: scale(0.6);
+        opacity: 0.45;
+      }
+      to {
+        transform: scale(2);
+        opacity: 0;
+      }
+    }
+
+    .rmap text {
+      font-family: var(--font-display);
+      font-size: 12px;
+      fill: var(--fg-2);
+    }
+
+    .rmap-pt.is-current text {
+      fill: var(--fg);
+      font-weight: 600;
+    }
+
+    .rmap-pt:focus-visible {
+      outline: none;
+    }
+
+    .rmap-pt:focus-visible .rmap-dot {
+      stroke: var(--jg-green);
+      stroke-width: 3;
+    }
+
+    .rmap figcaption {
+      position: absolute;
+      right: 14px;
+      bottom: 10px;
+      font-size: 0.6875rem;
+      color: var(--fg-3);
+    }
+  }
+</style>

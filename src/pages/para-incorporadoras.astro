@@ -1,0 +1,163 @@
+---
+/**
+ * Para incorporadoras (nova) — a Just Go como amenity de lançamento.
+ * Modelo comercial específico para incorporadoras: [CONFIRMAR].
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Section from '@components/ui/Section.astro';
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import SplitWords from '@components/ui/SplitWords.astro';
+import Icon from '@components/Icon.astro';
+import PageHero from '@components/site/PageHero.astro';
+import CtaFinal from '@components/site/CtaFinal.astro';
+import { crumbs } from '@lib/schema';
+
+const reasons = [
+  {
+    icon: 'sparkle',
+    title: 'Diferencial no lançamento',
+    text: 'Uma amenity de conveniência com curadoria premium, que aparece no material de venda e no decorado.',
+  },
+  {
+    icon: 'ruler',
+    title: 'Previsto em planta',
+    text: 'O espaço é pensado junto com o arquiteto: área, energia, circulação e acabamentos coerentes com o projeto.',
+  },
+  {
+    icon: 'building',
+    title: 'Pronto na ocupação',
+    text: 'A loja começa a operar quando os moradores chegam, sem que o novo condomínio precise organizar nada.',
+  },
+  {
+    icon: 'shield',
+    title: 'Sem gestão para o condomínio',
+    text: 'Estoque, reposição, manutenção e segurança continuam sendo responsabilidade da Just Go Market.',
+  },
+] as const;
+
+const steps = [
+  {
+    meta: 'Concepção',
+    title: 'Conversa sobre o projeto',
+    text: 'Entendemos o público, o padrão de acabamento e o posicionamento do empreendimento.',
+  },
+  {
+    meta: 'Projeto executivo',
+    title: 'Especificação técnica',
+    text: 'Entregamos ao escritório de arquitetura as diretrizes do espaço: área, ponto de energia, acesso e acabamentos.',
+  },
+  {
+    meta: 'Entrega',
+    title: 'Instalação e abertura',
+    text: 'Instalamos a estrutura modular sem obra civil e abrimos a loja junto com a ocupação do condomínio.',
+  },
+];
+
+const specs = [
+  'Área de cerca de 15 a 18 m², interna ou externa',
+  'Piso nivelado e acesso pela área comum',
+  'Um ponto de energia, com medição individual',
+  'Previsão para câmeras e controle de acesso',
+];
+---
+
+<BaseLayout
+  title="Para incorporadoras: mercado autônomo como amenity de lançamento"
+  description="Integre um mercado autônomo de alto padrão ao seu lançamento em Brasília. A Just Go Market especifica o espaço com o arquiteto e entrega a loja pronta na ocupação."
+  schemas={[crumbs(['Para incorporadoras', '/para-incorporadoras'])]}
+>
+  <PageHero
+    eyebrow="Para incorporadoras"
+    title="Uma amenity que ajuda a <span class='hl'>vender</span> o lançamento."
+    lead="Leve a Just Go para o projeto ainda na planta: conveniência de alto padrão integrada à arquitetura, entregue pronta para os novos moradores."
+    crumbs={[{ name: 'Para incorporadoras', href: '/para-incorporadoras' }]}
+    photo={{
+      name: 'projeto-fachada',
+      alt: 'Fachada de uma loja Just Go integrada à área comum de um condomínio',
+      placeholder: 'Projeto 3D — fachada da loja (render do projeto)',
+      illustrative: true,
+    }}
+  />
+
+  <Section theme="light">
+    <div class="container">
+      <div class="section-head split">
+        <div>
+          <Eyebrow>Por que incluir no projeto</Eyebrow>
+          <SplitWords tag="h2" class="mt-m">Um diferencial que o comprador entende na hora.</SplitWords>
+        </div>
+        <p class="lead" data-reveal>
+          Conveniência 24h no térreo é um argumento concreto — e coerente com o padrão de um lançamento de alto padrão.
+        </p>
+      </div>
+      <ul class="grid-2 reasons">
+        {
+          reasons.map((r) => (
+            <li class="card" data-reveal>
+              <span class="card-icon">
+                <Icon name={r.icon} draw />
+              </span>
+              <h3>{r.title}</h3>
+              <p>{r.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Section>
+
+  <Section theme="dark">
+    <div class="container split top">
+      <div class="split-copy">
+        <Eyebrow>Como trabalhamos</Eyebrow>
+        <SplitWords tag="h2">Junto com o seu time de projeto.</SplitWords>
+        <div class="card specs" data-reveal>
+          <h3>Para o caderno técnico</h3>
+          <ul class="list-check">{specs.map((s) => <li>{s}</li>)}</ul>
+          <p class="todo">[CONFIRMAR] Especificações técnicas detalhadas e modelo comercial para incorporadoras.</p>
+        </div>
+      </div>
+      <ol class="timeline" data-scroll-progress>
+        {
+          steps.map((s, i) => (
+            <li data-reveal>
+              <p class="timeline-meta">
+                {String(i + 1).padStart(2, '0')} · {s.meta}
+              </p>
+              <h3>{s.title}</h3>
+              <p>{s.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </Section>
+
+  <CtaFinal
+    title="Vamos conversar sobre o seu próximo lançamento."
+    text="Apresentamos o modelo ao seu time de produto e arquitetura."
+    origin="incorporadoras_cta"
+    whatsappText="Olá! Sou de uma incorporadora e gostaria de conversar sobre a Just Go Market em um lançamento."
+  />
+</BaseLayout>
+
+<style>
+  @layer components {
+    .reasons {
+      display: grid;
+      gap: 16px;
+    }
+
+    .split.top {
+      align-items: start;
+    }
+
+    .specs {
+      margin-top: 40px;
+    }
+
+    .specs .todo {
+      margin-top: 20px;
+    }
+  }
+</style>

@@ -1,93 +1,206 @@
 ---
+/**
+ * Páginas regionais (URLs mantidas: /brasilia, /noroeste, /sudoeste, /aguas-claras, /taguatinga).
+ * Template editorial com mapa estilizado em monocromo, bairros atendidos e FAQ local.
+ */
 import { getCollection } from 'astro:content';
 import BaseLayout from '@layouts/BaseLayout.astro';
-import Header from '@components/Header.astro';
-import Footer from '@components/Footer.astro';
-import WhatsAppFloat from '@components/WhatsAppFloat.astro';
-import CTASticky from '@components/CTASticky.astro';
-import FAQ from '@components/FAQ.astro';
-import { localBusinessSchema, faqPageSchema, serviceSchema, breadcrumbSchema } from '@lib/schema';
+import Section from '@components/ui/Section.astro';
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import SplitWords from '@components/ui/SplitWords.astro';
+import Accordion from '@components/ui/Accordion.astro';
+import PageHero from '@components/site/PageHero.astro';
+import RegionMap from '@components/site/RegionMap.astro';
+import CtaFinal from '@components/site/CtaFinal.astro';
+import { mdLite } from '@lib/markdown-lite';
+import { localBusinessSchema, faqPageSchema, serviceSchema, crumbs } from '@lib/schema';
 
 export async function getStaticPaths() {
   const cidades = await getCollection('cidades');
+  const all = cidades.map((c) => ({ name: c.data.name, slug: c.data.slug, coords: c.data.coords }));
   return cidades.map((cidade) => ({
     params: { cidade: cidade.data.slug },
-    props: { cidade: cidade.data },
+    props: { cidade: cidade.data, all },
   }));
 }
 
-const { cidade } = Astro.props;
+const { cidade, all } = Astro.props;
+const others = all.filter((c) => c.slug !== cidade.slug);
 
 const schemas = [
   localBusinessSchema(cidade.name, cidade.coords),
   serviceSchema(),
   faqPageSchema(cidade.faqs),
-  breadcrumbSchema([
-    { name: 'Home', url: 'https://www.justgomarket.com.br/' },
-    { name: cidade.name, url: `https://www.justgomarket.com.br/${cidade.slug}/` },
-  ]),
+  crumbs([cidade.name, `/${cidade.slug}`]),
 ];
+
+// O H1 dos JSONs termina com "— Just Go Market"; no visual, a marca já está no header
+const h1 = cidade.h1.replace(/\s*[—-]\s*Just Go Market\s*$/, '');
 ---
 
-<BaseLayout
-  title={cidade.metaTitle}
-  description={cidade.metaDescription}
-  city={cidade.name}
-  schemas={schemas}
->
-  <Header />
+<BaseLayout title={cidade.metaTitle} description={cidade.metaDescription} schemas={schemas}>
+  <PageHero
+    eyebrow={`Mercado autônomo em ${cidade.name}`}
+    title={h1}
+    lead={cidade.heroDescription}
+    crumbs={[{ name: cidade.name, href: `/${cidade.slug}` }]}
+  />
 
-  <main>
-    <section class="inner-hero">
-      <div class="container">
-        <span class="uppercase highlight" style="display: block; margin-bottom: 20px;">Mercado Autônomo em {cidade.name}</span>
-        <h1>{cidade.h1}</h1>
-        <p>{cidade.heroDescription}</p>
+  <Section theme="light">
+    <div class="container split top">
+      <div class="split-copy">
+        <Eyebrow>{cidade.name}</Eyebrow>
+        <SplitWords tag="h2">{`Conveniência premium no seu condomínio em ${cidade.name}.`}</SplitWords>
+        <div class="prose" data-reveal set:html={mdLite(cidade.content.intro)} />
       </div>
-    </section>
-
-    <section class="content-section light-section">
-      <div class="container">
-        <div class="content-wrapper">
-          <h2>Mercado Autônomo em {cidade.name}: Conveniência Premium no Seu Condomínio</h2>
-          {cidade.content.intro.split('\n\n').map((p: string) => <p>{p}</p>)}
-
-          <h2>Por Que um Mercado Autônomo em {cidade.name}?</h2>
-          {cidade.content.whyHere.split('\n\n').map((p: string) => <p set:html={p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')} />)}
-
-          <h2>Benefícios do Mercado Autônomo para Condomínios em {cidade.name}</h2>
-          {cidade.content.benefits.split('\n\n').map((p: string) => <p set:html={p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')} />)}
-
-          <h2>Como Funciona a Instalação em {cidade.name}</h2>
-          {cidade.content.howItWorks.split('\n\n').map((p: string) => <p set:html={p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')} />)}
-
-          <h2>Custos e Modelo de Negócio</h2>
-          {cidade.content.pricing.split('\n\n').map((p: string) => <p>{p}</p>)}
-
-          <h2>Bairros e Regiões Atendidas em {cidade.name}</h2>
-          {cidade.content.neighborhoods.split('\n\n').map((p: string) => <p set:html={p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/- (.*)/g, '• $1')} />)}
-        </div>
+      <div data-reveal>
+        <RegionMap regions={all} current={cidade.slug} />
+        <ul class="chips" aria-label="Áreas atendidas">
+          {cidade.neighborhoods.map((n: string) => <li>{n}</li>)}
+        </ul>
       </div>
-    </section>
+    </div>
+  </Section>
 
-    <section class="section-faq" style="padding-top: 60px;">
-      <div class="container">
-        <h2 class="text-center" style="margin-bottom: 40px;">Perguntas Frequentes sobre Mercado Autônomo em {cidade.name}</h2>
-        <FAQ items={cidade.faqs} id={`faq-${cidade.slug}`} />
+  <Section theme="dark">
+    <div class="container editorial">
+      <div class="editorial-head">
+        <Eyebrow>Por que aqui</Eyebrow>
+        <SplitWords tag="h2" class="mt-m">{`Por que um mercado autônomo em ${cidade.name}?`}</SplitWords>
       </div>
-    </section>
+      <div class="prose" data-reveal set:html={mdLite(cidade.content.whyHere)} />
+    </div>
+  </Section>
 
-    <section class="section-contact" style="padding: 80px 0;">
-      <div class="container text-center">
-        <span class="uppercase highlight" style="display: block; margin-bottom: 20px;">Próximo passo</span>
-        <h2 style="color: var(--color-offwhite); margin-bottom: 20px;">{cidade.content.cta.split('.')[0]}.</h2>
-        <p style="max-width: 600px; margin: 0 auto 30px; color: rgba(255,255,255,0.8);">{cidade.content.cta}</p>
-        <a href="/#contato" class="btn btn-primary btn-glow">Solicitar Estudo Gratuito para {cidade.name}</a>
+  <Section theme="ink">
+    <div class="container editorial">
+      <div class="editorial-head">
+        <Eyebrow>Benefícios</Eyebrow>
+        <SplitWords tag="h2" class="mt-m">O que muda para o condomínio.</SplitWords>
       </div>
-    </section>
-  </main>
+      <div class="prose" data-reveal set:html={mdLite(cidade.content.benefits)} />
+    </div>
+  </Section>
 
-  <Footer />
-  <WhatsAppFloat />
-  <CTASticky />
+  <Section theme="paper">
+    <div class="container editorial">
+      <div class="editorial-head">
+        <Eyebrow>Implantação e custos</Eyebrow>
+        <SplitWords tag="h2" class="mt-m">{`Como funciona a instalação em ${cidade.name}.`}</SplitWords>
+      </div>
+      <div class="prose" data-reveal>
+        <Fragment set:html={mdLite(cidade.content.howItWorks)} />
+        <h3>Custos e modelo de negócio</h3>
+        <Fragment set:html={mdLite(cidade.content.pricing)} />
+        <h3>Áreas atendidas</h3>
+        <Fragment set:html={mdLite(cidade.content.neighborhoods)} />
+      </div>
+    </div>
+  </Section>
+
+  <Section theme="light">
+    <div class="container editorial">
+      <div class="editorial-head">
+        <Eyebrow>Perguntas frequentes</Eyebrow>
+        <SplitWords tag="h2" class="mt-m">{`Dúvidas sobre o mercado autônomo em ${cidade.name}.`}</SplitWords>
+      </div>
+      <div data-reveal>
+        <Accordion items={cidade.faqs} id={`faq-${cidade.slug}`} />
+      </div>
+    </div>
+  </Section>
+
+  <Section theme="dark" tight>
+    <div class="container others">
+      <p class="eyebrow">Outras regiões</p>
+      <ul>
+        {
+          others.map((o) => (
+            <li>
+              <a href={`/${o.slug}`}>{o.name}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Section>
+
+  <CtaFinal
+    title={`Leve a Just Go para o seu condomínio em ${cidade.name}.`}
+    text={cidade.content.cta}
+    origin={`regiao_${cidade.slug}`}
+    whatsappText={`Olá! Quero levar a Just Go Market para o meu condomínio em ${cidade.name}.`}
+  />
 </BaseLayout>
+
+<style>
+  @layer components {
+    .split.top {
+      align-items: start;
+    }
+
+    .chips {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chips li {
+      padding: 8px 14px;
+      border-radius: var(--r-pill);
+      border: 1px solid var(--line);
+      font-size: 0.875rem;
+      color: var(--fg-2);
+    }
+
+    .editorial {
+      display: grid;
+      gap: 40px;
+    }
+
+    @media (min-width: 1024px) {
+      .editorial {
+        grid-template-columns: 5fr 7fr;
+        gap: 80px;
+        align-items: start;
+      }
+
+      .editorial-head {
+        position: sticky;
+        top: calc(var(--header-h) + 40px);
+      }
+    }
+
+    .others {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px 40px;
+    }
+
+    .others ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 28px;
+    }
+
+    .others a {
+      font-family: var(--font-title);
+      font-size: clamp(1.25rem, 2vw, 1.75rem);
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      color: var(--fg);
+      display: inline-block;
+      padding-block: 6px;
+      border-bottom: 1px solid transparent;
+      transition: border-color var(--dur-xs) var(--ease-soft);
+    }
+
+    @media (hover: hover) {
+      .others a:hover {
+        border-color: var(--jg-green);
+      }
+    }
+  }
+</style>

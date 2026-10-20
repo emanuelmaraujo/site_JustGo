@@ -1,0 +1,288 @@
+---
+/**
+ * Formulário "Agendar visita". Monta a mensagem e abre o WhatsApp (como hoje),
+ * com validação inline acessível (aria-invalid + mensagem associada).
+ * O envio é tratado em site.ts (initLeadForms) e dispara lead_submit no dataLayer.
+ */
+import Button from '@components/ui/Button.astro';
+
+interface Props {
+  prefix: string;
+  origin: string;
+}
+
+const { prefix, origin } = Astro.props;
+const id = (name: string) => `${prefix}-${name}`;
+
+const profiles = [
+  { value: 'Síndico(a) ou conselho', label: 'Síndico ou conselho' },
+  { value: 'Morador(a)', label: 'Morador' },
+  { value: 'Administradora', label: 'Administradora' },
+  { value: 'Incorporadora', label: 'Incorporadora' },
+];
+
+const regions = [
+  'Noroeste',
+  'Sudoeste',
+  'Lago Sul',
+  'Lago Norte',
+  'Asa Norte',
+  'Asa Sul',
+  'Park Way',
+  'Jardim Botânico',
+  'Águas Claras',
+  'Taguatinga',
+  'Valparaíso de Goiás',
+  'Outra região',
+];
+---
+
+<form class="lf" data-lead-form data-origin={origin} novalidate>
+  <fieldset class="lf-field">
+    <legend class="lf-label">Você é</legend>
+    <div class="lf-pills">
+      {
+        profiles.map((p, i) => (
+          <label class="lf-pill">
+            <input type="radio" name="perfil" value={p.value} checked={i === 0} />
+            <span>{p.label}</span>
+          </label>
+        ))
+      }
+    </div>
+  </fieldset>
+
+  <div class="lf-row">
+    <div class="lf-field">
+      <label class="lf-label" for={id('nome')}>Nome</label>
+      <input
+        class="lf-input"
+        id={id('nome')}
+        name="nome"
+        type="text"
+        autocomplete="name"
+        required
+        aria-describedby={id('nome-err')}
+      />
+      <p class="lf-err" id={id('nome-err')} data-error-for="nome"></p>
+    </div>
+    <div class="lf-field">
+      <label class="lf-label" for={id('whatsapp')}>WhatsApp</label>
+      <input
+        class="lf-input"
+        id={id('whatsapp')}
+        name="whatsapp"
+        type="tel"
+        inputmode="tel"
+        autocomplete="tel-national"
+        placeholder="(61) 90000-0000"
+        required
+        aria-describedby={id('whatsapp-err')}
+      />
+      <p class="lf-err" id={id('whatsapp-err')} data-error-for="whatsapp"></p>
+    </div>
+  </div>
+
+  <div class="lf-row">
+    <div class="lf-field">
+      <label class="lf-label" for={id('condominio')}>Condomínio ou empreendimento</label>
+      <input
+        class="lf-input"
+        id={id('condominio')}
+        name="condominio"
+        type="text"
+        autocomplete="organization"
+        required
+        aria-describedby={id('condominio-err')}
+      />
+      <p class="lf-err" id={id('condominio-err')} data-error-for="condominio"></p>
+    </div>
+    <div class="lf-field">
+      <label class="lf-label" for={id('regiao')}>Região</label>
+      <select class="lf-input lf-select" id={id('regiao')} name="regiao">
+        {regions.map((r) => <option value={r}>{r}</option>)}
+      </select>
+    </div>
+  </div>
+
+  <div class="lf-field">
+    <label class="lf-label" for={id('mensagem')}>Algo que devemos saber? <span class="lf-opt">(opcional)</span></label>
+    <textarea class="lf-input lf-textarea" id={id('mensagem')} name="mensagem" rows="3"></textarea>
+  </div>
+
+  <div class="lf-submit">
+    <Button type="submit" icon="whatsapp" block>Enviar pelo WhatsApp</Button>
+    <p class="lf-note">
+      Você abre uma conversa no WhatsApp com a mensagem pronta. Respondemos em até 24 horas.
+      <a href="/privacidade">Política de privacidade</a>.
+    </p>
+  </div>
+</form>
+
+<style>
+  @layer components {
+    .lf {
+      display: grid;
+      gap: 24px;
+    }
+
+    .lf-row {
+      display: grid;
+      gap: 24px;
+    }
+
+    @media (min-width: 640px) {
+      .lf-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .lf-field {
+      display: grid;
+      gap: 10px;
+      border: 0;
+      min-width: 0;
+    }
+
+    .lf-label {
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--fg);
+      padding: 0;
+    }
+
+    .lf-opt {
+      color: var(--fg-3);
+      font-weight: 400;
+    }
+
+    .lf-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .lf-pill {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .lf-pill input {
+      position: absolute;
+      opacity: 0;
+      inset: 0;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .lf-pill span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: var(--r-pill);
+      border: 1px solid var(--line);
+      font-size: 0.9375rem;
+      color: var(--fg-2);
+      transition:
+        background-color var(--dur-xs) var(--ease-soft),
+        color var(--dur-xs) var(--ease-soft),
+        border-color var(--dur-xs) var(--ease-soft);
+    }
+
+    .lf-pill input:checked + span {
+      background: var(--fg);
+      border-color: var(--fg);
+      color: var(--bg);
+    }
+
+    .lf-pill input:focus-visible + span {
+      outline: 2px solid var(--jg-green);
+      outline-offset: 3px;
+    }
+
+    .lf-input {
+      width: 100%;
+      min-height: 54px;
+      padding: 14px 18px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: color-mix(in srgb, var(--fg) 3%, transparent);
+      color: var(--fg);
+      font-size: 1rem;
+      transition: border-color var(--dur-xs) var(--ease-soft);
+    }
+
+    .lf-input::placeholder {
+      color: var(--fg-3);
+    }
+
+    .lf-input:focus {
+      outline: none;
+      border-color: var(--fg);
+    }
+
+    .lf-input:focus-visible {
+      outline: 2px solid var(--jg-green);
+      outline-offset: 2px;
+    }
+
+    .lf-select {
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+        linear-gradient(135deg, currentColor 50%, transparent 50%);
+      background-position:
+        calc(100% - 22px) 50%,
+        calc(100% - 17px) 50%;
+      background-size: 5px 5px;
+      background-repeat: no-repeat;
+    }
+
+    .lf-select option {
+      color: var(--jg-black);
+    }
+
+    .lf-textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    .lf-input[aria-invalid='true'] {
+      border-color: var(--fg);
+    }
+
+    .lf-err {
+      min-height: 0;
+      font-size: 0.8125rem;
+      color: var(--fg);
+    }
+
+    .lf-err::before {
+      content: '! ';
+      font-weight: 700;
+      color: var(--jg-green);
+    }
+
+    .lf-err:empty {
+      display: none;
+    }
+
+    .lf-submit {
+      display: grid;
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    .lf-note {
+      font-size: 0.8125rem;
+      color: var(--fg-3);
+    }
+
+    .lf-note a {
+      color: var(--fg-2);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+</style>

@@ -1,0 +1,19 @@
+{
+  "order": 4,
+  "title": "Bem-estar",
+  "kicker": "Para quem cuida da rotina",
+  "text": "Sucos naturais, kombuchas, snacks saudáveis e opções para quem treina.",
+  "long": "Uma seleção para o pós-treino e para os dias leves: sucos, kombuchas, barras de proteína, castanhas e frutas.",
+  "items": [
+    "Sucos e kombuchas",
+    "Barras de proteína",
+    "Castanhas e snacks",
+    "Frutas"
+  ],
+  "photo": {
+    "name": "curadoria-bem-estar",
+    "alt": "Suco verde, kombucha, barras de proteína e castanhas sobre fundo preto",
+    "placeholder": "Bem-estar — suco verde, kombucha e snacks saudáveis"
+  },
+  "confirm": "Confirmar se a categoria Bem-estar existe no mix atual."
+}

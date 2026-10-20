@@ -1,155 +1,65 @@
 ---
+/** Diagnóstico de viabilidade (wizard). Modo morador: ?perfil=morador */
 import BaseLayout from '@layouts/BaseLayout.astro';
-import Header from '@components/Header.astro';
-import Footer from '@components/Footer.astro';
-import WhatsAppFloat from '@components/WhatsAppFloat.astro';
-import CTASticky from '@components/CTASticky.astro';
-import ViabilityDiagnostic from '@components/ViabilityDiagnostic.astro';
-import { breadcrumbSchema } from '@lib/schema';
-
-const schemas = [
-  breadcrumbSchema([
-    { name: 'Home', url: 'https://www.justgomarket.com.br/' },
-    { name: 'Diagnóstico de Viabilidade', url: 'https://www.justgomarket.com.br/diagnostico-condominio/' },
-  ]),
-];
+import Section from '@components/ui/Section.astro';
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import SplitWords from '@components/ui/SplitWords.astro';
+import Diagnostic from '@components/site/Diagnostic.astro';
+import { crumbs } from '@lib/schema';
 ---
 
 <BaseLayout
-  title="Diagnóstico de Viabilidade: Seu Condomínio Está Pronto para um Mini Mercado Autônomo?"
-  description="Faça o diagnóstico inteligente de viabilidade do seu condomínio para um mini mercado autônomo. Avaliação gratuita em menos de 2 minutos com score personalizado e recomendações."
-  schemas={schemas}
+  title="Diagnóstico de viabilidade do condomínio"
+  description="Descubra em dois minutos se o seu condomínio em Brasília tem perfil para um mercado autônomo Just Go Market. Diagnóstico gratuito, com resultado na hora."
+  schemas={[crumbs(['Diagnóstico', '/diagnostico-condominio'])]}
 >
-  <Header currentPath="/diagnostico-condominio" />
-
-  <main>
-    <!-- Hero -->
-    <section class="inner-hero">
-      <div class="container">
-        <span class="uppercase highlight" style="display: block; margin-bottom: 20px;">Ferramenta Consultiva Gratuita</span>
-        <h1>Diagnóstico Inteligente de Viabilidade do Mini Mercado</h1>
-        <p>Descubra, em menos de 2 minutos, se o seu condomínio tem o perfil ideal para receber um mercado autônomo — com score personalizado e recomendações sob medida.</p>
+  <Section theme="dark" class="dgp">
+    <div class="container dgp-grid">
+      <div class="dgp-intro">
+        <Eyebrow>Diagnóstico gratuito</Eyebrow>
+        <SplitWords tag="h1" immediate class="dgp-title">Dois minutos para saber.</SplitWords>
+        <p class="lead dgp-lead">
+          Uma avaliação rápida sobre estrutura, moradores e entorno. Ao final, você recebe a pontuação e pode enviar o
+          resultado para o nosso time — ou para o seu síndico.
+        </p>
       </div>
-    </section>
-
-    <!-- O que é -->
-    <section class="content-section light-section">
-      <div class="container">
-        <div class="content-wrapper">
-          <h2 class="text-center">O Que é o Diagnóstico de Viabilidade?</h2>
-          <p>O <strong>Diagnóstico Inteligente de Viabilidade</strong> é uma ferramenta consultiva desenvolvida pela Just Go Market para ajudar síndicos, administradores e moradores a entender se o seu condomínio possui as características ideais para receber um mini mercado autônomo.</p>
-          <p>Diferente de uma simples pesquisa de opinião, o diagnóstico analisa critérios objetivos — como número de unidades, infraestrutura, perfil dos moradores e contexto do entorno — para gerar um <strong>Score de Viabilidade de 0 a 100</strong>, acompanhado de uma classificação clara e recomendações personalizadas.</p>
-          <p>A ideia é simples: antes de tomar qualquer decisão, é fundamental saber se o seu condomínio tem o perfil certo. O diagnóstico foi criado para que essa resposta chegue de forma rápida, visual e sem compromisso.</p>
-          <p>O mercado autônomo em condomínios é uma tendência que cresce em todo o Brasil, especialmente em grandes centros urbanos. A conveniência de ter acesso a itens essenciais — como bebidas, snacks, produtos de higiene e alimentos prontos — sem precisar sair do condomínio transformou a forma como moradores vivem o dia a dia. Mas nem todo condomínio está igualmente preparado para essa inovação.</p>
-          <p>É justamente aí que o diagnóstico de viabilidade se torna essencial: ele cruza múltiplos fatores para determinar o nível de aderência e prontidão do condomínio, oferecendo uma visão realista e orientada por dados.</p>
-
-          <h2 class="text-center">Como o Diagnóstico Funciona</h2>
-          <p>O diagnóstico é dividido em <strong>quatro dimensões de análise</strong>, cada uma avaliando um aspecto diferente do condomínio. A combinação dessas dimensões gera o score final.</p>
-
-          <h3>1. Dados Estruturais do Condomínio</h3>
-          <p>A primeira etapa analisa as características físicas e estruturais do empreendimento. Três fatores são avaliados:</p>
-          <ul>
-            <li><strong>Número de unidades residenciais</strong> — Condomínios com maior número de unidades apresentam maior volume potencial de utilização do mercado autônomo. A ferramenta classifica em três faixas: até 40 unidades, de 40 a 120, e acima de 120. Condomínios maiores recebem pontuação proporcionalmente superior.</li>
-            <li><strong>Portaria 24 horas</strong> — A presença de portaria em tempo integral é um indicador de infraestrutura e segurança, dois pilares fundamentais para a operação de um mercado autônomo. Condomínios com portaria 24h recebem bônus significativo.</li>
-            <li><strong>Padrão do condomínio</strong> — O padrão construtivo influencia diretamente o perfil de consumo dos moradores. Condomínios de alto padrão tendem a apresentar maior aderência a soluções de conveniência premium, seguidos por condomínios de médio padrão.</li>
-          </ul>
-
-          <h3>2. Perfil dos Moradores</h3>
-          <p>A segunda dimensão investiga quem são os moradores e como eles se relacionam com tecnologia:</p>
-          <ul>
-            <li><strong>Nível de uso de aplicativos</strong> — Moradores que já utilizam apps de delivery e compras online com frequência têm maior afinidade natural com o conceito de mercado autônomo, que utiliza tecnologia semelhante para oferecer uma experiência Scan &amp; Go sem atrito.</li>
-            <li><strong>Perfil predominante</strong> — Famílias com filhos, jovens profissionais, público maduro ou perfil misto: cada grupo tem necessidades e hábitos de consumo diferentes. O diagnóstico considera esse contexto para enriquecer a análise, embora todos os perfis possam se beneficiar de um mercado no condomínio.</li>
-          </ul>
-
-          <h3>3. Ambiente Externo</h3>
-          <p>A terceira dimensão avalia o contexto ao redor do condomínio:</p>
-          <ul>
-            <li><strong>Distância até o mercado ou conveniência mais próximo</strong> — Quando o comércio mais próximo está a mais de 800 metros, a conveniência de ter um mini mercado dentro do condomínio se torna ainda mais valiosa. Distâncias entre 300 e 800 metros também representam oportunidade relevante, pois eliminam a necessidade de deslocamento para compras rápidas.</li>
-            <li><strong>Fluxo noturno de moradores</strong> — Condomínios com alto fluxo de moradores à noite — seja por rotina profissional, famílias com crianças ou simplesmente pela dinâmica do prédio — se beneficiam enormemente de um mercado que opera 24 horas, 7 dias por semana, sem necessidade de funcionários.</li>
-          </ul>
-
-          <h3>4. O Score de Viabilidade</h3>
-          <p>Após responder às perguntas das três etapas anteriores, o sistema calcula automaticamente um score normalizado de <strong>0 a 100 pontos</strong>. O resultado é apresentado com um indicador visual animado e uma classificação objetiva:</p>
-          <ul>
-            <li><strong>Viabilidade Excelente (80–100)</strong> — O condomínio apresenta perfil excepcional em todas as dimensões analisadas. A recomendação é avançar com uma visita técnica para definir espaço e modelo ideal.</li>
-            <li><strong>Viabilidade Alta (60–79)</strong> — O condomínio possui ótimo potencial. A maioria dos indicadores é positiva, e uma avaliação presencial pode confirmar os detalhes de implementação.</li>
-            <li><strong>Viabilidade Moderada (40–59)</strong> — Há potencial, mas alguns fatores merecem análise mais detalhada. Uma consultoria gratuita pode esclarecer as particularidades.</li>
-            <li><strong>Avaliação Necessária (0–39)</strong> — O diagnóstico online indica que uma avaliação presencial é recomendada para identificar fatores locais não capturados pela ferramenta.</li>
-          </ul>
-
-          <h2 class="text-center">Por Que Avaliar a Viabilidade Antes de Tudo</h2>
-          <p>A decisão de instalar um mini mercado autônomo em um condomínio impacta positivamente a vida de todos os moradores — mas é uma decisão que precisa ser bem informada. O diagnóstico de viabilidade existe para trazer clareza antes de qualquer conversa técnica.</p>
-          <p>Quando o síndico ou a administradora compreende o nível de aderência do condomínio, a conversa com a assembleia se torna muito mais produtiva. Em vez de apresentar uma ideia abstrata, é possível mostrar dados concretos: "Nosso condomínio recebeu score 85 de viabilidade — temos perfil excelente para receber um mercado autônomo."</p>
-          <p>Além disso, o diagnóstico ajuda a identificar quais são os pontos fortes do condomínio. Um prédio com portaria 24h e alto fluxo noturno, por exemplo, tem um diferencial competitivo natural. Já um condomínio com grande número de unidades, mas sem comércios próximos, apresenta uma oportunidade clara de conveniência.</p>
-          <p>Em todos os casos, o diagnóstico funciona como ponto de partida para uma conversa mais aprofundada — nunca como uma decisão final. Cada condomínio é único, e a visita técnica presencial sempre revelará nuances que nenhuma ferramenta online consegue captar completamente.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Ferramenta de Diagnóstico -->
-    <section class="section-contact" style="padding: 60px 0 80px;">
-      <div class="container">
-        <ViabilityDiagnostic />
-      </div>
-    </section>
-
-    <!-- Benefícios -->
-    <section class="content-section light-section">
-      <div class="container">
-        <div class="content-wrapper">
-          <h2 class="text-center">Benefícios de um Mini Mercado Autônomo no Condomínio</h2>
-          <p>Independentemente do resultado do diagnóstico, condomínios que adotam um mini mercado autônomo experimentam transformações significativas no dia a dia dos moradores. Três benefícios se destacam consistentemente:</p>
-
-          <h3>Conveniência 24 horas</h3>
-          <p>O benefício mais imediato e perceptível é a conveniência. Ter acesso a itens essenciais — de água mineral a snacks, de produtos de higiene a refeições prontas — a qualquer hora do dia ou da noite, sem sair do condomínio, transforma a rotina doméstica. Pais com crianças pequenas, profissionais que chegam tarde do trabalho, moradores que recebem visitas inesperadas: todos se beneficiam da presença de um mini mercado operando sem interrupção.</p>
-          <p>A operação é totalmente autônoma, sem necessidade de funcionários. Isso significa que o mercado funciona em feriados, finais de semana e madrugadas — exatamente nos momentos em que o comércio tradicional está fechado. A tecnologia Scan &amp; Go permite que a experiência de compra seja rápida, intuitiva e completamente self-service.</p>
-
-          <h3>Valorização do Condomínio</h3>
-          <p>A presença de infraestrutura moderna e diferenciada contribui diretamente para a percepção de valor do empreendimento. Um mini mercado autônomo é um diferencial competitivo que posiciona o condomínio como inovador e orientado para a qualidade de vida dos moradores. Em um mercado imobiliário cada vez mais competitivo, amenidades como essa podem influenciar positivamente tanto a valorização das unidades quanto a atratividade para novos moradores ou locatários.</p>
-          <p>Pesquisas do setor imobiliário indicam que condomínios com infraestrutura completa — que inclui soluções de conveniência — tendem a apresentar maior satisfação dos moradores e menor rotatividade. O mini mercado autônomo se encaixa perfeitamente nessa categoria, oferecendo um serviço tangível e utilizável no dia a dia.</p>
-
-          <h3>Redução de Deslocamentos</h3>
-          <p>Cada ida ao supermercado consome tempo, combustível e energia. Para compras pequenas e emergenciais — o leite que acabou, o pão do café da manhã, a água para o jantar — o deslocamento até o comércio mais próximo é desproporcional à necessidade. O mini mercado autônomo elimina esse atrito, concentrando as compras rápidas dentro do próprio condomínio.</p>
-          <p>Essa redução de deslocamentos tem impacto real na rotina: menos tempo no trânsito, menos gastos com transporte, e mais tempo livre para o que realmente importa. Para condomínios localizados em regiões com trânsito intenso ou distantes de centros comerciais, esse benefício é especialmente significativo.</p>
-
-          <h2 class="text-center">Perguntas Frequentes sobre o Diagnóstico</h2>
-
-          <h3>O diagnóstico tem algum custo?</h3>
-          <p>Não. O Diagnóstico Inteligente de Viabilidade é totalmente gratuito e pode ser realizado quantas vezes você desejar. Não há compromisso ou obrigação ao completar a avaliação.</p>
-
-          <h3>O resultado do diagnóstico é definitivo?</h3>
-          <p>Não. O diagnóstico online é uma orientação inicial baseada nas informações fornecidas. A avaliação definitiva é sempre presencial, realizada pela equipe técnica da Just Go Market durante uma visita ao condomínio.</p>
-
-          <h3>Preciso ser síndico para fazer o diagnóstico?</h3>
-          <p>Não. Qualquer morador, administrador ou interessado pode realizar o diagnóstico. O resultado pode ser compartilhado com o síndico ou com a administradora como base para discussão em assembleia.</p>
-
-          <h3>Que dados são coletados durante o diagnóstico?</h3>
-          <p>O diagnóstico não coleta dados pessoais. As respostas são processadas localmente no navegador para gerar o score. Nenhuma informação é armazenada ou transmitida para servidores externos.</p>
-
-          <h3>Meu condomínio recebeu um score baixo. Isso significa que não é viável?</h3>
-          <p>Não necessariamente. O diagnóstico online avalia critérios gerais, mas cada condomínio tem particularidades que só podem ser percebidas presencialmente. Mesmo com score inicial moderado, fatores locais como espaço disponível, demanda dos moradores e características do entorno podem revelar ótimas oportunidades. Recomendamos sempre solicitar uma visita técnica gratuita para uma avaliação completa.</p>
-
-          <h3>Quanto tempo leva para completar o diagnóstico?</h3>
-          <p>Menos de 2 minutos. São apenas três etapas rápidas com perguntas objetivas. O resultado é exibido imediatamente após a última etapa.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- CTA Final -->
-    <section class="content-section light-section" style="padding: 80px 0;">
-      <div class="container">
-        <div class="content-wrapper">
-          <h2 class="text-center">Independente do Resultado...</h2>
-          <p class="text-center" style="max-width: 600px; margin: 0 auto 30px;">Cada condomínio é único. O diagnóstico online é uma orientação inicial. Para uma avaliação completa — incluindo análise de espaço, infraestrutura e perfil dos moradores — solicite uma visita técnica gratuita. Nossa equipe avalia presencialmente todos os fatores e apresenta uma proposta personalizada, sem compromisso.</p>
-          <div class="text-center">
-            <a href="/#contato" class="btn btn-primary btn-glow">Solicitar Visita Técnica Gratuita</a>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <Footer />
-  <WhatsAppFloat />
-  <CTASticky />
+      <Diagnostic />
+    </div>
+  </Section>
 </BaseLayout>
+
+<style>
+  @layer components {
+    .dgp {
+      padding-top: calc(var(--header-h) + clamp(56px, 8vw, 112px));
+    }
+
+    .dgp-grid {
+      display: grid;
+      gap: 48px;
+    }
+
+    @media (min-width: 1100px) {
+      .dgp-grid {
+        grid-template-columns: 4fr 7fr;
+        gap: 80px;
+        align-items: start;
+      }
+
+      .dgp-intro {
+        position: sticky;
+        top: calc(var(--header-h) + 48px);
+      }
+    }
+
+    .dgp-title {
+      margin-top: 28px;
+      font-size: clamp(2.6rem, 5.4vw, 5rem);
+      max-width: 10ch;
+    }
+
+    .dgp-lead {
+      margin-top: 28px;
+    }
+  }
+</style>

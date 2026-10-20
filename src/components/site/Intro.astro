@@ -1,0 +1,131 @@
+---
+/**
+ * Intro da home (substitui o preloader):
+ * o símbolo se desenha (≈900ms, expo.out) e duas "portas" pretas se abrem
+ * para os lados — a metáfora do elevador — revelando o hero (≈700ms).
+ *
+ * - Só na primeira visita da sessão (sessionStorage) — decidido por script inline
+ *   no <head>, antes da primeira pintura (classe .intro-on no <html>).
+ * - Total ≤ 1,6s. Pular com clique ou qualquer tecla.
+ * - Desativada com prefers-reduced-motion e sem JS.
+ * - Nunca bloqueia o LCP: o hero é renderizado por baixo desde o início.
+ * - Mobile: apenas o desenho do símbolo (≤ 1s).
+ */
+import { SYMBOL_PATH, SYMBOL_STROKE, SYMBOL_VIEWBOX } from '@lib/brand';
+---
+
+<div class="intro" data-intro aria-hidden="true">
+  <div class="intro-door intro-door-l"></div>
+  <div class="intro-door intro-door-r"></div>
+  <svg
+    class="intro-symbol"
+    viewBox={SYMBOL_VIEWBOX}
+    fill="none"
+    stroke="var(--jg-green)"
+    stroke-width={SYMBOL_STROKE}
+    stroke-linejoin="round"
+  >
+    <path d={SYMBOL_PATH} pathLength="1"></path>
+  </svg>
+</div>
+
+<style>
+  @layer components {
+    .intro {
+      display: none;
+    }
+
+    :global(.intro-on) .intro {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      cursor: pointer;
+    }
+
+    :global(.intro-on) body {
+      overflow: hidden;
+    }
+
+    .intro-door {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 50.5%;
+      background: var(--jg-black);
+      animation: door-open 700ms var(--ease-in-out) 900ms both;
+    }
+
+    .intro-door-l {
+      left: 0;
+      --to: -100%;
+    }
+
+    .intro-door-r {
+      right: 0;
+      --to: 100%;
+    }
+
+    @keyframes door-open {
+      to {
+        transform: translateX(var(--to));
+      }
+    }
+
+    .intro-symbol {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: clamp(56px, 7vw, 88px);
+      height: auto;
+      transform: translate(-50%, -50%);
+      overflow: visible;
+      animation: symbol-out 260ms var(--ease-soft) 780ms both;
+    }
+
+    .intro-symbol path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: symbol-draw 900ms var(--ease-out-expo) 40ms forwards;
+    }
+
+    @keyframes symbol-draw {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes symbol-out {
+      to {
+        opacity: 0;
+      }
+    }
+
+    /* Mobile: só o desenho do símbolo; o véu sai em fade (≤ 1s) */
+    @media (max-width: 767px) {
+      .intro-symbol path {
+        animation-duration: 650ms;
+      }
+
+      .intro-symbol {
+        animation-delay: 640ms;
+      }
+
+      .intro-door {
+        animation: veil-out 300ms var(--ease-soft) 700ms both;
+      }
+
+      @keyframes veil-out {
+        to {
+          opacity: 0;
+        }
+      }
+    }
+
+    :global(.intro-skip) .intro {
+      opacity: 0;
+      transition: opacity 240ms var(--ease-soft);
+      pointer-events: none;
+    }
+  }
+</style>

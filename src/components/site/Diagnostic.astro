@@ -1,0 +1,717 @@
+---
+/**
+ * Diagnóstico de viabilidade — wizard com uma pergunta por tela.
+ * Mantém as perguntas e a lógica de pontuação do ViabilityDiagnostic original.
+ * Eventos: diagnostico_start, diagnostico_step, diagnostico_submit (dataLayer).
+ * Modo morador: ?perfil=morador (indicação para o síndico).
+ */
+import Button from '@components/ui/Button.astro';
+import Icon from '@components/Icon.astro';
+
+const questions = [
+  {
+    id: 'unidades',
+    group: 'Estrutura',
+    title: 'Quantas unidades tem o condomínio?',
+    options: [
+      { value: 'small', label: 'Até 40', points: 10 },
+      { value: 'medium', label: '40 a 120', points: 20 },
+      { value: 'large', label: 'Mais de 120', points: 30 },
+    ],
+  },
+  {
+    id: 'portaria',
+    group: 'Estrutura',
+    title: 'O condomínio tem portaria 24 horas?',
+    options: [
+      { value: 'sim', label: 'Sim', points: 15 },
+      { value: 'nao', label: 'Não', points: 0 },
+    ],
+  },
+  {
+    id: 'padrao',
+    group: 'Estrutura',
+    title: 'Qual é o padrão do condomínio?',
+    options: [
+      { value: 'alto', label: 'Alto padrão', points: 20 },
+      { value: 'medio', label: 'Médio padrão', points: 10 },
+      { value: 'outro', label: 'Padrão', points: 0 },
+    ],
+  },
+  {
+    id: 'apps',
+    group: 'Moradores',
+    title: 'Os moradores usam muito delivery e compras online?',
+    options: [
+      { value: 'alto', label: 'Muito', points: 10 },
+      { value: 'medio', label: 'Moderadamente', points: 0 },
+      { value: 'baixo', label: 'Pouco', points: 0 },
+    ],
+  },
+  {
+    id: 'perfil',
+    group: 'Moradores',
+    title: 'Qual é o perfil predominante dos moradores?',
+    options: [
+      { value: 'familias', label: 'Famílias', points: 0 },
+      { value: 'jovens', label: 'Jovens e casais', points: 0 },
+      { value: 'maduro', label: 'Público maduro', points: 0 },
+      { value: 'misto', label: 'Misto', points: 0 },
+    ],
+  },
+  {
+    id: 'distancia',
+    group: 'Entorno',
+    title: 'A que distância fica o mercado ou a conveniência mais próxima?',
+    options: [
+      { value: 'longe', label: 'Mais de 800 m', points: 15 },
+      { value: 'medio', label: '300 a 800 m', points: 8 },
+      { value: 'perto', label: 'Menos de 300 m', points: 0 },
+    ],
+  },
+  {
+    id: 'fluxo',
+    group: 'Entorno',
+    title: 'Como é o movimento de moradores à noite?',
+    options: [
+      { value: 'alto', label: 'Intenso', points: 15 },
+      { value: 'medio', label: 'Moderado', points: 0 },
+      { value: 'baixo', label: 'Baixo', points: 0 },
+    ],
+  },
+];
+
+const total = questions.length;
+---
+
+<div class="dg" data-diagnostic data-max="105" data-dir="next">
+  <div class="dg-progress" aria-hidden="true">
+    <span class="dg-progress-fill"></span>
+  </div>
+  <p class="dg-count" aria-live="polite" data-dg-count></p>
+
+  <noscript>
+    <p class="dg-noscript">
+      O diagnóstico precisa de JavaScript. Se preferir, fale com a gente pelo WhatsApp: (61) 99991-8007.
+    </p>
+  </noscript>
+
+  <!-- Intro -->
+  <section class="dg-screen is-active" data-screen="intro" aria-labelledby="dg-intro-title">
+    <h2 id="dg-intro-title" class="dg-title" tabindex="-1" data-mode-text="sindico">
+      O seu condomínio tem perfil para uma Just Go?
+    </h2>
+    <h2 class="dg-title" tabindex="-1" data-mode-text="morador" hidden>Indique a Just Go para o seu condomínio.</h2>
+    <p class="dg-sub" data-mode-text="sindico">Sete perguntas rápidas sobre estrutura, moradores e entorno. Menos de dois minutos.</p>
+    <p class="dg-sub" data-mode-text="morador" hidden>
+      Responda sete perguntas rápidas e envie o resultado pronto para o seu síndico pelo WhatsApp.
+    </p>
+    <ul class="dg-intro-list">
+      <li><Icon name="building" size={20} /> Estrutura</li>
+      <li><Icon name="users" size={20} /> Moradores</li>
+      <li><Icon name="pin" size={20} /> Entorno</li>
+      <li><Icon name="check" size={20} /> Resultado na hora</li>
+    </ul>
+    <Button type="button" data-dg-start icon="arrow-right">Começar o diagnóstico</Button>
+  </section>
+
+  <!-- Perguntas -->
+  {
+    questions.map((q, i) => (
+      <section class="dg-screen" data-screen={String(i + 1)} data-question={q.id}>
+        <fieldset class="dg-fieldset">
+          <legend class="dg-legend">
+            <span class="dg-group">
+              {q.group} · {i + 1} de {total}
+            </span>
+            <span class="dg-title" tabindex="-1">
+              {q.title}
+            </span>
+          </legend>
+          <div class="dg-options">
+            {q.options.map((o) => (
+              <label class="dg-opt">
+                <input type="radio" name={q.id} value={o.value} data-points={o.points} data-label={o.label} />
+                <span>
+                  {o.label}
+                  <Icon name="check" size={18} />
+                </span>
+              </label>
+            ))}
+          </div>
+          <p class="dg-err" data-dg-error role="alert"></p>
+        </fieldset>
+        <div class="dg-nav">
+          <button type="button" class="dg-back" data-dg-back>
+            <Icon name="arrow-left" size={16} /> Voltar
+          </button>
+          <Button type="button" data-dg-next icon="arrow-right">
+            {i === total - 1 ? 'Ver resultado' : 'Próxima'}
+          </Button>
+        </div>
+      </section>
+    ))
+  }
+
+  <!-- Resultado -->
+  <section class="dg-screen" data-screen="result" aria-labelledby="dg-result-title">
+    <div class="dg-result">
+      <div class="dg-gauge" aria-hidden="true">
+        <svg viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="86" class="dg-gauge-bg"></circle>
+          <circle cx="100" cy="100" r="86" class="dg-gauge-fill" pathLength="100" data-dg-gauge></circle>
+        </svg>
+        <p class="dg-score"><span data-dg-score>0</span><small>de 100</small></p>
+      </div>
+      <div>
+        <p class="dg-group">Resultado</p>
+        <h2 id="dg-result-title" class="dg-title" tabindex="-1" data-dg-class>—</h2>
+        <p class="dg-sub" data-dg-reco></p>
+      </div>
+    </div>
+
+    <form class="dg-form" data-dg-form novalidate>
+      <h3 class="dg-form-title" data-mode-text="sindico">Receba o estudo completo para o seu condomínio</h3>
+      <h3 class="dg-form-title" data-mode-text="morador" hidden>Envie a indicação com o resultado</h3>
+      <div class="dg-fields">
+        <label class="dg-field">
+          <span>Seu nome</span>
+          <input name="nome" type="text" autocomplete="name" required />
+          <em class="dg-field-err" data-error-for="nome"></em>
+        </label>
+        <label class="dg-field">
+          <span>WhatsApp</span>
+          <input name="whatsapp" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(61) 90000-0000" required />
+          <em class="dg-field-err" data-error-for="whatsapp"></em>
+        </label>
+        <label class="dg-field dg-field-wide">
+          <span>Condomínio</span>
+          <input name="condominio" type="text" autocomplete="organization" required />
+          <em class="dg-field-err" data-error-for="condominio"></em>
+        </label>
+      </div>
+      <div class="dg-actions">
+        <Button type="submit" icon="whatsapp">Enviar pelo WhatsApp</Button>
+        <button type="button" class="dg-back" data-dg-restart>Refazer o diagnóstico</button>
+      </div>
+    </form>
+  </section>
+</div>
+
+<script>
+  import { SITE } from '../../lib/site';
+
+  const push = (event: string, payload: Record<string, unknown> = {}) => {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event, ...payload });
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-diagnostic]').forEach((root) => {
+    const screens = Array.from(root.querySelectorAll<HTMLElement>('.dg-screen'));
+    const questions = screens.filter((s) => s.dataset.question);
+    const fill = root.querySelector<HTMLElement>('.dg-progress-fill')!;
+    const count = root.querySelector<HTMLElement>('[data-dg-count]')!;
+    const mode = new URLSearchParams(location.search).get('perfil') === 'morador' ? 'morador' : 'sindico';
+    let started = false;
+
+    root.querySelectorAll<HTMLElement>('[data-mode-text]').forEach((el) => {
+      el.hidden = el.dataset.modeText !== mode;
+    });
+
+    const show = (i: number, dir: 'next' | 'prev' = 'next') => {
+      root.dataset.dir = dir;
+      screens.forEach((s, j) => s.classList.toggle('is-active', j === i));
+      const progress = Math.min(i, questions.length) / (questions.length + 1);
+      fill.style.transform = `scaleX(${i === screens.length - 1 ? 1 : progress})`;
+      count.textContent =
+        i > 0 && i <= questions.length ? `Pergunta ${i} de ${questions.length}` : i > questions.length ? 'Resultado' : '';
+      const title = screens[i].querySelector<HTMLElement>('.dg-title:not([hidden])');
+      title?.focus({ preventScroll: true });
+      const top = root.getBoundingClientRect().top + window.scrollY - 120;
+      if (window.scrollY > top) window.scrollTo({ top, behavior: 'smooth' });
+    };
+
+    const selected = (screen: HTMLElement) => screen.querySelector<HTMLInputElement>('input[type="radio"]:checked');
+
+    root.querySelector('[data-dg-start]')?.addEventListener('click', () => {
+      if (!started) push('diagnostico_start', { perfil: mode });
+      started = true;
+      show(1);
+    });
+
+    questions.forEach((screen, qi) => {
+      const err = screen.querySelector<HTMLElement>('[data-dg-error]')!;
+      // Ao escolher, avança sozinho após um instante (sem pressa)
+      screen.querySelectorAll<HTMLInputElement>('input[type="radio"]').forEach((input) =>
+        input.addEventListener('change', () => {
+          err.textContent = '';
+        }),
+      );
+      screen.querySelector('[data-dg-next]')?.addEventListener('click', () => {
+        const sel = selected(screen);
+        if (!sel) {
+          err.textContent = 'Escolha uma opção para continuar.';
+          screen.querySelector<HTMLInputElement>('input[type="radio"]')?.focus();
+          return;
+        }
+        push('diagnostico_step', { step: qi + 1, question: screen.dataset.question, answer: sel.value });
+        if (qi === questions.length - 1) computeResult();
+        show(qi + 2);
+      });
+      screen.querySelector('[data-dg-back]')?.addEventListener('click', () => show(qi, 'prev'));
+    });
+
+    let score = 0;
+    let classification = '';
+
+    const computeResult = () => {
+      const raw = questions.reduce((sum, s) => sum + Number(selected(s)?.dataset.points ?? 0), 0);
+      score = Math.min(100, Math.round((raw / Number(root.dataset.max)) * 100));
+      let reco = '';
+      if (score >= 80) {
+        classification = 'Viabilidade excelente';
+        reco =
+          'O condomínio tem um perfil excepcional. Estrutura, moradores e entorno indicam alta aderência. O próximo passo é a visita técnica para definir o melhor espaço.';
+      } else if (score >= 60) {
+        classification = 'Viabilidade alta';
+        reco =
+          'O condomínio tem ótimo potencial. A maioria dos indicadores aponta boa aderência dos moradores. Uma visita técnica confirma os detalhes.';
+      } else if (score >= 40) {
+        classification = 'Viabilidade moderada';
+        reco =
+          'Há potencial, com alguns pontos que pedem uma análise mais próxima. Uma conversa com o nosso time ajuda a entender as particularidades do prédio.';
+      } else {
+        classification = 'Vale uma avaliação';
+        reco =
+          'Cada condomínio é único, e fatores locais podem revelar um potencial maior do que o questionário mostra. Uma visita sem compromisso traz a resposta.';
+      }
+      root.querySelector('[data-dg-class]')!.textContent = classification;
+      root.querySelector('[data-dg-reco]')!.textContent = reco;
+
+      const gauge = root.querySelector<SVGCircleElement>('[data-dg-gauge]')!;
+      const scoreEl = root.querySelector<HTMLElement>('[data-dg-score]')!;
+      gauge.style.strokeDashoffset = '100';
+      requestAnimationFrame(() => requestAnimationFrame(() => (gauge.style.strokeDashoffset = String(100 - score))));
+      const start = performance.now();
+      const tick = (now: number) => {
+        const t = Math.min((now - start) / 1400, 1);
+        scoreEl.textContent = String(Math.round(score * (1 - Math.pow(1 - t, 4))));
+        if (t < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+      // Garante o valor final mesmo se a aba estiver em segundo plano
+      window.setTimeout(() => {
+        scoreEl.textContent = String(score);
+        gauge.style.strokeDashoffset = String(100 - score);
+      }, 1500);
+    };
+
+    root.querySelector('[data-dg-restart]')?.addEventListener('click', () => {
+      questions.forEach((s) => s.querySelectorAll<HTMLInputElement>('input').forEach((i) => (i.checked = false)));
+      show(1, 'prev');
+    });
+
+    // Envio → WhatsApp
+    const form = root.querySelector<HTMLFormElement>('[data-dg-form]')!;
+    const digits = (v: string) => v.replace(/\D/g, '');
+    const rules: Record<string, (v: string) => string> = {
+      nome: (v) => (v.trim().length < 2 ? 'Informe o seu nome.' : ''),
+      whatsapp: (v) => (digits(v).length < 10 ? 'Informe um WhatsApp com DDD.' : ''),
+      condominio: (v) => (v.trim().length < 2 ? 'Informe o condomínio.' : ''),
+    };
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      let ok = true;
+      Object.entries(rules).forEach(([name, rule]) => {
+        const input = form.elements.namedItem(name) as HTMLInputElement;
+        const msg = rule(input.value);
+        input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+        const em = form.querySelector<HTMLElement>(`[data-error-for="${name}"]`)!;
+        em.textContent = msg;
+        if (msg && ok) {
+          input.focus();
+          ok = false;
+        }
+      });
+      if (!ok) return;
+      const val = (n: string) => (form.elements.namedItem(n) as HTMLInputElement).value.trim();
+      const answers = questions.map((s) => {
+        const title = s.querySelector('.dg-title')?.textContent?.trim();
+        return `- ${title} ${selected(s)?.dataset.label ?? ''}`;
+      });
+      const lines = [
+        mode === 'morador'
+          ? 'Olá! Sou morador(a) e quero indicar a Just Go Market para o meu condomínio.'
+          : 'Olá! Fiz o diagnóstico de viabilidade no site da Just Go Market.',
+        '',
+        `Nome: ${val('nome')}`,
+        `WhatsApp: ${val('whatsapp')}`,
+        `Condomínio: ${val('condominio')}`,
+        '',
+        `Resultado: ${score}/100 — ${classification}`,
+        '',
+        'Respostas:',
+        ...answers,
+      ];
+      push('diagnostico_submit', { score, classification, perfil: mode });
+      push('lead_submit', { lead_profile: mode, lead_source: 'diagnostico' });
+      window.open(`https://wa.me/${SITE.whatsappNumber}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
+    });
+  });
+</script>
+
+<style>
+  @layer components {
+    .dg {
+      position: relative;
+      padding: clamp(24px, 4vw, 56px);
+      border: 1px solid var(--line);
+      border-radius: var(--r-card);
+      background: var(--jg-ink-2);
+      --bg: var(--jg-ink-2);
+      min-height: 520px;
+      overflow: hidden;
+    }
+
+    .dg-progress {
+      position: absolute;
+      inset: 0 0 auto;
+      height: 3px;
+      background: var(--line);
+    }
+
+    .dg-progress-fill {
+      position: absolute;
+      inset: 0;
+      background: var(--jg-green);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform var(--dur-m) var(--ease-out-expo);
+    }
+
+    .dg-count {
+      min-height: 1.5em;
+      font-family: var(--font-display);
+      font-size: 0.8125rem;
+      color: var(--fg-3);
+    }
+
+    .dg-noscript {
+      margin-bottom: 24px;
+    }
+
+    :global(.js) .dg-screen {
+      display: none;
+    }
+
+    :global(.js) .dg-screen.is-active {
+      display: block;
+      animation: dg-in-next var(--dur-m) var(--ease-out-expo);
+    }
+
+    .dg[data-dir='prev'] .dg-screen.is-active {
+      animation-name: dg-in-prev;
+    }
+
+    @keyframes dg-in-next {
+      from {
+        opacity: 0;
+        transform: translateX(40px);
+      }
+    }
+
+    @keyframes dg-in-prev {
+      from {
+        opacity: 0;
+        transform: translateX(-40px);
+      }
+    }
+
+    :global(html:not(.js)) .dg-screen + .dg-screen {
+      margin-top: 48px;
+    }
+
+    .dg-title {
+      display: block;
+      margin-top: 12px;
+      font-family: var(--font-title);
+      font-size: clamp(1.75rem, 3.6vw, 2.75rem);
+      font-weight: 600;
+      line-height: 1.08;
+      letter-spacing: var(--tracking-h2);
+      color: var(--fg);
+      outline: none;
+    }
+
+    .dg-sub {
+      margin-top: 16px;
+      max-width: 52ch;
+    }
+
+    .dg-intro-list {
+      margin: 32px 0 40px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      max-width: 520px;
+    }
+
+    .dg-intro-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--fg-2);
+    }
+
+    .dg-fieldset {
+      border: 0;
+    }
+
+    .dg-legend {
+      padding: 0;
+    }
+
+    .dg-group {
+      font-family: var(--font-display);
+      font-size: var(--fs-label);
+      letter-spacing: var(--tracking-label);
+      text-transform: uppercase;
+      color: var(--fg-3);
+    }
+
+    .dg-options {
+      margin-top: 32px;
+      display: grid;
+      gap: 10px;
+    }
+
+    @media (min-width: 640px) {
+      .dg-options {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .dg-opt {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .dg-opt input {
+      position: absolute;
+      opacity: 0;
+      inset: 0;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .dg-opt span {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 64px;
+      padding: 0 22px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      font-family: var(--font-display);
+      font-size: 1.0625rem;
+      color: var(--fg);
+      transition:
+        border-color var(--dur-xs) var(--ease-soft),
+        background-color var(--dur-xs) var(--ease-soft);
+    }
+
+    .dg-opt span :global(svg) {
+      opacity: 0;
+      color: var(--jg-black);
+      transition: opacity var(--dur-xs) var(--ease-soft);
+    }
+
+    @media (hover: hover) {
+      .dg-opt:hover span {
+        border-color: rgba(255, 253, 252, 0.4);
+      }
+    }
+
+    .dg-opt input:checked + span {
+      background: var(--jg-green);
+      border-color: var(--jg-green);
+      color: var(--jg-black);
+    }
+
+    .dg-opt input:checked + span :global(svg) {
+      opacity: 1;
+    }
+
+    .dg-opt input:focus-visible + span {
+      outline: 2px solid var(--jg-green);
+      outline-offset: 3px;
+    }
+
+    .dg-err,
+    .dg-field-err {
+      min-height: 1.4em;
+      margin-top: 12px;
+      font-size: 0.875rem;
+      font-style: normal;
+      color: var(--jg-offwhite);
+    }
+
+    .dg-err:not(:empty)::before,
+    .dg-field-err:not(:empty)::before {
+      content: '! ';
+      color: var(--jg-green);
+      font-weight: 700;
+    }
+
+    .dg-nav,
+    .dg-actions {
+      margin-top: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .dg-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 0 4px;
+      font-family: var(--font-display);
+      color: var(--fg-2);
+    }
+
+    :global(html:not(.js)) .dg-nav,
+    :global(html:not(.js)) [data-screen='result'],
+    :global(html:not(.js)) [data-dg-start] {
+      display: none;
+    }
+
+    .dg-result {
+      display: grid;
+      gap: 32px;
+      align-items: center;
+    }
+
+    @media (min-width: 768px) {
+      .dg-result {
+        grid-template-columns: 200px 1fr;
+        gap: 48px;
+      }
+    }
+
+    .dg-gauge {
+      position: relative;
+      width: 200px;
+    }
+
+    .dg-gauge svg {
+      width: 200px;
+      height: 200px;
+      transform: rotate(-90deg); /* rotação do medidor (ícone de UI), nunca da marca */
+    }
+
+    .dg-gauge circle {
+      fill: none;
+      stroke-width: 6;
+    }
+
+    .dg-gauge-bg {
+      stroke: var(--line);
+    }
+
+    .dg-gauge-fill {
+      stroke: var(--jg-green);
+      stroke-linecap: round;
+      stroke-dasharray: 100;
+      stroke-dashoffset: 100;
+      transition: stroke-dashoffset 1.4s var(--ease-out-expo);
+    }
+
+    .dg-score {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-content: center;
+      text-align: center;
+      font-family: var(--font-title);
+      font-size: 3.25rem;
+      font-weight: 600;
+      line-height: 1;
+      color: var(--fg);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .dg-score small {
+      margin-top: 6px;
+      font-family: var(--font-display);
+      font-size: 0.8125rem;
+      font-weight: 400;
+      color: var(--fg-3);
+    }
+
+    .dg-form {
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid var(--line);
+    }
+
+    .dg-form-title {
+      font-size: 1.25rem;
+    }
+
+    .dg-fields {
+      margin-top: 20px;
+      display: grid;
+      gap: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .dg-fields {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .dg-field-wide {
+        grid-column: 1 / -1;
+      }
+    }
+
+    .dg-field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .dg-field span {
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--fg);
+    }
+
+    .dg-field input {
+      min-height: 54px;
+      padding: 14px 18px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255, 253, 252, 0.03);
+      color: var(--fg);
+      font-size: 1rem;
+    }
+
+    .dg-field input:focus-visible {
+      outline: 2px solid var(--jg-green);
+      outline-offset: 2px;
+    }
+
+    .dg-field input[aria-invalid='true'] {
+      border-color: var(--jg-offwhite);
+    }
+
+    .dg-field-err {
+      margin-top: 0;
+    }
+  }
+</style>

@@ -1,0 +1,518 @@
+---
+/**
+ * Para síndicos — argumentário para a assembleia.
+ * Funde /zero-trabalho-sindico (#zero-trabalho), /seguranca-do-mercado (#seguranca)
+ * e /quanto-custa (#quanto-custa), com 301 no .htaccess.
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Section from '@components/ui/Section.astro';
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import SplitWords from '@components/ui/SplitWords.astro';
+import StatCounter from '@components/ui/StatCounter.astro';
+import Accordion from '@components/ui/Accordion.astro';
+import Button from '@components/ui/Button.astro';
+import Icon from '@components/Icon.astro';
+import PageHero from '@components/site/PageHero.astro';
+import Pattern from '@components/site/Pattern.astro';
+import CtaFinal from '@components/site/CtaFinal.astro';
+import { ROLLOUT, SECURITY } from '@lib/model';
+import { FACTS, CTA, whatsappUrl } from '@lib/site';
+import { getFaqs } from '@lib/content';
+import { crumbs, faqPageSchema, serviceSchema } from '@lib/schema';
+
+const faqs = await getFaqs();
+
+const subnav = [
+  { href: '#modelo', label: 'O modelo' },
+  { href: '#quanto-custa', label: 'Quanto custa' },
+  { href: '#zero-trabalho', label: 'Zero trabalho' },
+  { href: '#seguranca', label: 'Segurança' },
+  { href: '#contrato', label: 'Energia e contrato' },
+  { href: '#implantacao', label: 'Implantação' },
+  { href: '#assembleia', label: 'Assembleia' },
+];
+
+const invest = [
+  'Projeto e design: estudo de viabilidade, layout 3D e interiores adaptados ao prédio',
+  'Estrutura e equipamentos: prateleiras, geladeiras, freezers, totem e câmeras',
+  'Tecnologia: gestão de estoque, Scan & Go, controle de acesso e relatórios',
+  'Estoque inaugural, entre essenciais e itens de empório',
+  'Operação contínua: reposição, limpeza, manutenção e seguro',
+];
+
+const notToDo = [
+  'Gerir estoque ou fornecedores',
+  'Contratar ou supervisionar funcionários',
+  'Conferir caixa ou cobrar moradores',
+  'Cuidar de limpeza e manutenção',
+  'Atender reclamações sobre produtos ou pagamentos',
+  'Responder por perdas, furtos ou danos',
+];
+
+const onceToDo = [
+  { title: 'Receber a visita técnica', text: 'Nossa equipe avalia o espaço com você.' },
+  { title: 'Apresentar na assembleia', text: 'Com o material pronto, preparado por nós.' },
+  { title: 'Assinar o contrato', text: 'Depois da aprovação dos moradores.' },
+];
+
+const terms = [
+  {
+    icon: 'energy',
+    title: 'Energia reembolsada',
+    text: 'Medidor individual e reembolso do consumo exato todo mês — ou taxa fixa definida em contrato. A conta do condomínio não aumenta.',
+  },
+  {
+    icon: 'calendar',
+    title: `Contrato de ${FACTS.contractMonths} meses`,
+    text: 'Prazo necessário para amortizar o investimento. Renovação automática, salvo aviso com 90 dias de antecedência.',
+  },
+  {
+    icon: 'shield',
+    title: 'Seguro por nossa conta',
+    text: 'Contratamos e pagamos o seguro contra danos e furtos da loja.',
+  },
+  {
+    icon: 'users',
+    title: 'Sem vínculo trabalhista',
+    text: 'Não há funcionários fixos no local. Toda a equipe de reposição e manutenção é nossa.',
+  },
+] as const;
+---
+
+<BaseLayout
+  title="Para síndicos: mercado autônomo sem custo e sem gestão"
+  description="Mercado autônomo para condomínios em Brasília sem investimento, sem gestão e sem vínculo trabalhista. Modelo, custos, segurança, contrato e implantação, com material para a assembleia."
+  schemas={[serviceSchema(), faqPageSchema(faqs.sindico), crumbs(['Para síndicos', '/para-sindicos'])]}
+>
+  <PageHero
+    eyebrow="Para síndicos"
+    title="Uma amenity de alto padrão. <span class='hl'>Sem custo</span> para o condomínio."
+    lead="Investimos, instalamos e operamos. O condomínio cede o espaço, aprova em assembleia e passa a oferecer conveniência 24 horas aos moradores."
+    crumbs={[{ name: 'Para síndicos', href: '/para-sindicos' }]}
+  >
+    <div class="btn-row">
+      <Button href={CTA.primaryHref} track="cta_agendar_visita" origin="sindicos_hero" data-lead-open>{CTA.primary}</Button>
+    </div>
+  </PageHero>
+
+  <nav class="subnav theme-dark" aria-label="Nesta página">
+    <div class="container">
+      <ul>
+        {subnav.map((s) => <li><a href={s.href}>{s.label}</a></li>)}
+      </ul>
+    </div>
+  </nav>
+
+  <!-- O modelo -->
+  <Section theme="light" id="modelo">
+    <div class="container">
+      <div class="section-head split">
+        <div>
+          <Eyebrow>O modelo</Eyebrow>
+          <SplitWords tag="h2" class="mt-m">Nós cuidamos de tudo. O condomínio só ganha.</SplitWords>
+        </div>
+        <p class="lead" data-reveal>
+          Não somos franquia nem revenda. Investimos, instalamos e operamos a loja inteira — e respondemos por ela.
+        </p>
+      </div>
+      <div class="stats-4">
+        <StatCounter value={24} suffix="h" label="Operação" note="Todos os dias, inclusive feriados" />
+        <StatCounter value={0} prefix="R$" label="Investimento do condomínio" note="Estrutura e estoque por nossa conta" />
+        <StatCounter value={15} suffix="m²" label="Espaço necessário" note="Mais um ponto de energia" />
+        <StatCounter value={FACTS.contractMonths} suffix="meses" label="Prazo de contrato" note="Renovação automática" />
+      </div>
+    </div>
+  </Section>
+
+  <!-- Quanto custa -->
+  <Section theme="dark" id="quanto-custa">
+    <div class="container">
+      <div class="section-head split">
+        <div>
+          <Eyebrow>Quanto custa</Eyebrow>
+          <SplitWords tag="h2" class="mt-m">Para o condomínio, nada.</SplitWords>
+        </div>
+        <p class="lead" data-reveal>
+          Nenhuma taxa de adesão, nenhuma mensalidade, nenhum custo oculto. Nossa receita vem das vendas aos moradores,
+          com preços alinhados à conveniência premium.
+        </p>
+      </div>
+      <div class="duo">
+        <div class="card" data-reveal>
+          <h3>O que nós investimos</h3>
+          <ul class="list-check">{invest.map((i) => <li>{i}</li>)}</ul>
+        </div>
+        <div class="card" data-reveal>
+          <h3>O que o condomínio cede</h3>
+          <ul class="list-check">
+            <li><strong>Espaço:</strong> cerca de 15 a 18 m², interno ou externo, com piso nivelado</li>
+            <li><strong>Energia:</strong> um ponto de energia, com consumo reembolsado</li>
+          </ul>
+          <p class="card-foot">
+            Sem participação nos lucros e sem cláusula de mínimo garantido. O condomínio disponibiliza o espaço — e os
+            moradores aproveitam.
+          </p>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <!-- Zero trabalho -->
+  <Section theme="paper" id="zero-trabalho">
+    <div class="container">
+      <div class="section-head split">
+        <div>
+          <Eyebrow>Zero trabalho</Eyebrow>
+          <SplitWords tag="h2" class="mt-m">“Vai dar trabalho para mim?” Não.</SplitWords>
+        </div>
+        <p class="lead" data-reveal>
+          Não é uma promessa: é o modelo. Toda a complexidade operacional fica do nosso lado.
+        </p>
+      </div>
+      <div class="duo">
+        <div class="card" data-reveal>
+          <h3>O que o síndico não precisa fazer</h3>
+          <ul class="not-list">
+            {
+              notToDo.map((n) => (
+                <li>
+                  <Icon name="close" size={16} />
+                  {n}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <div class="card" data-reveal>
+          <h3>O que o síndico faz — uma única vez</h3>
+          <ol class="once">
+            {
+              onceToDo.map((o, i) => (
+                <li>
+                  <span class="index-num">{String(i + 1).padStart(2, '0')}</span>
+                  <div>
+                    <strong>{o.title}</strong>
+                    <p>{o.text}</p>
+                  </div>
+                </li>
+              ))
+            }
+          </ol>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <!-- Segurança -->
+  <Section theme="dark" id="seguranca" class="sec">
+    <Pattern id="pattern-sindicos" opacity={0.035} size={168} />
+    <div class="container sec-inner">
+      <div class="section-head split">
+        <div>
+          <Eyebrow>Segurança</Eyebrow>
+          <SplitWords tag="h2" class="mt-m">O risco é nosso, não do condomínio.</SplitWords>
+        </div>
+        <p class="lead" data-reveal>
+          “E se alguém pegar sem pagar?” É a pergunta mais comum — e a razão de termos várias camadas de proteção. O
+          monitoramento inibe a maioria das ocorrências; quando algo acontece, o prejuízo é nosso.
+        </p>
+      </div>
+      <ol class="layers">
+        {
+          SECURITY.map((s, i) => (
+            <li data-reveal>
+              <span class="card-icon">
+                <Icon name={s.icon} draw />
+              </span>
+              <div>
+                <p class="index-num">Camada {String(i + 1).padStart(2, '0')}</p>
+                <h3>{s.title}</h3>
+                <p>{s.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </Section>
+
+  <!-- Energia e contrato -->
+  <Section theme="light" id="contrato">
+    <div class="container">
+      <div class="section-head split">
+        <div>
+          <Eyebrow>Energia e contrato</Eyebrow>
+          <SplitWords tag="h2" class="mt-m">Regras claras, por escrito.</SplitWords>
+        </div>
+        <p class="lead" data-reveal>A Just Go Market é a única responsável pela operação da loja.</p>
+      </div>
+      <ul class="grid-2 terms">
+        {
+          terms.map((t) => (
+            <li class="card" data-reveal>
+              <span class="card-icon">
+                <Icon name={t.icon} draw />
+              </span>
+              <h3>{t.title}</h3>
+              <p>{t.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Section>
+
+  <!-- Implantação -->
+  <Section theme="ink" id="implantacao">
+    <div class="container split top">
+      <div class="split-copy">
+        <Eyebrow>Implantação</Eyebrow>
+        <SplitWords tag="h2">Do primeiro contato à inauguração.</SplitWords>
+        <p class="lead" data-reveal>Em média, {FACTS.totalDays}. A instalação leva {FACTS.installDays}, sem obra civil.</p>
+      </div>
+      <ol class="timeline" data-scroll-progress>
+        {
+          ROLLOUT.map((step, i) => (
+            <li data-reveal>
+              <p class="timeline-meta">
+                {String(i + 1).padStart(2, '0')} · {step.meta}
+              </p>
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </Section>
+
+  <!-- Material para a assembleia -->
+  <Section theme="dark" id="assembleia">
+    <div class="container">
+      <div class="assembly" data-reveal>
+        <span class="card-icon"><Icon name="doc" draw /></span>
+        <div>
+          <Eyebrow>Material para a assembleia</Eyebrow>
+          <h2 class="assembly-title">Tudo pronto para apresentar aos moradores.</h2>
+          <p>
+            Apresentação visual, detalhes do contrato, perguntas frequentes para os moradores e um modelo de pauta.
+            <span class="todo">[CONFIRMAR] PDF para download direto</span>
+          </p>
+        </div>
+        <Button
+          href={whatsappUrl('Olá! Sou síndico(a) e gostaria de receber o material para a assembleia da Just Go Market.')}
+          variant="secondary"
+          icon="whatsapp"
+          external
+          track="cta_material_assembleia"
+          origin="sindicos_assembleia"
+        >
+          Receber o material
+        </Button>
+      </div>
+    </div>
+  </Section>
+
+  <!-- FAQ -->
+  <Section theme="light" id="faq">
+    <div class="container faq-wrap">
+      <div>
+        <Eyebrow>Perguntas de síndicos</Eyebrow>
+        <SplitWords tag="h2" class="mt-m">O que os conselhos costumam perguntar.</SplitWords>
+      </div>
+      <div data-reveal>
+        <Accordion items={faqs.sindico} id="faq-sindicos" />
+      </div>
+    </div>
+  </Section>
+
+  <CtaFinal origin="sindicos_cta" />
+</BaseLayout>
+
+<style>
+  @layer components {
+    .subnav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: rgba(1, 5, 2, 0.85);
+      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(14px);
+    }
+
+    .subnav ul {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-block: 10px;
+    }
+
+    .subnav a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 40px;
+      padding: 0 16px;
+      border-radius: var(--r-pill);
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      color: var(--fg-2);
+      white-space: nowrap;
+      transition:
+        background-color var(--dur-xs) var(--ease-soft),
+        color var(--dur-xs) var(--ease-soft);
+    }
+
+    @media (hover: hover) {
+      .subnav a:hover {
+        background: rgba(255, 253, 252, 0.08);
+        color: var(--fg);
+      }
+    }
+
+    .stats-4 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 40px 24px;
+    }
+
+    @media (min-width: 1024px) {
+      .stats-4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .card-foot {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+      font-size: var(--fs-small);
+    }
+
+    .not-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .not-list li {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      color: var(--fg-2);
+    }
+
+    .not-list :global(svg) {
+      flex: none;
+      margin-top: 4px;
+      color: var(--fg);
+    }
+
+    .once {
+      display: grid;
+      gap: 20px;
+    }
+
+    .once li {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 8px;
+    }
+
+    .once strong {
+      font-weight: 500;
+    }
+
+    .once p {
+      margin-top: 2px;
+      font-size: var(--fs-small);
+    }
+
+    .sec {
+      overflow: hidden;
+    }
+
+    .sec-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .layers {
+      display: grid;
+      border-top: 1px solid var(--line);
+    }
+
+    .layers li {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 24px;
+      padding: 32px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .layers :global(.card-icon) {
+      margin: 0;
+    }
+
+    .layers h3 {
+      margin-top: 6px;
+    }
+
+    .layers li p:last-child {
+      margin-top: 8px;
+      max-width: 62ch;
+    }
+
+    .terms {
+      gap: 16px;
+      display: grid;
+    }
+
+    .split.top {
+      align-items: start;
+    }
+
+    .assembly {
+      display: grid;
+      gap: 24px;
+      padding: clamp(28px, 4vw, 56px);
+      border: 1px solid var(--line);
+      border-radius: var(--r-card);
+      align-items: center;
+    }
+
+    .assembly :global(.card-icon) {
+      margin: 0;
+    }
+
+    .assembly-title {
+      margin-top: 16px;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+    }
+
+    .assembly p {
+      margin-top: 12px;
+      max-width: 56ch;
+    }
+
+    @media (min-width: 1024px) {
+      .assembly {
+        grid-template-columns: 48px 1fr auto;
+        gap: 40px;
+      }
+    }
+
+    .faq-wrap {
+      display: grid;
+      gap: 48px;
+    }
+
+    @media (min-width: 1024px) {
+      .faq-wrap {
+        grid-template-columns: 5fr 7fr;
+        gap: 64px;
+      }
+    }
+  }
+</style>

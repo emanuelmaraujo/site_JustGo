@@ -1,0 +1,73 @@
+---
+/** 404 — "Este corredor está vazio." */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import BrandSymbol from '@components/BrandSymbol.astro';
+import Button from '@components/ui/Button.astro';
+import { NAV } from '@lib/site';
+---
+
+<BaseLayout
+  title="Página não encontrada"
+  description="A página que você procura não está aqui. Volte para o início ou conheça a curadoria da Just Go Market."
+  noindex
+  stickyCta={false}
+>
+  <section class="nf theme-dark">
+    <div class="container nf-inner">
+      <BrandSymbol class="nf-symbol" draw />
+      <p class="eyebrow">Erro 404</p>
+      <h1 class="nf-title">Este corredor está vazio.</h1>
+      <p class="lead">A página que você procura mudou de prateleira ou não existe mais. O resto da loja continua aberto.</p>
+      <div class="btn-row">
+        <Button href="/" icon="arrow-left">Voltar ao início</Button>
+        <Button href="/curadoria" variant="secondary" icon="arrow-right">Ver a curadoria</Button>
+      </div>
+      <nav aria-label="Páginas principais" class="nf-nav">
+        <ul>
+          {NAV.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
+        </ul>
+      </nav>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  @layer components {
+    .nf {
+      min-height: 100vh;
+      display: grid;
+      align-items: center;
+      padding-block: calc(var(--header-h) + 64px) 96px;
+    }
+
+    .nf-inner {
+      display: grid;
+      gap: 24px;
+      justify-items: start;
+    }
+
+    .nf :global(.nf-symbol) {
+      width: 72px;
+      margin-bottom: 16px;
+    }
+
+    .nf-title {
+      font-size: var(--fs-h1-inner);
+      max-width: 12ch;
+    }
+
+    .nf-nav ul {
+      margin-top: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 24px;
+    }
+
+    .nf-nav a {
+      display: inline-block;
+      padding-block: 8px;
+      color: var(--fg-2);
+      font-size: var(--fs-small);
+    }
+  }
+</style>

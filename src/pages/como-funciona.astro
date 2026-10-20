@@ -1,125 +1,225 @@
 ---
+/**
+ * Como funciona — fusão de /como-funciona e /como-funciona-na-pratica (301).
+ */
 import BaseLayout from '@layouts/BaseLayout.astro';
-import Header from '@components/Header.astro';
-import Footer from '@components/Footer.astro';
-import WhatsAppFloat from '@components/WhatsAppFloat.astro';
-import CTASticky from '@components/CTASticky.astro';
-import { breadcrumbSchema, serviceSchema } from '@lib/schema';
+import Section from '@components/ui/Section.astro';
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import SplitWords from '@components/ui/SplitWords.astro';
+import StickySteps from '@components/ui/StickySteps.astro';
+import Icon from '@components/Icon.astro';
+import PageHero from '@components/site/PageHero.astro';
+import CtaFinal from '@components/site/CtaFinal.astro';
+import { BUY_STEPS, ROLLOUT, OPERATION, WE_DO, CONDO_GIVES } from '@lib/model';
+import { FACTS } from '@lib/site';
+import { crumbs, serviceSchema } from '@lib/schema';
 
-const schemas = [
-  serviceSchema(),
-  breadcrumbSchema([
-    { name: 'Home', url: 'https://www.justgomarket.com.br/' },
-    { name: 'Como Funciona', url: 'https://www.justgomarket.com.br/como-funciona/' },
-  ]),
+const tech = [
+  { title: 'Totem Scan & Go', text: 'Leitor de código de barras e tela de pagamento com Pix e cartão.' },
+  { title: 'Inventário inteligente', text: 'Estoque acompanhado em tempo real, com alertas automáticos de reposição.' },
+  { title: 'Câmeras em nuvem', text: 'Monitoramento 24h com acesso remoto da nossa equipe.' },
+  { title: 'Aplicativo do condomínio', text: 'Acesso controlado e verificação de maioridade, quando o condomínio escolhe.' },
 ];
 ---
 
 <BaseLayout
-  title="Como Funciona o Mercado Autônomo para Condomínios"
-  description="Entenda como funciona a instalação e operação do mercado autônomo Just Go Market em condomínios. Do projeto à operação 24h, tudo sem custo para o condomínio. Tecnologia Scan & Go em Brasília e DF."
-  schemas={schemas}
+  title="Como funciona o mercado autônomo no condomínio"
+  description="Do primeiro contato à loja aberta 24 horas: como funciona a implantação e a operação do mercado autônomo Just Go Market em condomínios de Brasília, sem custo para o condomínio."
+  schemas={[serviceSchema(), crumbs(['Como funciona', '/como-funciona'])]}
 >
-  <Header currentPath="/como-funciona" />
+  <PageHero
+    eyebrow="Como funciona"
+    title="Do primeiro contato à loja aberta 24 horas."
+    lead={`Uma implantação de ${FACTS.totalDays}, conduzida do início ao fim por nós. Depois, uma operação que o condomínio não precisa acompanhar.`}
+    crumbs={[{ name: 'Como funciona', href: '/como-funciona' }]}
+    photo={{
+      name: 'projeto-interior',
+      alt: 'Interior de uma loja Just Go: prateleiras de madeira, geladeiras e totem de autoatendimento',
+      placeholder: 'Projeto 3D — interior da loja (render do projeto)',
+      illustrative: true,
+    }}
+  />
 
-  <main>
-    <section class="inner-hero">
-      <div class="container">
-        <span class="uppercase highlight" style="display: block; margin-bottom: 20px;">Guia Completo</span>
-        <h1>Como Funciona o Mercado Autônomo Just Go Market em Condomínios</h1>
-        <p>Da consultoria inicial à operação 24 horas: entenda cada etapa do processo de implantação do seu minimercado inteligente.</p>
+  <Section theme="light">
+    <div class="container split">
+      <div class="split-copy">
+        <Eyebrow>O conceito</Eyebrow>
+        <SplitWords tag="h2">O que é um mercado autônomo para condomínios?</SplitWords>
       </div>
-    </section>
+      <div class="prose" data-reveal>
+        <p>
+          Um mercado autônomo é uma loja de conveniência sem funcionários fixos, instalada dentro do condomínio. O
+          morador entra, escolhe, passa os produtos no totem e paga — a qualquer hora.
+        </p>
+        <p>
+          A Just Go Market leva o conceito para o alto padrão: curadoria de empório, adega com trava, projeto desenhado
+          para a arquitetura do prédio e uma operação discreta, toda nossa. O condomínio cede o espaço; nós cuidamos do
+          resto.
+        </p>
+      </div>
+    </div>
+  </Section>
 
-    <section class="content-section light-section">
-      <div class="container">
-        <div class="content-wrapper">
-          <h2>O Que É um Mercado Autônomo para Condomínios?</h2>
-          <p>Um mercado autônomo — também chamado de honest market, mini mercado inteligente ou loja de conveniência autônoma — é um espaço de compras sem funcionários fixos, instalado dentro de condomínios residenciais. Os moradores entram, escolhem os produtos, escaneiam e pagam diretamente no totem de autoatendimento. Tudo funciona 24 horas por dia, 7 dias por semana.</p>
-          <p>A Just Go Market leva este conceito a um novo patamar em Brasília e no Distrito Federal. Não somos um micro-market genérico: somos um empório com curadoria gourmet, adega inteligente e tecnologia Scan & Go, tudo com design premium que se integra harmoniosamente à arquitetura do seu condomínio.</p>
+  <Section theme="ink" id="morador">
+    <div class="container">
+      <div class="section-head split">
+        <div>
+          <Eyebrow>Para o morador</Eyebrow>
+          <SplitWords tag="h2" class="mt-m">Entre. Escolha. Siga.</SplitWords>
+        </div>
+        <p class="lead" data-reveal>Sem fila, sem caixa e sem aplicativo para comprar. Menos de dois minutos.</p>
+      </div>
+      <StickySteps steps={BUY_STEPS} />
+    </div>
+  </Section>
 
-          <h2>Como Funciona o Processo de Instalação</h2>
-          <p>O processo de implantação de um mercado autônomo Just Go Market em seu condomínio é simples e totalmente conduzido por nossa equipe. Veja as etapas:</p>
+  <Section theme="dark" id="implantacao">
+    <div class="container split">
+      <div class="split-copy sticky-col">
+        <Eyebrow>Implantação</Eyebrow>
+        <SplitWords tag="h2">Quatro etapas. Nenhuma obra.</SplitWords>
+        <p class="lead" data-reveal>
+          Em média, {FACTS.totalDays} do primeiro contato à inauguração — o prazo depende sobretudo da agenda da
+          assembleia.
+        </p>
+      </div>
+      <ol class="timeline" data-scroll-progress>
+        {
+          ROLLOUT.map((step, i) => (
+            <li data-reveal>
+              <p class="timeline-meta">
+                {String(i + 1).padStart(2, '0')} · {step.meta}
+              </p>
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </Section>
 
-          <h3>1. Consultoria e Estudo de Viabilidade</h3>
-          <p>Tudo começa com uma conversa. Nossa equipe comercial visita o condomínio, analisa o espaço disponível (mínimo 15m²), o perfil dos moradores e o potencial de uso. Em até 5 dias úteis, apresentamos um projeto personalizado com layout 3D, estimativa de mix de produtos e projeção de valorização para o empreendimento.</p>
+  <Section theme="paper" id="operacao">
+    <div class="container">
+      <div class="section-head split">
+        <div>
+          <Eyebrow>Operação diária</Eyebrow>
+          <SplitWords tag="h2" class="mt-m">Depois da inauguração, o condomínio não faz nada.</SplitWords>
+        </div>
+        <p class="lead" data-reveal>Toda a rotina da loja é nossa — e invisível para a administração.</p>
+      </div>
+      <ul class="grid-3 op-grid">
+        {
+          OPERATION.map((o) => (
+            <li class="card" data-reveal>
+              <span class="card-icon">
+                <Icon name={o.icon} draw />
+              </span>
+              <h3>{o.title}</h3>
+              <p>{o.text}</p>
+            </li>
+          ))
+        }
+      </ul>
 
-          <h3>2. Aprovação em Assembleia</h3>
-          <p>Auxiliamos o síndico na preparação da pauta e dos materiais para a assembleia condominial. Fornecemos uma apresentação completa com todos os detalhes do modelo, incluindo as cláusulas do contrato, para que os moradores possam votar com segurança. Nosso contrato padrão é de 36 meses.</p>
-
-          <h3>3. Projeto e Implantação</h3>
-          <p>Após a aprovação, nossa equipe de projetos desenvolve o layout final adaptado ao espaço do condomínio. A instalação é rápida — entre 15 e 30 dias — e inclui:</p>
-          <ul>
-            <li>Estrutura modular de alta qualidade (prateleiras, geladeiras, freezers)</li>
-            <li>Totem de autoatendimento com tecnologia Scan & Go</li>
-            <li>Sistema de câmeras de segurança 24h em alta definição</li>
-            <li>Geladeira com trava inteligente para bebidas alcoólicas</li>
-            <li>Medidor de energia individual para reembolso justo</li>
-            <li>Estoque inaugural com mais de 500 produtos selecionados</li>
+      <div class="duo mt-l">
+        <div class="card" data-reveal>
+          <h3>A Just Go Market faz</h3>
+          <ul class="list-check">
+            {WE_DO.map((item) => <li>{item}</li>)}
           </ul>
-          <p><strong>Custo para o condomínio: zero.</strong> Nós arcamos com 100% do investimento de implantação.</p>
-
-          <h3>4. Operação Diária</h3>
-          <p>A operação é 100% gerenciada pela Just Go Market. Isso significa:</p>
-          <ul>
-            <li><strong>Reposição periódica:</strong> nossa equipe visita a loja regularmente para repor o estoque e ajustar o mix de produtos com base no consumo real</li>
-            <li><strong>Limpeza e manutenção:</strong> cuidamos da higienização do espaço e da manutenção preventiva de todos os equipamentos</li>
-            <li><strong>Monitoramento 24h:</strong> câmeras de segurança com acesso remoto e alertas automáticos</li>
-            <li><strong>Suporte ao morador:</strong> canal exclusivo via WhatsApp para dúvidas, sugestões de produtos ou problemas com pagamento</li>
+        </div>
+        <div class="card" data-reveal>
+          <h3>O condomínio fornece</h3>
+          <ul class="list-check">
+            {CONDO_GIVES.map((item) => <li>{item}</li>)}
           </ul>
-
-          <h2>Como o Morador Compra no Mercado Autônomo</h2>
-          <p>A experiência de compra é extremamente simples e rápida:</p>
-          <ol>
-            <li><strong>Acesse a loja:</strong> entrada livre (em áreas seguras) ou via App/QR Code (acesso controlado)</li>
-            <li><strong>Escolha seus produtos:</strong> navegue pelas prateleiras com mais de 500 opções — do básico ao gourmet</li>
-            <li><strong>Escaneie no totem:</strong> passe o código de barras de cada produto no leitor do totem de autoatendimento</li>
-            <li><strong>Pague e pronto:</strong> finalize com cartão de crédito ou débito. Todo o processo leva menos de 2 minutos</li>
-          </ol>
-
-          <h2>Tecnologia por Trás do Mercado Autônomo</h2>
-          <p>A Just Go Market utiliza um ecossistema tecnológico proprietário que garante segurança, controle de estoque e experiência de compra fluida:</p>
-          <ul>
-            <li><strong>Totem Scan & Go:</strong> leitor de código de barras de alta velocidade com tela touch para pagamento</li>
-            <li><strong>Sistema de inventário inteligente:</strong> controle em tempo real do estoque e alertas automáticos de reposição</li>
-            <li><strong>Câmeras de segurança HD:</strong> monitoramento 24h com armazenamento em nuvem e acesso remoto</li>
-            <li><strong>App do condomínio:</strong> gestão de acesso, verificação de maioridade para álcool e canal de sugestões</li>
-            <li><strong>Dashboard para o síndico:</strong> relatórios mensais de consumo, satisfação e funcionamento</li>
-          </ul>
-
-          <h2>O Mix de Produtos: Curadoria Gourmet + Essenciais</h2>
-          <p>Diferentemente de micro-markets genéricos, a Just Go Market trabalha com uma curadoria inteligente que equilibra itens de emergência do dia a dia com uma seleção premium. Nosso mix inclui:</p>
-          <ul>
-            <li><strong>Essenciais:</strong> leite, ovos, pão, manteiga, arroz, feijão, massas, molhos, temperos</li>
-            <li><strong>Higiene e limpeza:</strong> sabonete, shampoo, pasta de dente, papel higiênico, detergente</li>
-            <li><strong>Gourmet:</strong> chocolates importados, queijos finos, azeites premium, conservas artesanais</li>
-            <li><strong>Adega:</strong> vinhos selecionados, cervejas artesanais, destilados (com verificação de maioridade)</li>
-            <li><strong>Snacks e bebidas:</strong> refrigerantes, sucos, energéticos, salgadinhos, biscoitos</li>
-            <li><strong>Congelados:</strong> sorvetes, pratos prontos, pão de queijo, açaí</li>
-          </ul>
-          <p>O mix é constantemente ajustado com base nas preferências dos moradores de cada condomínio. Moradores podem solicitar produtos específicos pelo canal de sugestões via WhatsApp.</p>
-
-          <h2>Segurança e Confiança</h2>
-          <p>Sabemos que segurança é uma preocupação fundamental para síndicos e moradores. Por isso, investimos fortemente em múltiplas camadas de proteção:</p>
-          <ul>
-            <li><strong>Câmeras de segurança 24h:</strong> circuito interno de alta definição com armazenamento em nuvem</li>
-            <li><strong>Controle de acesso:</strong> possibilidade de restringir a entrada via aplicativo ou QR Code exclusivo para moradores</li>
-            <li><strong>Trava inteligente pour bebidas alcoólicas:</strong> geladeiras só abrem após verificação de maioridade</li>
-            <li><strong>Seguro contra danos e furtos:</strong> contratado e pago integralmente pela Just Go Market</li>
-            <li><strong>Equipe de incidentes:</strong> em caso de ocorrência, nossa equipe trata diretamente sem envolver a administração do condomínio</li>
-          </ul>
-
-          <div class="text-center" style="margin-top: 60px;">
-            <h2>Pronto para Levar o Mercado Autônomo para Seu Condomínio?</h2>
-            <p style="max-width: 600px; margin: 0 auto 30px;">Solicite um estudo de viabilidade gratuito e descubra como a Just Go Market pode transformar a conveniência no seu condomínio.</p>
-            <a href="/#contato" class="btn btn-primary btn-glow">Solicitar Projeto Gratuito</a>
-          </div>
+          <p class="duo-note">Só isso.</p>
         </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </Section>
 
-  <Footer />
-  <WhatsAppFloat />
-  <CTASticky />
+  <Section theme="dark" id="tecnologia">
+    <div class="container">
+      <div class="section-head split">
+        <div>
+          <Eyebrow>Tecnologia</Eyebrow>
+          <SplitWords tag="h2" class="mt-m">Tecnologia que não aparece.</SplitWords>
+        </div>
+        <p class="lead" data-reveal>
+          O sistema trabalha nos bastidores para que a compra leve segundos e a reposição nunca atrase.
+        </p>
+      </div>
+      <ul class="tech">
+        {
+          tech.map((t, i) => (
+            <li data-reveal>
+              <span class="index-num">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{t.title}</h3>
+              <p>{t.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Section>
+
+  <CtaFinal title="Quer ver funcionando de perto?" origin="como_funciona_cta" />
 </BaseLayout>
+
+<style>
+  @layer components {
+    @media (min-width: 1024px) {
+      .split:has(.sticky-col) {
+        align-items: start;
+      }
+
+      .sticky-col {
+        position: sticky;
+        top: calc(var(--header-h) + 48px);
+      }
+    }
+
+    .op-grid .card p {
+      margin-top: 4px;
+    }
+
+    .op-grid {
+      gap: 16px;
+    }
+
+    @media (min-width: 1100px) {
+      .op-grid {
+        grid-template-columns: repeat(5, 1fr);
+      }
+    }
+
+    .duo-note {
+      margin-top: 24px;
+      font-family: var(--font-title);
+      font-size: 1.5rem;
+      color: var(--fg);
+    }
+
+    .tech {
+      display: grid;
+      border-top: 1px solid var(--line);
+    }
+
+    .tech li {
+      display: grid;
+      gap: 8px;
+      padding: 28px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    @media (min-width: 768px) {
+      .tech li {
+        grid-template-columns: 80px 1fr 1.4fr;
+        align-items: baseline;
+        gap: 24px;
+      }
+    }
+  }
+</style>

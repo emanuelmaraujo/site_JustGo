@@ -1,275 +1,675 @@
 ---
+/**
+ * Home — "Galeria noturna".
+ * Ordem (§7): intro · hero · manifesto · curadoria · como funciona · síndicos ·
+ * projeto integrado · segurança · FAQ · CTA final.
+ * O depoimento (§7.8) fica omitido até existir um depoimento real e autorizado.
+ */
 import BaseLayout from '@layouts/BaseLayout.astro';
-import Header from '@components/Header.astro';
-import Footer from '@components/Footer.astro';
-import WhatsAppFloat from '@components/WhatsAppFloat.astro';
-import CTASticky from '@components/CTASticky.astro';
-import SocialProof from '@components/SocialProof.astro';
-import ContactForm from '@components/ContactForm.astro';
-import FAQ from '@components/FAQ.astro';
+import Section from '@components/ui/Section.astro';
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import Button from '@components/ui/Button.astro';
+import SplitWords from '@components/ui/SplitWords.astro';
+import WordLight from '@components/ui/WordLight.astro';
+import Photo from '@components/ui/Photo.astro';
+import HorizontalGallery from '@components/ui/HorizontalGallery.astro';
+import StickySteps from '@components/ui/StickySteps.astro';
+import StatCounter from '@components/ui/StatCounter.astro';
+import BeforeAfter from '@components/ui/BeforeAfter.astro';
+import Icon from '@components/Icon.astro';
+import Pattern from '@components/site/Pattern.astro';
+import FaqTabs from '@components/site/FaqTabs.astro';
+import CtaFinal from '@components/site/CtaFinal.astro';
+import Marquee from '@components/site/Marquee.astro';
+import { CTA, FACTS, PREMIUM_BRANDS } from '@lib/site';
+import { getFaqs, getCuradoria } from '@lib/content';
+import { BUY_STEPS } from '@lib/model';
 import { serviceSchema, faqPageSchema, localBusinessSchema } from '@lib/schema';
 
-const syndicFaqs = [
-  { question: 'Quanto custa para o condomínio ter uma Just Go Market?', answer: 'Absolutamente nada. A Just Go Market opera no modelo de Custo Zero. Nós arcamos com 100% do investimento de implantação (estrutura, equipamentos, tecnologia) e com todos os custos operacionais (estoque, manutenção, sistemas). O condomínio cede apenas o espaço e um ponto de energia.' },
-  { question: 'Qual o tamanho de espaço necessário?', answer: 'Nossa estrutura modular é flexível. O modelo padrão ocupa cerca de 15m² a 18m². Precisamos apenas de um local com piso nivelado e acesso a um ponto de energia elétrica. Podemos instalar em áreas internas (hall, salão de jogos) ou externas (áreas de lazer, jardins), adaptando o projeto à arquitetura do seu condomínio.' },
-  { question: 'O condomínio tem alguma responsabilidade sobre a operação ou funcionários?', answer: 'Nenhuma. A gestão é 100% nossa. Não temos funcionários fixos no local; nossa equipe de reposição e limpeza visita a loja periodicamente. O condomínio não tem vínculo trabalhista nem responsabilidade sobre o estoque ou o atendimento.' },
-  { question: 'Como funciona a segurança e o controle de acesso?', answer: 'A segurança é prioridade. Nossa loja é monitorada 24h por um circuito interno de câmeras de alta definição. O acesso pode ser configurado de duas formas: Livre (ideal para áreas seguras e internas) ou Controlado (via aplicativo do condomínio ou QR Code exclusivo para moradores). Além disso, temos seguro próprio contra danos e furtos.' },
-  { question: 'E se houver furto ou vandalismo?', answer: 'O risco é nosso. Nossos sistemas de monitoramento e inteligência inibem a maioria das ocorrências. Caso algo aconteça, nossa equipe de segurança trata diretamente do incidente, sem envolver a administração do condomínio. O condomínio está isento de qualquer prejuízo financeiro.' },
-  { question: 'O consumo de energia é pago pelo condomínio?', answer: 'Não. Instalamos um medidor individual para a loja e reembolsamos o valor exato do consumo ao condomínio mensalmente, ou definimos uma taxa fixa de reembolso em contrato. A conta de energia do condomínio não aumenta.' },
-  { question: 'Qual o prazo de contrato?', answer: 'Nosso contrato padrão é de 36 meses. Esse período é necessário para amortizar o alto investimento inicial que fazemos na estrutura e tecnologia.' },
-];
-
-const residentFaqs = [
-  { question: 'Como eu faço para comprar?', answer: 'É muito simples: entre no mercado (acesso livre ou via App/QR Code), escolha e pegue os produtos, escaneie o código de barras no leitor do totem e pague com seu cartão. Pronto!' },
-  { question: 'Preciso baixar algum aplicativo?', answer: 'Para comprar, não! O pagamento é feito direto no totem com seu cartão. O aplicativo só é necessário se o seu condomínio optar pelo modelo de Acesso Controlado para abrir a porta, ou para destravar a geladeira de bebidas alcoólicas.' },
-  { question: 'A loja funciona 24 horas?', answer: 'Sim! Estamos abertos 24 horas por dia, 7 dias por semana, incluindo feriados. A conveniência está sempre lá quando você precisa.' },
-  { question: 'Como compro bebidas alcoólicas?', answer: 'Para segurança de menores, nossas geladeiras de bebidas alcoólicas possuem trava. Para destravar, basta fazer uma rápida verificação de maioridade no nosso totem ou App.' },
-  { question: 'E se eu tiver problema com um produto ou pagamento?', answer: 'Não se preocupe. Temos um canal de Suporte Rápido via WhatsApp. O número está visível na loja e na tela do totem. Nossa equipe atende em tempo real para resolver qualquer questão, inclusive estornos imediatos se necessário.' },
-  { question: 'Aceita dinheiro ou PIX?', answer: 'Para garantir a agilidade e a segurança (sem dinheiro em caixa), aceitamos apenas Cartão de Crédito e Débito. Alguns totens podem aceitar PIX via QR Code na tela. Vale Refeição/Alimentação ainda não são aceitos.' },
-];
-
-const allFaqs = [...syndicFaqs, ...residentFaqs];
+const faqs = await getFaqs();
+const curadoria = await getCuradoria();
 
 const schemas = [
   serviceSchema(),
   localBusinessSchema('Brasília', { lat: -15.7975, lng: -47.8919 }),
-  faqPageSchema(allFaqs),
+  faqPageSchema(faqs.all),
 ];
+
+const model = [
+  {
+    title: 'Investimos',
+    text: 'Projeto, estrutura, equipamentos, tecnologia e estoque. Tudo por nossa conta.',
+  },
+  {
+    title: 'Operamos',
+    text: 'Reposição, limpeza, manutenção e monitoramento 24 horas. Sem funcionários do condomínio.',
+  },
+  {
+    title: 'Você valoriza',
+    text: 'Uma amenity que eleva o padrão do empreendimento e o dia a dia de quem mora nele.',
+  },
+];
+
+const security = [
+  { icon: 'camera', title: 'Câmeras 24h', text: 'Circuito em alta definição, acompanhado remotamente pela nossa equipe.' },
+  { icon: 'key', title: 'Controle de acesso', text: 'Livre, por QR Code ou pelo aplicativo do condomínio — vocês escolhem.' },
+  { icon: 'lock', title: 'Adega com trava', text: 'Bebidas alcoólicas só após verificação de maioridade.' },
+  { icon: 'shield', title: 'Seguro próprio', text: 'Contra danos e furtos, contratado e pago por nós.' },
+  { icon: 'chat', title: 'Suporte em tempo real', text: 'Atendimento pelo WhatsApp, com estorno na hora quando necessário.' },
+] as const;
 ---
 
 <BaseLayout
-  title="Mercadinho Premium Autônomo em Brasília e Entorno"
-  description="O conceito de Mercadinho de Condomínio, elevado. Tecnologia Scan & Go, Adega e Empório Gourmet 24h. Instalação Gratuita em Brasília e todo o Entorno (DF). Just Go Market — Mercado Autônomo para Condomínios."
+  fullTitle="Mercado Autônomo Premium para Condomínios em Brasília | Just Go Market"
+  description="Mercado autônomo 24h com curadoria premium para condomínios de alto padrão em Brasília. Instalado e operado pela Just Go Market, sem custo para o condomínio."
   schemas={schemas}
+  intro
+  floors
+  pageClass="page-home"
 >
-  <Header currentPath="/" />
+  <!-- 7.1 Hero -->
+  <section class="hero theme-dark" data-floor="08" data-floor-label="Entrada">
+    <div class="container hero-top">
+      <p class="hero-status">
+        <span class="hero-live"><span class="hero-dot" aria-hidden="true"></span> Aberto agora</span>
+        <span aria-hidden="true">·</span>
+        <time data-clock>24h</time>
+        <span aria-hidden="true">·</span>
+        <span>Brasília</span>
+      </p>
 
-  <main>
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="container">
-        <div class="hero-content">
-          <span class="hero-tagline">MINI MERCADO AUTÔNOMO</span>
-          <h1>Toda conveniência, a um elevador de distância.</h1>
-          <p>Mercado premium <span class="highlight-green" style="font-weight: bold;">24h</span> com zero custo de instalação. Da emergência ao jantar especial, sem sair de casa.</p>
-          <div class="hero-btns">
-            <a href="#contato" class="btn btn-primary">Solicitar Projeto Gratuito</a>
-            <a href="/como-funciona" class="btn btn-outline">Como Funciona →</a>
+      <div class="hero-grid">
+        <div data-parallax-y="-15">
+          <SplitWords tag="h1" immediate class="hero-title">
+            A conveniência de <span class="hl">alto padrão,</span> a um elevador de distância.
+          </SplitWords>
+        </div>
+        <div class="hero-side">
+          <p class="lead">
+            Mercado autônomo 24h com curadoria premium — instalado e operado por nós, sem custo para o condomínio.
+          </p>
+          <div class="btn-row">
+            <Button href={CTA.primaryHref} track="cta_agendar_visita" origin="hero" data-lead-open magnetic>
+              {CTA.primary}
+            </Button>
+            <Button href="/curadoria" variant="secondary" icon="arrow-right">Ver a curadoria</Button>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Authority Marquee -->
-    <div class="marquee-section">
-      <div class="container">
-        <p class="marquee-title">A conveniência que seu condomínio merece. As marcas que você ama.</p>
-      </div>
-      <div class="marquee-track">
-        <span class="brand-item">HEINEKEN</span>
-        <span class="brand-item">COCA-COLA</span>
-        <span class="brand-item">LINDT</span>
-        <span class="brand-item">OMO</span>
-        <span class="brand-item">PRINGLES</span>
-        <span class="brand-item">NESTLÉ</span>
-        <span class="brand-item">RED BULL</span>
-        <span class="brand-item">COLGATE</span>
-        <span class="brand-item">BAUDUCCO</span>
-        <span class="brand-item">YPÊ</span>
-        <span class="brand-item">FINI</span>
-        <span class="brand-item">NISSIN</span>
-        <span class="brand-item">HEINEKEN</span>
-        <span class="brand-item">COCA-COLA</span>
-        <span class="brand-item">LINDT</span>
-        <span class="brand-item">OMO</span>
-        <span class="brand-item">PRINGLES</span>
-        <span class="brand-item">NESTLÉ</span>
-        <span class="brand-item">RED BULL</span>
-        <span class="brand-item">COLGATE</span>
-        <span class="brand-item">BAUDUCCO</span>
-        <span class="brand-item">YPÊ</span>
-        <span class="brand-item">FINI</span>
-        <span class="brand-item">NISSIN</span>
       </div>
     </div>
 
-    <!-- Modelo de Negócio -->
-    <section id="modelo" class="section-model">
-      <div class="container">
-        <div class="text-center" style="margin-bottom: 60px;">
-          <span class="uppercase highlight">Modelo de Negócio — Custo Zero</span>
-          <h2>Mercado Inteligente em Brasília. <span class="highlight-green">Basta o espaço.</span></h2>
-          <p style="max-width: 700px; margin: 20px auto 0;">Transforme seu condomínio com a principal loja de conveniência autônoma do DF. Instalação e operação gratuitas, garantindo comodidade e valorização imediata.</p>
+    <div class="hero-media" data-hero-media>
+      <Photo
+        name="hero-loja-noite"
+        alt="Loja Just Go integrada ao lobby de um condomínio de alto padrão, à noite"
+        placeholder="Loja integrada ao lobby do condomínio, à noite, luz quente, sem pessoas"
+        ratio="16/9"
+        sizes="100vw"
+        priority
+        rounded={false}
+        illustrative
+        class="hero-photo"
+      />
+    </div>
+  </section>
+
+  <!-- 7.2 Manifesto -->
+  <Section theme="light" class="manifesto" floor="07" floorLabel="Manifesto" label="Manifesto">
+    <div class="container">
+      <Eyebrow>Manifesto</Eyebrow>
+      <WordLight
+        class="manifesto-text"
+        text="Acreditamos que o bem mais precioso é o tempo. Por isso levamos o essencial para dentro do seu condomínio — com curadoria, discrição e cuidado."
+        highlight={['tempo.']}
+      />
+      <p class="manifesto-sign">Tempo de sobra para o que importa.</p>
+    </div>
+  </Section>
+
+  <!-- 7.3 Curadoria -->
+  <Section theme="dark" id="curadoria" class="curadoria" floor="06" floorLabel="Curadoria" flush>
+    <div class="curadoria-wrap" data-track-view="curadoria_view">
+      <div class="container section-head split">
+        <div>
+          <Eyebrow>Curadoria</Eyebrow>
+          <SplitWords tag="h2" class="mt-m">Um empório inteiro no térreo do seu prédio.</SplitWords>
         </div>
-
-        <div class="bento-grid">
-          <div class="bento-card">
-            <div class="bento-icon">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-            </div>
-            <h3>Nós Investimos</h3>
-            <p>A Just Go Market financia 100% da estrutura, equipamentos e do estoque inicial.</p>
-          </div>
-
-          <div class="bento-card">
-            <div class="bento-icon">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.39a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-            </div>
-            <h3>Nós Operamos</h3>
-            <p>Gestão completa: reposição constante, manutenção e monitoramento 24 horas por dia.</p>
-          </div>
-
-          <div class="bento-card">
-            <div class="bento-icon">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-            </div>
-            <h3>Você Valoriza</h3>
-            <p>Inovação premium que atrai moradores e aumenta diretamente o patrimônio do condomínio.</p>
-          </div>
-        </div>
-
-        <div class="transparency-box">
-          <h3>Ponto de energia e 15m². Só isso.</h3>
-          <p>Sem taxas embutidas. Seu condomínio não gasta um centavo para ter o melhor mercadinho autônomo do Distrito Federal. <a href="/quanto-custa" style="color: var(--color-green); text-decoration: underline;">Como fazemos isso? →</a></p>
-        </div>
+        <p class="lead" data-reveal>
+          Não é um mercado comum. Cada loja recebe uma seleção pensada para quem mora ali — e ajustada ao que os
+          moradores pedem.
+        </p>
       </div>
-    </section>
 
-    <!-- Social Proof -->
-    <SocialProof />
+      <HorizontalGallery
+        label="Universos da curadoria"
+        items={curadoria.map((c) => ({
+          title: c.title,
+          kicker: c.kicker,
+          text: c.text,
+          photo: c.photo,
+          note: c.confirm ? `[CONFIRMAR] ${c.confirm}` : undefined,
+        }))}
+      />
 
-    <!-- Para o Síndico -->
-    <section id="sindico" class="section-split dark-section">
-      <div class="container">
-        <div class="split-grid">
-          <div class="split-content">
-            <span class="uppercase highlight">Para Síndicos e Administradoras</span>
-            <h2>Inovação sem esforço. Valorização Garantida.</h2>
-            <p>Aumente a satisfação dos moradores com uma solução premium, sem adicionar trabalho ou despesas à administração do condomínio.</p>
+      {PREMIUM_BRANDS.length > 0 && <Marquee brands={PREMIUM_BRANDS} />}
 
-            <ul class="benefits-list">
-              <li>
-                <div style="min-width: 24px; color: var(--color-green);">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                </div>
-                <div>
-                  <strong>Valorização Imediata</strong>
-                  <span>Diferencial tecnológico que atrai novos perfis e eleva o padrão de moradia.</span>
-                </div>
-              </li>
-              <li>
-                <div style="min-width: 24px; color: var(--color-green);">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                </div>
-                <div>
-                  <strong>Segurança Integrada</strong>
-                  <span>Câmeras HD 24h, acesso via QR Code ou App, além de risco zero de furtos ou passivos trabalhistas.</span>
-                </div>
-              </li>
-              <li>
-                <div style="min-width: 24px; color: var(--color-green);">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                </div>
-                <div>
-                  <strong>Gestão "Turnkey"</strong>
-                  <span>Do projeto à operação diária. Sem vínculo empregatício e zero dor de cabeça para o síndico.</span>
-                </div>
-              </li>
-            </ul>
-
-            <a href="/diagnostico-condominio" class="btn btn-primary btn-glow" style="margin-top: 20px;">DIAGNÓSTICO DO MEU CONDOMÍNIO</a>
-          </div>
-          <div class="split-image-wrapper">
-            <img src="/assets/images/mini-mercado-autonomo-condominio-brasilia.jpg" alt="Mini mercado autônomo Just Go Market instalado em condomínio de alto padrão em Brasília DF" width="800" height="600" loading="lazy" class="split-image" />
-          </div>
-        </div>
+      <div class="container curadoria-foot">
+        <a href="/curadoria" class="link-arrow">Conhecer a curadoria <Icon name="arrow-right" size={14} /></a>
       </div>
-    </section>
+    </div>
+  </Section>
 
-    <!-- Para o Morador -->
-    <section id="morador" class="section-split light-section">
-      <div class="container">
-        <div class="split-grid">
-          <div class="split-image-wrapper">
-            <img src="/assets/images/loja-conveniencia-autonoma-df.jpg" alt="Loja de conveniência autônoma Just Go Market em condomínio no Distrito Federal" width="800" height="600" loading="lazy" class="split-image" />
-          </div>
-          <div class="split-content">
-            <span class="uppercase highlight">Para Moradores</span>
-            <h2>O mercado <span class="highlight-italic">premium</span> a um elevador de distância.</h2>
-            <ul class="split-list">
-              <li>
-                <strong>🍸 Adega Gourmet:</strong> Vinhos premiados e itens especiais para celebrar, dentro de casa.
-              </li>
-              <li>
-                <strong>🏠 Despensa 24 Horas:</strong> Esqueceu o ingrediente do jantar? A autonomia da sua conveniência salva em segundos.
-              </li>
-              <li>
-                <strong>📱 Tecnologia Scan & Go:</strong> Autonomia total. Escaneie, pague e desfrute. Sem filas, sem contato.
-              </li>
-            </ul>
-          </div>
+  <!-- 7.4 Como funciona -->
+  <Section theme="ink" id="como-funciona" floor="05" floorLabel="Como funciona">
+    <div class="container">
+      <div class="section-head split">
+        <div>
+          <Eyebrow>Como funciona</Eyebrow>
+          <SplitWords tag="h2" class="mt-m">Entre. Escolha. Siga.</SplitWords>
         </div>
+        <p class="lead" data-reveal>Sem fila, sem caixa, sem aplicativo para comprar. Ir, pegar e seguir.</p>
       </div>
-    </section>
+      <StickySteps steps={BUY_STEPS} />
+    </div>
+  </Section>
 
-    <!-- FAQ -->
-    <section id="faq" class="section-faq">
-      <div class="container">
-        <div class="text-center" style="margin-bottom: 40px;">
-          <span class="uppercase highlight">Dúvidas Frequentes</span>
-          <h2>Tudo Sobre o Mercado Autônomo Just Go Market</h2>
-          <p>Perguntas frequentes de síndicos e moradores sobre instalação, custos, segurança e operação.</p>
+  <!-- 7.5 Para síndicos -->
+  <Section theme="light" id="para-sindicos" floor="04" floorLabel="Síndicos">
+    <div class="container">
+      <div class="section-head split">
+        <div>
+          <Eyebrow>Para síndicos</Eyebrow>
+          <SplitWords tag="h2" class="mt-m">Nós cuidamos de tudo. O condomínio só ganha.</SplitWords>
         </div>
-
-        <div class="faq-tabs">
-          <button class="faq-tab-btn active" data-faq-tab="syndic">Para Síndicos</button>
-          <button class="faq-tab-btn" data-faq-tab="resident">Para Moradores</button>
-        </div>
-
-        <div id="faq-syndic" class="faq-group active" data-faq-group="syndic">
-          <FAQ items={syndicFaqs} id="faq-syndic-list" />
-        </div>
-
-        <div id="faq-resident" class="faq-group" data-faq-group="resident" style="display: none;">
-          <FAQ items={residentFaqs} id="faq-resident-list" />
-        </div>
-
-        <div class="text-center" style="margin-top: 40px;">
-          <a href="/faq" class="btn btn-primary">Ver Todas as Perguntas →</a>
-        </div>
+        <p class="lead" data-reveal>
+          Um mercado autônomo para condomínios em Brasília sem investimento, sem gestão e sem vínculo trabalhista.
+        </p>
       </div>
-    </section>
 
-    <!-- Contact Form -->
-    <ContactForm />
-  </main>
+      <div class="model">
+        <div class="draw-line model-line" aria-hidden="true"></div>
+        <ol class="model-list">
+          {
+            model.map((m, i) => (
+              <li class="model-item" data-reveal>
+                <p class="model-num" aria-hidden="true" data-split>
+                  <span class="sw"><span style={`--i:${i}`}>{String(i + 1).padStart(2, '0')}</span></span>
+                </p>
+                <h3>{m.title}</h3>
+                <p>{m.text}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
 
-  <Footer />
-  <WhatsAppFloat />
-  <CTASticky />
+      <div class="model-note" data-reveal>
+        <p class="model-note-text">
+          {FACTS.area} e um ponto de energia — <span class="hl">com consumo reembolsado.</span>
+        </p>
+        <a href="/para-sindicos" class="link-arrow">Entenda o modelo <Icon name="arrow-right" size={14} /></a>
+      </div>
 
-  <!-- FAQ Tab Switching -->
-  <script>
-    document.querySelectorAll('[data-faq-tab]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const tab = (btn as HTMLElement).getAttribute('data-faq-tab')!;
+      <div class="stats">
+        <StatCounter value={24} suffix="h" label="Operação" note="Todos os dias, inclusive feriados" />
+        <StatCounter value={0} prefix="R$" label="Investimento do condomínio" note="Estrutura e estoque por nossa conta" />
+        <StatCounter value={15} suffix="m²" label="Espaço necessário" note="Mais um ponto de energia" />
+        <StatCounter value={FACTS.contractMonths} suffix="meses" label="Prazo de contrato" note="Renovação automática" />
+      </div>
+    </div>
+  </Section>
 
-        // Update buttons
-        document.querySelectorAll('[data-faq-tab]').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+  <!-- 7.6 Projeto integrado à arquitetura -->
+  <Section theme="paper" id="projeto" floor="03" floorLabel="Projeto">
+    <div class="container">
+      <div class="section-head split">
+        <div>
+          <Eyebrow>Projeto integrado</Eyebrow>
+          <SplitWords tag="h2" class="mt-m">Cada loja é desenhada para o seu condomínio.</SplitWords>
+        </div>
+        <p class="lead" data-reveal>
+          Nada de módulo padronizado de franquia. Materiais e acabamentos escolhidos para conversar com a arquitetura
+          do seu prédio.
+        </p>
+      </div>
 
-        // Update groups
-        document.querySelectorAll('[data-faq-group]').forEach(g => {
-          (g as HTMLElement).style.display = 'none';
-        });
-        const target = document.querySelector(`[data-faq-group="${tab}"]`) as HTMLElement;
-        if (target) {
-          target.style.display = 'block';
-          target.style.animation = 'none';
-          target.offsetHeight;
-          target.style.animation = 'fadeIn 0.5s ease';
+      <div data-reveal>
+        <BeforeAfter
+          before={{
+            name: 'projeto-antes',
+            alt: 'Nicho vazio no hall de um condomínio, antes da instalação',
+            placeholder: 'Antes — nicho vazio no hall do condomínio, mesmo enquadramento',
+          }}
+          after={{
+            name: 'projeto-depois',
+            alt: 'O mesmo nicho com a loja Just Go instalada',
+            placeholder: 'Depois — o mesmo nicho com a loja instalada',
+          }}
+        />
+      </div>
+
+      <ol class="project-steps">
+        <li data-reveal>
+          <span class="index-num">01</span>
+          <h3>Visita técnica</h3>
+          <p>Avaliamos o espaço, a circulação e o perfil dos moradores.</p>
+        </li>
+        <li data-reveal>
+          <span class="index-num">02</span>
+          <h3>Projeto 3D</h3>
+          <p>Em {FACTS.projectDays}, com layout, materiais e mix de produtos sugerido.</p>
+        </li>
+        <li data-reveal>
+          <span class="index-num">03</span>
+          <h3>Instalação limpa</h3>
+          <p>De {FACTS.installDays} após a aprovação, sem obra civil.</p>
+        </li>
+      </ol>
+    </div>
+  </Section>
+
+  <!-- 7.7 Segurança e discrição -->
+  <Section theme="dark" id="seguranca" class="security" floor="02" floorLabel="Segurança">
+    <Pattern id="pattern-security" opacity={0.035} size={168} />
+    <div class="container security-inner">
+      <div class="section-head split">
+        <div>
+          <Eyebrow>Segurança e discrição</Eyebrow>
+          <SplitWords tag="h2" class="mt-m">O risco é nosso, não do condomínio.</SplitWords>
+        </div>
+        <p class="lead" data-reveal>
+          Várias camadas de proteção, operando em silêncio. Se algo acontece, nossa equipe resolve — sem envolver a
+          administração.
+        </p>
+      </div>
+      <ul class="security-grid">
+        {
+          security.map((s) => (
+            <li class="security-item" data-reveal>
+              <span class="card-icon">
+                <Icon name={s.icon} size={22} draw />
+              </span>
+              <h3>{s.title}</h3>
+              <p>{s.text}</p>
+            </li>
+          ))
         }
-      });
-    });
-  </script>
+      </ul>
+    </div>
+  </Section>
+
+  <!-- 7.9 FAQ -->
+  <Section theme="light" id="duvidas" floor="01" floorLabel="Dúvidas">
+    <div class="container faq-home">
+      <div class="faq-home-head">
+        <Eyebrow>Dúvidas frequentes</Eyebrow>
+        <SplitWords tag="h2" class="mt-m">Dúvidas sobre o mercado autônomo no condomínio.</SplitWords>
+        <a href="/faq" class="link-arrow mt-m">Ver todas as perguntas <Icon name="arrow-right" size={14} /></a>
+      </div>
+      <div data-reveal>
+        <FaqTabs id="faq-home" sindico={faqs.featured.sindico} morador={faqs.featured.morador} />
+      </div>
+    </div>
+  </Section>
+
+  <!-- 7.10 CTA final -->
+  <CtaFinal />
 </BaseLayout>
+
+<style>
+  @layer components {
+    /* ---------- Hero ---------- */
+    .hero {
+      padding-top: calc(var(--header-h) + clamp(40px, 7vw, 96px));
+      overflow: clip;
+    }
+
+    .hero-status {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-size: 0.8125rem;
+      letter-spacing: 0.04em;
+      color: var(--fg-2);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .hero-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--fg);
+    }
+
+    .hero-dot {
+      position: relative;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--jg-green);
+    }
+
+    .hero-dot::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: var(--jg-green);
+      animation: live 2.4s var(--ease-out-expo) infinite;
+    }
+
+    @keyframes live {
+      0% {
+        transform: scale(1);
+        opacity: 0.7;
+      }
+      100% {
+        transform: scale(3.2);
+        opacity: 0;
+      }
+    }
+
+    .hero-grid {
+      margin-top: clamp(28px, 4vw, 48px);
+      display: grid;
+      gap: 40px;
+    }
+
+    .hero-title {
+      max-width: 13ch;
+    }
+
+    .hero-side {
+      display: grid;
+      gap: 32px;
+      align-content: end;
+    }
+
+    @media (min-width: 1024px) {
+      .hero-grid {
+        grid-template-columns: 8fr 4fr;
+        column-gap: 56px;
+        align-items: end;
+      }
+
+      .hero-side {
+        padding-bottom: 0.7em;
+      }
+    }
+
+    :global(.motion) .hero-side,
+    :global(.motion) .hero-status {
+      animation: hero-in var(--dur-l) var(--ease-out-expo) both;
+    }
+
+    :global(.motion) .hero-status {
+      animation-delay: 100ms;
+    }
+
+    :global(.motion) .hero-side {
+      animation-delay: 650ms;
+    }
+
+    /* Na primeira visita, o H1 se monta por baixo das portas (sem atrasar o LCP);
+       rótulo e CTAs entram quando as portas se abrem */
+    :global(.intro-first) .hero-status {
+      animation-delay: 1200ms;
+    }
+
+    :global(.intro-first) .hero-side {
+      animation-delay: 1700ms;
+    }
+
+    @keyframes hero-in {
+      from {
+        opacity: 0;
+        transform: translateY(var(--reveal-distance));
+      }
+    }
+
+    .hero-media {
+      margin-top: clamp(56px, 8vw, 104px);
+    }
+
+    :global(.motion) .hero-media {
+      clip-path: inset(0% 7% 0% 7% round 32px);
+    }
+
+    :global(html:not(.motion)) .hero-media {
+      padding-inline: var(--gutter);
+    }
+
+    :global(html:not(.motion)) .hero-media :global(.hero-photo) {
+      border-radius: var(--r-media);
+    }
+
+    @media (max-width: 767px) {
+      .hero-media :global(.hero-photo) {
+        aspect-ratio: 4 / 5;
+      }
+
+      :global(.motion) .hero-media {
+        clip-path: inset(0% 4% 0% 4% round 24px);
+      }
+    }
+
+    /* ---------- Manifesto ---------- */
+    .manifesto :global(.manifesto-text) {
+      margin-top: 40px;
+      max-width: 22ch;
+      font-family: var(--font-title);
+      font-size: var(--fs-statement);
+      font-weight: 500;
+      line-height: 1.12;
+      letter-spacing: -0.035em;
+      color: var(--fg);
+    }
+
+    .manifesto-sign {
+      margin-top: 48px;
+      font-family: var(--font-display);
+      color: var(--fg-2);
+    }
+
+    @media (min-width: 1024px) {
+      .manifesto {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+      }
+
+      .manifesto > .container {
+        width: 100%;
+      }
+    }
+
+    /* ---------- Curadoria ---------- */
+    .curadoria-wrap {
+      padding-block: var(--section-y);
+    }
+
+    .curadoria-foot {
+      margin-top: 56px;
+    }
+
+    /* ---------- Modelo (síndicos) ---------- */
+    .model {
+      position: relative;
+    }
+
+    .model-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 26px;
+      display: none;
+    }
+
+    .model-list {
+      display: grid;
+      gap: 40px;
+    }
+
+    .model-num {
+      font-family: var(--font-title);
+      font-size: 3.25rem;
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: -0.05em;
+      color: var(--fg);
+    }
+
+    .model-num .sw {
+      background: var(--bg);
+      padding-right: 16px;
+    }
+
+    .model-item h3 {
+      margin-top: 28px;
+    }
+
+    .model-item p:last-child {
+      margin-top: 12px;
+      max-width: 32ch;
+    }
+
+    @media (min-width: 768px) {
+      .model-line {
+        display: block;
+      }
+
+      .model-list {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 32px;
+      }
+    }
+
+    .model-note {
+      margin-top: clamp(56px, 7vw, 96px);
+      padding-top: 32px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px 40px;
+    }
+
+    .model-note-text {
+      font-family: var(--font-title);
+      font-size: clamp(1.4rem, 2.6vw, 2.1rem);
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      color: var(--fg);
+      max-width: 26ch;
+    }
+
+    .stats {
+      margin-top: clamp(64px, 8vw, 112px);
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 40px 24px;
+    }
+
+    @media (min-width: 1024px) {
+      .stats {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    /* ---------- Projeto ---------- */
+    .project-steps {
+      margin-top: 48px;
+      display: grid;
+      gap: 32px;
+    }
+
+    .project-steps h3 {
+      margin-top: 12px;
+    }
+
+    .project-steps p {
+      margin-top: 8px;
+      max-width: 34ch;
+    }
+
+    @media (min-width: 768px) {
+      .project-steps {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* ---------- Segurança ---------- */
+    .security {
+      overflow: hidden;
+    }
+
+    .security-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .security-grid {
+      display: grid;
+      gap: 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .security-item {
+      padding: 32px 0;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      column-gap: 24px;
+      align-items: start;
+    }
+
+    .security-item :global(.card-icon) {
+      grid-row: span 2;
+      margin: 0;
+    }
+
+    .security-item p {
+      margin-top: 8px;
+    }
+
+    @media (min-width: 768px) {
+      .security-grid {
+        grid-template-columns: repeat(2, 1fr);
+        column-gap: 48px;
+      }
+    }
+
+    @media (min-width: 1100px) {
+      .security-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* ---------- FAQ ---------- */
+    .faq-home {
+      display: grid;
+      gap: 48px;
+    }
+
+    @media (min-width: 1024px) {
+      .faq-home {
+        grid-template-columns: 5fr 7fr;
+        gap: 64px;
+      }
+
+      .faq-home-head {
+        position: sticky;
+        top: calc(var(--header-h) + 32px);
+        align-self: start;
+      }
+    }
+
+    .faq-home-head :global(.link-arrow) {
+      margin-top: 32px;
+    }
+  }
+</style>

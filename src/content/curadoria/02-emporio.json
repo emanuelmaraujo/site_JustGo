@@ -1,0 +1,18 @@
+{
+  "order": 2,
+  "title": "Empório",
+  "kicker": "Pequenos luxos, a qualquer hora",
+  "text": "Chocolates, queijos, azeites e importados. O detalhe que transforma uma noite comum.",
+  "long": "Chocolates importados, queijos finos, azeites e conservas artesanais — a seleção de empório que costuma exigir uma ida até a loja especializada, agora no térreo do seu prédio.",
+  "items": [
+    "Chocolates importados",
+    "Queijos finos",
+    "Azeites e conservas",
+    "Snacks gourmet"
+  ],
+  "photo": {
+    "name": "curadoria-emporio",
+    "alt": "Queijo curado, chocolate amargo, azeite e amêndoas sobre ardósia preta",
+    "placeholder": "Empório — queijo, chocolate e azeite sobre ardósia preta"
+  }
+}

@@ -1,0 +1,112 @@
+---
+/**
+ * CTA final — a única seção em verde total.
+ * A seção entra subindo como uma cortina verde sobre a anterior (curtain, motion.ts)
+ * e o símbolo ampliado, tom sobre tom, desliza com parallax.
+ */
+import Button from '@components/ui/Button.astro';
+import SplitWords from '@components/ui/SplitWords.astro';
+import BrandSymbol from '@components/BrandSymbol.astro';
+import { CTA, whatsappUrl, FACTS } from '@lib/site';
+
+interface Props {
+  title?: string;
+  text?: string;
+  origin?: string;
+  whatsappText?: string;
+}
+
+const {
+  title = 'Leve a Just Go para o seu condomínio.',
+  text = `Estudo de viabilidade personalizado, com retorno em ${FACTS.replyHours}.`,
+  origin = 'cta_final',
+  whatsappText = 'Olá! Quero levar a Just Go Market para o meu condomínio.',
+} = Astro.props;
+---
+
+<section class="ctaf theme-green" data-cta-final data-curtain data-floor="T" data-floor-label="Térreo">
+  <div class="ctaf-symbol" aria-hidden="true">
+    <div data-parallax-y="-18"><BrandSymbol tone="soft" /></div>
+  </div>
+  <div class="container ctaf-inner">
+    <p class="eyebrow">O próximo passo</p>
+    <SplitWords tag="h2" class="ctaf-title">{title}</SplitWords>
+    <p class="ctaf-text" data-reveal>{text}</p>
+    <div class="btn-row" data-reveal style="--d:0.12s">
+      <Button href={CTA.primaryHref} track="cta_agendar_visita" origin={origin} data-lead-open>
+        {CTA.primary}
+      </Button>
+      <Button
+        href={whatsappUrl(whatsappText)}
+        variant="secondary"
+        icon="whatsapp"
+        external
+        track="whatsapp_click"
+        origin={origin}
+      >
+        WhatsApp
+      </Button>
+    </div>
+  </div>
+</section>
+
+<style>
+  @layer components {
+    .ctaf {
+      position: relative;
+      z-index: 2;
+      overflow: hidden;
+      padding-block: clamp(120px, 16vw, 240px);
+      border-radius: clamp(24px, 3vw, 40px) clamp(24px, 3vw, 40px) 0 0;
+    }
+
+    .ctaf-symbol {
+      position: absolute;
+      right: -8vw;
+      top: 50%;
+      width: clamp(420px, 58vw, 900px);
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .ctaf-symbol :global(svg) {
+      width: 100%;
+      height: auto;
+    }
+
+    .ctaf-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .ctaf-title {
+      margin-top: 28px;
+      max-width: 13ch;
+      font-size: clamp(2.75rem, 7vw, 6.5rem);
+      line-height: 0.98;
+      letter-spacing: var(--tracking-h1);
+    }
+
+    .ctaf-text {
+      margin-top: 28px;
+      max-width: 40ch;
+      font-family: var(--font-display);
+      font-size: var(--fs-lead);
+      color: var(--fg);
+    }
+
+    .ctaf .btn-row {
+      margin-top: 44px;
+    }
+
+    @media (max-width: 767px) {
+      .ctaf-symbol {
+        right: -40vw;
+        top: auto;
+        bottom: -18%;
+        transform: none;
+        width: 120vw;
+      }
+    }
+  }
+</style>

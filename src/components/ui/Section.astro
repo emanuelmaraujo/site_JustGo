@@ -1,0 +1,39 @@
+---
+/**
+ * Seção com tema (preto, tinta, claro, papel ou verde) e respiro vertical generoso.
+ * floor → rótulo do indicador de "andar" (assinatura da home; ex.: "05", "T").
+ */
+interface Props {
+  theme?: 'dark' | 'ink' | 'light' | 'paper' | 'green';
+  id?: string;
+  floor?: string;
+  floorLabel?: string;
+  tight?: boolean;
+  flush?: boolean;
+  class?: string;
+  tag?: 'section' | 'div' | 'aside';
+  label?: string;
+}
+
+const {
+  theme = 'dark',
+  id,
+  floor,
+  floorLabel,
+  tight = false,
+  flush = false,
+  class: className = '',
+  tag: Tag = 'section',
+  label,
+} = Astro.props as Props;
+---
+
+<Tag
+  id={id}
+  class:list={[`theme-${theme}`, !flush && (tight ? 'section-tight' : 'section'), className]}
+  data-floor={floor}
+  data-floor-label={floorLabel}
+  aria-label={label}
+>
+  <slot />
+</Tag>

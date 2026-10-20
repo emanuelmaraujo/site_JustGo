@@ -1,0 +1,61 @@
+---
+/**
+ * Número com count-up e desfoque → foco ao entrar na tela.
+ * O valor final é renderizado no HTML (funciona sem JS); o script só anima.
+ */
+interface Props {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  label: string;
+  note?: string;
+}
+const { value, prefix = '', suffix = '', label, note } = Astro.props;
+---
+
+<div class="stat" data-reveal>
+  <p class="stat-value">
+    {prefix && <span class="stat-affix">{prefix}</span>}<span data-count={value}>{value}</span>{suffix && <span class="stat-affix">{suffix}</span>}
+  </p>
+  <p class="stat-label">{label}</p>
+  {note && <p class="stat-note">{note}</p>}
+</div>
+
+<style>
+  @layer components {
+    .stat {
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+    }
+
+    .stat-value {
+      font-family: var(--font-title);
+      font-size: clamp(3rem, 6vw, 5.25rem);
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: -0.05em;
+      color: var(--fg);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .stat-affix {
+      font-size: 0.5em;
+      letter-spacing: -0.02em;
+      margin-inline: 0.08em;
+    }
+
+    .stat-label {
+      margin-top: 14px;
+      font-family: var(--font-display);
+      color: var(--fg);
+      font-weight: 500;
+    }
+
+    .stat-note {
+      margin-top: 4px;
+      font-size: var(--fs-small);
+      color: var(--fg-2);
+    }
+  }
+</style>

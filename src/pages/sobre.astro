@@ -1,109 +1,215 @@
 ---
+/**
+ * Sobre / Manifesto — origem brasiliense, diferenciais e valores
+ * (lista tipográfica com revelação sequencial).
+ */
 import BaseLayout from '@layouts/BaseLayout.astro';
-import Header from '@components/Header.astro';
-import Footer from '@components/Footer.astro';
-import WhatsAppFloat from '@components/WhatsAppFloat.astro';
-import CTASticky from '@components/CTASticky.astro';
-import { breadcrumbSchema } from '@lib/schema';
+import Section from '@components/ui/Section.astro';
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import SplitWords from '@components/ui/SplitWords.astro';
+import WordLight from '@components/ui/WordLight.astro';
+import Photo from '@components/ui/Photo.astro';
+import PageHero from '@components/site/PageHero.astro';
+import CtaFinal from '@components/site/CtaFinal.astro';
+import { SITE } from '@lib/site';
+import { crumbs } from '@lib/schema';
 
-const schemas = [
-  breadcrumbSchema([
-    { name: 'Home', url: 'https://www.justgomarket.com.br/' },
-    { name: 'Sobre', url: 'https://www.justgomarket.com.br/sobre/' },
-  ]),
+const manifesto =
+  'Acreditamos que o tempo é o bem mais valioso que existe. Que conveniência não deveria exigir pegar o carro, enfrentar fila ou baixar mais um aplicativo. Que o vinho do jantar, o café especial e o leite da manhã podem estar no mesmo lugar — a um passo de casa. Por isso existimos: para antecipar o que você precisa, com curadoria, discrição e cuidado. E devolver o seu tempo para o que importa.';
+
+const pillars = [
+  {
+    title: 'Projeto integrado',
+    text: 'Cada loja é desenhada para o prédio onde vai morar, com materiais e acabamentos que respeitam a arquitetura.',
+  },
+  {
+    title: 'Curadoria',
+    text: 'Do essencial de emergência ao vinho do fim de semana, com um mix ajustado ao que cada condomínio pede.',
+  },
+  {
+    title: 'Operação invisível',
+    text: 'Reposição, limpeza, manutenção e segurança acontecem nos bastidores. O condomínio só percebe a conveniência.',
+  },
+];
+
+const differences = [
+  'Estética de alto padrão, não de franquia',
+  'Curadoria de empório, não só o básico',
+  'Projeto desenhado para cada condomínio',
+  'Relação direta com o condomínio, sem franqueados',
+  'Compra sem aplicativo, com Pix ou cartão',
+  'Empresa de Brasília, com operação local',
+];
+
+const values = [
+  { title: 'Foco no cliente', text: 'Antecipar necessidades antes de elas virarem problema.' },
+  { title: 'Qualidade inegociável', text: 'No produto, no projeto e no atendimento.' },
+  { title: 'Integridade e transparência', text: 'Afirmamos só o que podemos cumprir — e cumprimos.' },
+  { title: 'Conexão com a comunidade', text: 'Cada loja é parte da rotina de um prédio e das pessoas que moram nele.' },
+  { title: 'Inovação contínua', text: 'Tecnologia a serviço da simplicidade, sempre um passo à frente.' },
 ];
 ---
 
 <BaseLayout
   title="Sobre a Just Go Market"
-  description="Conheça a história da Just Go Market. Nascemos em Brasília com a missão de reinventar a conveniência em condomínios com tecnologia autônoma, curadoria gourmet e instalação gratuita."
-  schemas={schemas}
+  description="Nascemos em Brasília da convicção de que o tempo é o novo luxo. Conheça o manifesto, os pilares e os valores da Just Go Market, mercado autônomo de alto padrão para condomínios."
+  schemas={[crumbs(['Sobre', '/sobre'])]}
 >
-  <Header currentPath="/sobre" />
+  <PageHero
+    eyebrow="Sobre"
+    title="Nascemos da convicção de que o <span class='hl'>tempo</span> é o novo luxo."
+    lead="A Just Go Market é uma empresa de Brasília que leva conveniência de alto padrão para dentro dos condomínios — com projeto, curadoria e operação próprios."
+    crumbs={[{ name: 'Sobre', href: '/sobre' }]}
+  />
 
-  <main>
-    <section class="about-hero">
-      <div class="container">
-        <div class="about-hero-content">
-          <h1>Nascemos da convicção de que o <span class="highlight-italic">tempo</span> é o novo luxo.</h1>
-          <div class="green-line"></div>
-          <p>A Just Go Market foi fundada em Brasília, o coração pulsante do país, com uma missão clara: reinventar a experiência de conveniência para quem não aceita o básico. Somos especialistas em mercado autônomo para condomínios.</p>
-        </div>
+  <Section theme="light" class="manifesto-page">
+    <div class="container">
+      <Eyebrow>Manifesto</Eyebrow>
+      <WordLight tag="blockquote" class="statement manifesto-full" text={manifesto} highlight={['tempo', 'importa.']} />
+      <p class="manifesto-sign">{SITE.slogan}</p>
+    </div>
+  </Section>
+
+  <Section theme="dark">
+    <div class="container split">
+      <Photo name="brasilia-noite" alt="Brasília à noite, com o trânsito iluminado sob um viaduto e prédios ao fundo" ratio="4/5" unveil parallax position="60% center" />
+      <div class="split-copy">
+        <Eyebrow>Nossa origem</Eyebrow>
+        <SplitWords tag="h2">Feita em Brasília, para Brasília.</SplitWords>
+        <p data-reveal>
+          Uma cidade monumental, onde as distâncias roubam tempo precioso. Em condomínios de alto padrão, a casa é um
+          refúgio — e a conveniência não deveria exigir sair dele.
+        </p>
+        <p data-reveal>
+          Desenhamos a Just Go Market como uma extensão do lar: discreta, bem resolvida, à altura da arquitetura dos
+          prédios mais exigentes do DF. Uma cidade planejada para o futuro merecia uma conveniência à sua altura.
+        </p>
       </div>
-    </section>
+    </div>
+  </Section>
 
-    <section class="story-section dark-section">
-      <div class="container">
-        <div class="editorial-grid">
-          <div class="editorial-text">
-            <span class="uppercase highlight">O Cenário</span>
-            <h2>A Oportunidade de Criar o Mercado Autônomo do Futuro</h2>
-            <p>Vivemos em uma era onde a tecnologia transformou tudo, exceto a forma como fazemos as compras mais essenciais. Filas, trânsito e lojas impessoais ainda fazem parte da rotina de milhões de moradores em condomínios.</p>
-            <p>Nós olhamos para este cenário em Brasília e vimos a oportunidade de criar algo melhor. Algo que respeite o seu tempo e eleve o padrão do seu dia a dia. Um mercado autônomo de verdade, não apenas uma vending machine glorificada.</p>
-            <p>Brasília, com seus condomínios de alto padrão e distâncias significativas, foi o laboratório perfeito para desenvolver nosso modelo de minimercado inteligente. A cidade que foi planejada para o futuro merecia uma solução de conveniência à sua altura.</p>
-          </div>
-          <div class="editorial-image">
-            <img src="/assets/images/bsb1.png" alt="Arquitetura moderna de Brasília que inspira o conceito de mercado autônomo Just Go Market" width="600" height="400" loading="lazy" />
-          </div>
-        </div>
+  <Section theme="ink">
+    <div class="container">
+      <div class="section-head">
+        <Eyebrow>Pilares</Eyebrow>
+        <SplitWords tag="h2" class="mt-m">Três coisas que fazemos com rigor.</SplitWords>
       </div>
-    </section>
+      <ol class="grid-3 pillars">
+        {
+          pillars.map((p, i) => (
+            <li data-reveal>
+              <span class="index-num">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{p.title}</h3>
+              <p>{p.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </Section>
 
-    <section class="story-section light-section">
-      <div class="container">
-        <div class="editorial-grid reverse">
-          <div class="editorial-image">
-            <img src="/assets/images/bsb2.png" alt="Detalhes da arquitetura de Brasília inspirando o design premium da Just Go Market" width="600" height="400" loading="lazy" />
-          </div>
-          <div class="editorial-text">
-            <span class="uppercase highlight">Nossa Origem</span>
-            <h2>O DNA de Brasília no Mercado Autônomo</h2>
-            <p>Nossa história começa na arquitetura e no ritmo de Brasília. Uma cidade monumental, mas onde as distâncias roubam tempo precioso. Entendemos que, em condomínios de alto padrão, o lar é um refúgio.</p>
-            <p>A conveniência não deveria exigir sair desse santuário. Desenhamos a Just Go Market não como um mercado comum, mas como uma extensão sofisticada da sua casa. Cada detalhe — dos materiais nobres à curadoria gourmet — foi pensado para se integrar harmoniosamente ao ambiente dos condomínios mais exigentes do DF.</p>
-            <p>Nosso modelo de negócio foi construído sobre três pilares: tecnologia invisível, curadoria inteligente de produtos e operação turnkey. Isso significa que o condomínio ganha um diferencial moderno sem qualquer investimento, esforço ou risco — enquanto os moradores ganham acesso 24 horas a mais de 500 produtos selecionados.</p>
-          </div>
-        </div>
+  <Section theme="paper">
+    <div class="container split top">
+      <div class="split-copy">
+        <Eyebrow>O que nos diferencia</Eyebrow>
+        <SplitWords tag="h2">Conveniência com cara de casa, não de franquia.</SplitWords>
       </div>
-    </section>
+      <ul class="list-check diff" data-reveal>
+        {differences.map((d) => <li>{d}</li>)}
+      </ul>
+    </div>
+  </Section>
 
-    <section class="section-pillars light-section">
-      <div class="container">
-        <div class="text-center" style="margin-bottom: 60px;">
-          <span class="uppercase highlight">Nossos Valores</span>
-          <h2>O Que Nos Move: A Excelência no Mercado Autônomo</h2>
-        </div>
-        <div class="bento-grid">
-          <div class="bento-card">
-            <div class="bento-icon">✦</div>
-            <h3>Design que Respeita o Ambiente</h3>
-            <p>Materiais nobres e estética minimalista para se integrarem harmoniosamente à arquitetura dos condomínios mais exigentes de Brasília e DF.</p>
-          </div>
-          <div class="bento-card">
-            <div class="bento-icon">🍷</div>
-            <h3>Curadoria Inteligente</h3>
-            <p>Uma seleção estratégica que vai do essencial de emergência ao prazer de um vinho premiado ou chocolate gourmet. Mais de 500 itens por unidade.</p>
-          </div>
-          <div class="bento-card">
-            <div class="bento-icon">⚡</div>
-            <h3>Tecnologia Invisível</h3>
-            <p>Sistema fluido, seguro e intuitivo com tecnologia Scan & Go. A experiência de compra leva segundos, não minutos. Pagamento por cartão direto no totem.</p>
-          </div>
-        </div>
-      </div>
-    </section>
+  <Section theme="dark">
+    <div class="container">
+      <Eyebrow>Valores</Eyebrow>
+      <ol class="values">
+        {
+          values.map((v, i) => (
+            <li data-reveal>
+              <span class="index-num">{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="values-title">
+                <span class="sw"><span style="--i:0">{v.title}</span></span>
+              </h3>
+              <p>{v.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </Section>
 
-    <section class="final-cta dark-section">
-      <div class="container">
-        <div class="final-content">
-          <p class="lead-text">Mais do que vender produtos, nosso negócio é devolver tempo. Tempo para a família, para relaxar, para viver.</p>
-          <h2 class="signature">Somos a Just Go Market.<br />O luxo do imediato.<br />A conveniência, elevada.</h2>
-          <a href="/#contato" class="btn btn-primary" style="margin-top: 40px;">Leve para seu condomínio</a>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <Footer />
-  <WhatsAppFloat />
-  <CTASticky />
+  <CtaFinal title="Vamos conversar sobre o seu condomínio?" origin="sobre_cta" />
 </BaseLayout>
+
+<style>
+  @layer components {
+    .manifesto-full {
+      margin-top: 40px;
+      max-width: 28ch;
+    }
+
+    .manifesto-sign {
+      margin-top: 48px;
+      font-family: var(--font-display);
+    }
+
+    .pillars {
+      display: grid;
+      gap: 40px 24px;
+    }
+
+    .pillars h3 {
+      margin-top: 16px;
+    }
+
+    .pillars p {
+      margin-top: 10px;
+    }
+
+    .split.top {
+      align-items: start;
+    }
+
+    .diff {
+      gap: 20px;
+      font-size: 1.125rem;
+    }
+
+    .values {
+      margin-top: 40px;
+      border-top: 1px solid var(--line);
+    }
+
+    .values li {
+      display: grid;
+      gap: 8px;
+      padding: clamp(24px, 3vw, 40px) 0;
+      border-bottom: 1px solid var(--line);
+      align-items: baseline;
+    }
+
+    @media (min-width: 900px) {
+      .values li {
+        grid-template-columns: 80px 1.3fr 1fr;
+        gap: 32px;
+      }
+    }
+
+    .values-title {
+      font-size: clamp(1.9rem, 4.2vw, 3.6rem);
+      font-weight: 600;
+      letter-spacing: var(--tracking-h2);
+      line-height: 1.05;
+    }
+
+    :global(.motion) .values li .sw > span {
+      transform: translate3d(0, 110%, 0);
+      transition: transform var(--dur-l) var(--ease-out-expo) var(--d, 0s);
+    }
+
+    :global(.motion) .values li.is-in .sw > span {
+      transform: none;
+    }
+  }
+</style>

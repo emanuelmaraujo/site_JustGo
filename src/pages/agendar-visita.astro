@@ -1,0 +1,148 @@
+---
+/**
+ * Agendar visita — destino de todos os CTAs principais.
+ * Com JS, os CTAs abrem o painel lateral; esta página atende quem chega sem JS,
+ * por link direto ou por busca.
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Section from '@components/ui/Section.astro';
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import SplitWords from '@components/ui/SplitWords.astro';
+import LeadForm from '@components/site/LeadForm.astro';
+import Icon from '@components/Icon.astro';
+import { SITE, FACTS, whatsappUrl, WHATSAPP_DEFAULT_TEXT } from '@lib/site';
+import { crumbs } from '@lib/schema';
+
+const steps = [
+  { title: 'Conversa inicial', text: `Respondemos em ${FACTS.replyHours} para entender o condomínio.` },
+  { title: 'Visita técnica', text: 'Avaliamos o espaço, a circulação e o perfil dos moradores.' },
+  { title: 'Projeto 3D', text: `Em ${FACTS.projectDays}, com layout, materiais e mix sugerido.` },
+];
+---
+
+<BaseLayout
+  title="Agendar visita técnica"
+  description="Agende uma visita técnica gratuita da Just Go Market ao seu condomínio em Brasília. Estudo de viabilidade e projeto 3D sem compromisso."
+  schemas={[crumbs(['Agendar visita', '/agendar-visita'])]}
+  leadDialog={false}
+  stickyCta={false}
+>
+  <Section theme="dark" class="av">
+    <div class="container av-grid">
+      <div class="av-intro">
+        <Eyebrow>Agendar visita</Eyebrow>
+        <SplitWords tag="h1" immediate class="av-title">Vamos conhecer o seu condomínio.</SplitWords>
+        <p class="lead av-lead">
+          Sem custo e sem compromisso. Uma pessoa do nosso time responde pelo WhatsApp para combinar a visita técnica.
+        </p>
+        <ol class="av-steps">
+          {
+            steps.map((s, i) => (
+              <li>
+                <span class="index-num">{String(i + 1).padStart(2, '0')}</span>
+                <div>
+                  <h2 class="av-step-title">{s.title}</h2>
+                  <p>{s.text}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+        <p class="av-direct">
+          Prefere falar agora?
+          <a href={whatsappUrl(WHATSAPP_DEFAULT_TEXT)} target="_blank" rel="noopener noreferrer" data-origin="agendar_visita">
+            <Icon name="whatsapp" size={16} />
+            {SITE.whatsappDisplay}
+          </a>
+        </p>
+      </div>
+      <div class="av-form">
+        <LeadForm prefix="page" origin="agendar_visita_page" />
+      </div>
+    </div>
+  </Section>
+</BaseLayout>
+
+<style>
+  @layer components {
+    .av {
+      padding-top: calc(var(--header-h) + clamp(56px, 8vw, 112px));
+    }
+
+    .av-grid {
+      display: grid;
+      gap: 56px;
+    }
+
+    @media (min-width: 1024px) {
+      .av-grid {
+        grid-template-columns: 5fr 6fr;
+        gap: 96px;
+        align-items: start;
+      }
+    }
+
+    .av-title {
+      margin-top: 28px;
+      font-size: var(--fs-h1-inner);
+      max-width: 12ch;
+    }
+
+    .av-lead {
+      margin-top: 28px;
+    }
+
+    .av-steps {
+      margin-top: 48px;
+      display: grid;
+      gap: 24px;
+      border-top: 1px solid var(--line);
+      padding-top: 32px;
+    }
+
+    .av-steps li {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 12px;
+    }
+
+    .av-step-title {
+      font-size: 1.125rem;
+      font-weight: 500;
+      letter-spacing: -0.015em;
+    }
+
+    .av-steps p {
+      margin-top: 4px;
+      font-size: var(--fs-small);
+    }
+
+    .av-direct {
+      margin-top: 40px;
+      font-size: var(--fs-small);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 12px;
+    }
+
+    .av-direct a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      color: var(--fg);
+      text-decoration: underline;
+      text-decoration-color: var(--jg-green);
+      text-underline-offset: 4px;
+    }
+
+    .av-form {
+      padding: clamp(24px, 4vw, 48px);
+      border: 1px solid var(--line);
+      border-radius: var(--r-card);
+      background: var(--jg-ink-2);
+      --bg: var(--jg-ink-2);
+    }
+  }
+</style>

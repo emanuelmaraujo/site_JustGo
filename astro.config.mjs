@@ -8,9 +8,13 @@ export default defineConfig({
     publicDir: './public',
     outDir: './dist',
     trailingSlash: 'ignore',
+    // A classe de escopo acompanha a prop `class` passada a componentes filhos
+    scopedStyleStrategy: 'class',
     build: {
         format: 'file',
         assets: 'site-assets',
+        // CSS inline: elimina requisições bloqueantes na cadeia crítica (LCP)
+        inlineStylesheets: 'always',
     },
     integrations: [
         sitemap({

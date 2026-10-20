@@ -1,0 +1,36 @@
+{
+  "audience": "morador",
+  "title": "Para moradores",
+  "items": [
+    {
+      "question": "Como eu compro?",
+      "answer": "Entre na loja — com acesso livre, por QR Code ou pelo aplicativo do condomínio —, escolha os produtos, passe cada código de barras no totem e pague. Leva menos de dois minutos.",
+      "featured": true
+    },
+    {
+      "question": "Quais formas de pagamento são aceitas?",
+      "answer": "Pix e cartão de crédito ou débito, direto no totem. Não aceitamos dinheiro nem vale-refeição ou alimentação.",
+      "featured": true
+    },
+    {
+      "question": "Preciso baixar algum aplicativo?",
+      "answer": "Para comprar, não. O aplicativo só é usado quando o condomínio escolhe o acesso controlado."
+    },
+    {
+      "question": "A loja funciona 24 horas?",
+      "answer": "Sim. Todos os dias, inclusive feriados."
+    },
+    {
+      "question": "Como compro bebidas alcoólicas?",
+      "answer": "As geladeiras de bebidas alcoólicas têm trava. Para abrir, basta uma verificação rápida de maioridade no totem ou no aplicativo."
+    },
+    {
+      "question": "E se eu tiver um problema com um produto ou pagamento?",
+      "answer": "Fale com o nosso suporte pelo WhatsApp — o número está na loja e na tela do totem. Atendemos em tempo real e fazemos o estorno na hora, quando necessário."
+    },
+    {
+      "question": "Posso sugerir produtos?",
+      "answer": "Sim. Envie a sua sugestão pelo WhatsApp. Ajustamos o mix de cada loja a partir do consumo e dos pedidos dos moradores."
+    }
+  ]
+}

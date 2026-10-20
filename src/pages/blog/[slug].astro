@@ -1,38 +1,36 @@
 ---
-// Dynamic blog post route — ready for Content Collections
-// When blog posts are added to src/content/blog/, this route auto-generates pages
-
+/**
+ * Artigo — coluna de leitura de 680px, barra de progresso de leitura em verde,
+ * índice lateral fixo e CTA contextual ao final.
+ */
 import { getCollection } from 'astro:content';
 import BaseLayout from '@layouts/BaseLayout.astro';
-import Header from '@components/Header.astro';
-import Footer from '@components/Footer.astro';
-import WhatsAppFloat from '@components/WhatsAppFloat.astro';
-import { breadcrumbSchema } from '@lib/schema';
+import Section from '@components/ui/Section.astro';
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import SplitWords from '@components/ui/SplitWords.astro';
+import Button from '@components/ui/Button.astro';
+import Icon from '@components/Icon.astro';
+import CtaFinal from '@components/site/CtaFinal.astro';
+import { CTA } from '@lib/site';
+import { SITE_URL } from '@lib/seo';
+import { crumbs, articleSchema } from '@lib/schema';
 
 export async function getStaticPaths() {
-  let posts;
-  try {
-    posts = await getCollection('blog', ({ data }) => !data.draft);
-  } catch {
-    return [];
-  }
-  if (!posts || posts.length === 0) return [];
-  return posts.map((post) => ({
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const sorted = posts.sort((a, b) => a.data.title.localeCompare(b.data.title));
+  return sorted.map((post, i) => ({
     params: { slug: post.slug },
-    props: { post },
+    props: { post, next: sorted[(i + 1) % sorted.length] },
   }));
 }
 
-const { post } = Astro.props;
+const { post, next } = Astro.props;
 const { Content, headings } = await post.render();
-
-const schemas = [
-  breadcrumbSchema([
-    { name: 'Home', url: 'https://www.justgomarket.com.br/' },
-    { name: 'Blog', url: 'https://www.justgomarket.com.br/blog/' },
-    { name: post.data.title, url: `https://www.justgomarket.com.br/blog/${post.slug}/` },
-  ]),
-];
+const toc = headings.filter((h) => h.depth === 2);
+const minutes = Math.max(2, Math.round(post.body.split(/\s+/).length / 200));
+const fmt = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'long', year: 'numeric', timeZone: 'UTC' });
+const isMorador = post.data.tags.some((t: string) => /morador/i.test(t));
+const url = `${SITE_URL}/blog/${post.slug}`;
 ---
 
 <BaseLayout
@@ -40,414 +38,237 @@ const schemas = [
   description={post.data.description}
   ogType="article"
   ogImage={post.data.image}
-  schemas={schemas}
+  schemas={[
+    articleSchema({
+      title: post.data.title,
+      description: post.data.description,
+      url,
+      datePublished: post.data.pubDate,
+      dateModified: post.data.updatedDate,
+      image: post.data.image,
+      author: post.data.author,
+    }),
+    crumbs(['Blog', '/blog'], [post.data.title, `/blog/${post.slug}`]),
+  ]}
 >
-  <Header />
+  <div class="read-progress" data-scroll-progress="#artigo" data-progress-page aria-hidden="true"></div>
 
-  <main class="blog-main">
-    <div class="blog-hero">
-      <div class="container text-center">
-        <div class="blog-meta">
-          <span class="blog-tag">{post.data.tags[0]}</span>
-          <span class="blog-date">{post.data.pubDate.toLocaleDateString('pt-BR')}</span>
-        </div>
-        <h1 class="blog-title">{post.data.title}</h1>
-        <p class="blog-author">Por <strong>{post.data.author}</strong></p>
-        
-        <button id="theme-toggle-btn" class="theme-toggle" aria-label="Alternar Tema Escuro/Claro">
-          <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-          <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-          <span>Modo Leitura</span>
-        </button>
-      </div>
+  <Section theme="dark" class="art-hero">
+    <div class="container-narrow">
+      <nav class="art-crumbs" aria-label="Você está em">
+        <a href="/blog"><Icon name="arrow-left" size={14} /> Blog</a>
+      </nav>
+      <Eyebrow>{post.data.tags[0] ?? 'Artigo'}</Eyebrow>
+      <SplitWords tag="h1" immediate class="art-title">{post.data.title}</SplitWords>
+      <p class="art-desc">{post.data.description}</p>
+      <p class="art-meta">
+        <time datetime={post.data.pubDate.toISOString()}>{fmt.format(post.data.pubDate)}</time>
+        <span aria-hidden="true">·</span>
+        {minutes} min de leitura
+        <span aria-hidden="true">·</span>
+        {post.data.author}
+      </p>
     </div>
+  </Section>
 
-    <section class="blog-content-section">
-      <div class="container">
-        <div class="blog-layout">
-          
-          <article class="blog-article-content">
-            <Content />
-          </article>
-          
-          <aside class="blog-sidebar">
-            <div class="sticky-toc">
-              <h3>Índice do Artigo</h3>
-              <nav class="toc-nav">
-                <ul>
-                  {headings.filter(h => h.depth > 1 && h.depth <= 3).map((heading) => (
-                    <li class={`toc-item depth-${heading.depth}`}>
-                      <a href={`#${heading.slug}`}>{heading.text}</a>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-              
-              <div class="diagnostic-box">
-                <h4>Pronto para inovar?</h4>
-                <p>Descubra se seu condomínio tem o perfil ideal para um mercado autônomo.</p>
-                <a href="/diagnostico-condominio" class="btn btn-primary btn-sm">Fazer Diagnóstico</a>
-              </div>
-            </div>
+  <Section theme="light" tight id="artigo">
+    <div class="container art-grid">
+      {
+        toc.length > 1 && (
+          <aside class="art-toc" aria-label="Neste artigo">
+            <p class="eyebrow eyebrow-plain">Neste artigo</p>
+            <ol>
+              {toc.map((h) => (
+                <li>
+                  <a href={`#${h.slug}`}>{h.text}</a>
+                </li>
+              ))}
+            </ol>
           </aside>
+        )
+      }
+      <article class="prose art-body">
+        <Content />
+      </article>
+    </div>
+  </Section>
 
-        </div>
-      </div>
-    </section>
-  </main>
+  <Section theme="paper" tight>
+    <div class="container-narrow art-cta">
+      {
+        isMorador ? (
+          <>
+            <h2>Quer a Just Go no seu prédio?</h2>
+            <p>Faça o diagnóstico em dois minutos e envie o resultado para o seu síndico.</p>
+            <Button href="/diagnostico-condominio?perfil=morador" icon="arrow-right" origin="blog_artigo">
+              Fazer o diagnóstico
+            </Button>
+          </>
+        ) : (
+          <>
+            <h2>Avaliando para o seu condomínio?</h2>
+            <p>Uma visita técnica responde, no seu espaço, às dúvidas deste artigo. Sem custo e sem compromisso.</p>
+            <Button href={CTA.primaryHref} track="cta_agendar_visita" origin="blog_artigo" data-lead-open>
+              {CTA.primary}
+            </Button>
+          </>
+        )
+      }
+      <a href={`/blog/${next.slug}`} class="art-next">
+        <span class="eyebrow eyebrow-plain">Próxima leitura</span>
+        <span class="art-next-title">{next.data.title}</span>
+      </a>
+    </div>
+  </Section>
 
-  <style is:global>
-    /* CSS Variables for elegant theme switching */
-    :root {
-      --blog-bg: var(--color-black);
-      --blog-bg-hero: var(--color-black);
-      --blog-surface: rgba(255, 255, 255, 0.02);
-      --blog-border: rgba(255, 255, 255, 0.05);
-      --blog-text: rgba(255, 255, 255, 0.85);
-      --blog-text-muted: rgba(255, 255, 255, 0.6);
-      --blog-heading: var(--color-offwhite);
-      --blog-accent: var(--color-green);
-      --blog-accent-bg: rgba(160, 226, 97, 0.1);
-      --blog-link: var(--color-green);
-      --blog-hero-border: rgba(255, 255, 255, 0.05);
+  <CtaFinal origin="blog_artigo_cta" />
+</BaseLayout>
+
+<style>
+  @layer components {
+    .read-progress {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 120;
+      height: 3px;
+      background: var(--jg-green);
+      transform-origin: left;
+      transform: scaleX(var(--progress, 0));
     }
 
-    [data-blog-theme="light"] {
-      --blog-bg: var(--color-offwhite);
-      --blog-bg-hero: var(--color-black); /* Keep hero dark for contrast */
-      --blog-surface: #ffffff;
-      --blog-border: rgba(1, 5, 2, 0.1);
-      --blog-text: rgba(1, 5, 2, 0.85);
-      --blog-text-muted: rgba(1, 5, 2, 0.6);
-      --blog-heading: var(--color-black);
-      --blog-accent: var(--color-black); /* Black replaces green for high-constrast light accents */
-      --blog-accent-bg: rgba(1, 5, 2, 0.05);
-      --blog-link: #2e8b57; /* Darker readable green for links in light mode */
-      --blog-hero-border: transparent;
+    :global(html:not(.js)) .read-progress {
+      display: none;
     }
 
-    /* Hero area */
-    .blog-hero {
-      background: var(--blog-bg-hero);
-      color: var(--color-offwhite);
-      padding: 140px 0 60px;
-      position: relative;
-      border-bottom: 1px solid var(--blog-hero-border);
-      transition: all 0.3s ease;
-    }
-    
-    .blog-meta {
-      margin-bottom: 25px;
-      display: flex;
-      gap: 15px;
-      justify-content: center;
-      align-items: center;
-      font-size: 0.85rem;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
+    .art-hero {
+      padding-top: calc(var(--header-h) + clamp(48px, 7vw, 104px));
+      padding-bottom: clamp(56px, 7vw, 96px);
     }
 
-    .blog-meta .blog-tag {
-      background: rgba(160, 226, 97, 0.1);
-      color: var(--color-green);
-      padding: 6px 14px;
-      border-radius: 20px;
-    }
-
-    .blog-meta .blog-date {
-      opacity: 0.6;
-    }
-
-    .blog-title {
-      font-size: clamp(2rem, 4vw, 3.5rem);
-      font-family: var(--font-title);
-      line-height: 1.2;
-      font-weight: 800;
-      max-width: 900px;
-      margin: 0 auto 20px;
-      color: var(--color-offwhite);
-    }
-
-    .blog-author {
-      font-size: 1.1rem;
-      color: rgba(255, 255, 255, 0.7);
-    }
-
-    /* Theme Toggle */
-    .theme-toggle {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: white;
-      border-radius: 30px;
-      padding: 8px 16px;
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
+    .art-crumbs a {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin-top: 25px;
-      transition: all 0.2s ease;
+      min-height: 44px;
+      margin-bottom: 24px;
+      font-size: 0.875rem;
+      color: var(--fg-2);
     }
 
-    .theme-toggle:hover {
-      background: rgba(255, 255, 255, 0.2);
+    .art-title {
+      margin-top: 24px;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      line-height: 1.04;
     }
 
-    .moon-icon { display: none; }
-    [data-blog-theme="light"] .sun-icon { display: none; }
-    [data-blog-theme="light"] .moon-icon { display: block; }
-
-    /* Layout */
-    .blog-content-section {
-      padding: 60px 0 100px;
-      background-color: var(--blog-bg);
-      transition: background-color 0.3s ease;
-    }
-
-    .blog-layout {
-      display: flex;
-      gap: 50px;
-      position: relative;
-    }
-
-    @media (max-width: 991px) {
-      .blog-layout {
-        flex-direction: column-reverse;
-      }
-    }
-
-    /* Article Typography Settings */
-    .blog-article-content {
-      flex: 1;
-      min-width: 0; 
-      background: var(--blog-surface);
-      padding: 50px;
-      border-radius: 24px;
-      border: 1px solid var(--blog-border);
-      color: var(--blog-text);
-      font-size: 1.125rem;
-      line-height: 1.8;
-      transition: all 0.3s ease;
-    }
-
-    @media (max-width: 768px) {
-      .blog-article-content {
-        padding: 30px 20px;
-      }
-    }
-
-    /* Target the generated H1 inside the markdown and hide it since we have the hero title */
-    .blog-article-content > h1:first-child {
-      display: none; 
-    }
-
-    .blog-article-content h1,
-    .blog-article-content h2,
-    .blog-article-content h3,
-    .blog-article-content h4 {
-      color: var(--blog-heading);
-      font-family: var(--font-title);
-      font-weight: 700;
-      margin-top: 2.5em;
-      margin-bottom: 1em;
-      line-height: 1.3;
-      transition: color 0.3s ease;
-    }
-
-    .blog-article-content h2 {
-      font-size: 1.8rem;
-      border-bottom: 1px solid var(--blog-border);
-      padding-bottom: 0.5em;
-    }
-
-    .blog-article-content h3 {
-      font-size: 1.4rem;
-      color: var(--blog-accent);
-    }
-
-    .blog-article-content p {
-      margin-bottom: 1.5em;
-      color: var(--blog-text);
-    }
-
-    .blog-article-content ul, 
-    .blog-article-content ol {
-      margin-bottom: 1.5em;
-      padding-left: 1.5em;
-      color: var(--blog-text);
-    }
-
-    .blog-article-content li {
-      margin-bottom: 0.5em;
-    }
-
-    .blog-article-content a {
-      color: var(--blog-link);
-      text-decoration: none;
-      font-weight: 500;
-      border-bottom: 1px dashed var(--blog-border);
-      transition: all 0.2s;
-    }
-
-    .blog-article-content a:hover {
-      color: var(--blog-heading);
-      border-bottom-color: var(--blog-accent);
-    }
-
-    .blog-article-content blockquote {
-      border-left: 4px solid var(--blog-accent);
-      padding-left: 20px;
-      margin: 2em 0;
-      font-style: italic;
-      color: var(--blog-text-muted);
-      background: var(--blog-accent-bg);
-      padding: 20px;
-      border-radius: 0 12px 12px 0;
-    }
-
-    /* Sidebar TOC */
-    .blog-sidebar {
-      width: 320px;
-      flex-shrink: 0;
-    }
-
-    @media (max-width: 991px) {
-      .blog-sidebar {
-        width: 100%;
-      }
-    }
-
-    .sticky-toc {
-      position: sticky;
-      top: 100px;
-      background: var(--blog-surface);
-      padding: 30px;
-      border-radius: 20px;
-      border: 1px solid var(--blog-border);
-      transition: all 0.3s ease;
-    }
-
-    .sticky-toc h3 {
-      font-size: 1.1rem;
-      font-family: var(--font-title);
-      font-weight: 700;
-      margin-top: 0;
-      margin-bottom: 20px;
-      color: var(--blog-heading);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      transition: color 0.3s ease;
-    }
-
-    .toc-nav ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      border-left: 2px solid var(--blog-border);
-    }
-
-    .toc-nav li {
-      margin-bottom: 8px;
-    }
-
-    .toc-nav li.depth-3 {
-      padding-left: 15px;
-      font-size: 0.9em;
-    }
-
-    .toc-nav a {
-      color: var(--blog-text-muted);
-      text-decoration: none;
-      display: block;
-      padding: 4px 0 4px 15px;
-      font-size: 0.95rem;
-      font-weight: 500;
-      line-height: 1.4;
-      transition: all 0.2s ease;
-      position: relative;
-      left: -2px;
-      border-left: 2px solid transparent;
-    }
-
-    .toc-nav a:hover,
-    .toc-nav a.active-toc {
-      color: var(--blog-accent);
-      border-left-color: var(--blog-accent);
-      background: var(--blog-accent-bg);
-      border-radius: 0 6px 6px 0;
-    }
-
-    /* Diagnostic box strictly scoped to sidebar */
-    .diagnostic-box {
-      margin-top: 30px;
-      padding-top: 30px;
-      border-top: 1px solid var(--blog-border);
-      text-align: center;
-    }
-
-    .diagnostic-box h4 {
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-      color: var(--blog-heading);
-      font-family: var(--font-title);
-    }
-
-    .diagnostic-box p {
-      font-size: 0.95rem;
-      color: var(--blog-text-muted);
-      margin-bottom: 25px;
+    .art-desc {
+      margin-top: 24px;
+      font-family: var(--font-display);
+      font-size: var(--fs-lead);
       line-height: 1.5;
     }
 
-    .btn-sm {
-      padding: 12px 20px;
-      font-size: 0.9rem;
-      width: 100%;
+    .art-meta {
+      margin-top: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 0.875rem;
+      color: var(--fg-3);
     }
-  </style>
 
-  <script is:inline>
-    document.addEventListener("DOMContentLoaded", () => {
-      /* Theme Toggle Logic */
-      const themeBtn = document.getElementById("theme-toggle-btn");
-      const htmlEl = document.documentElement;
+    .art-grid {
+      display: grid;
+      gap: 40px;
+    }
 
-      const savedTheme = localStorage.getItem("blog-theme") || "dark";
-      htmlEl.setAttribute("data-blog-theme", savedTheme);
-
-      if (themeBtn) {
-        themeBtn.addEventListener("click", () => {
-          const current = htmlEl.getAttribute("data-blog-theme");
-          const next = current === "dark" ? "light" : "dark";
-          htmlEl.setAttribute("data-blog-theme", next);
-          localStorage.setItem("blog-theme", next);
-        });
+    @media (min-width: 1100px) {
+      .art-grid {
+        grid-template-columns: 1fr 680px 1fr;
+        gap: 56px;
       }
 
-      /* Scroll Spy Logic for TOC */
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const id = entry.target.getAttribute("id");
-            const tocLink = document.querySelector(`.toc-nav a[href="#${id}"]`);
-            
-            if (tocLink) {
-              document.querySelectorAll(".toc-nav a").forEach(link => link.classList.remove("active-toc"));
-              tocLink.classList.add("active-toc");
-            }
-          }
-        });
-      }, { rootMargin: "-10% 0px -80% 0px" });
+      .art-body {
+        grid-column: 2;
+      }
 
-      document.querySelectorAll(".blog-article-content h2, .blog-article-content h3").forEach(header => {
-        observer.observe(header);
-      });
-    });
-  </script>
+      .art-toc {
+        grid-column: 1;
+        grid-row: 1;
+        position: sticky;
+        top: calc(var(--header-h) + 40px);
+        align-self: start;
+      }
+    }
 
-  <Footer />
-  <WhatsAppFloat />
-</BaseLayout>
+    .art-body {
+      max-width: 680px;
+      width: 100%;
+      margin-inline: auto;
+    }
+
+    .art-toc ol {
+      margin-top: 16px;
+      display: grid;
+      gap: 4px;
+      border-left: 1px solid var(--line);
+    }
+
+    .art-toc a {
+      display: block;
+      padding: 6px 0 6px 16px;
+      font-size: 0.875rem;
+      line-height: 1.4;
+      color: var(--fg-2);
+    }
+
+    @media (hover: hover) {
+      .art-toc a:hover {
+        color: var(--fg);
+      }
+    }
+
+    @media (max-width: 1099px) {
+      .art-toc {
+        max-width: 680px;
+        width: 100%;
+        margin-inline: auto;
+        padding: 20px 24px;
+        border: 1px solid var(--line);
+        border-radius: var(--r-card);
+      }
+    }
+
+    .art-cta {
+      display: grid;
+      gap: 16px;
+      justify-items: start;
+    }
+
+    .art-cta h2 {
+      font-size: clamp(1.75rem, 3vw, 2.4rem);
+    }
+
+    .art-cta p {
+      max-width: 52ch;
+      margin-bottom: 8px;
+    }
+
+    .art-next {
+      margin-top: 40px;
+      padding-top: 28px;
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .art-next-title {
+      font-family: var(--font-title);
+      font-size: 1.375rem;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+    }
+  }
+</style>

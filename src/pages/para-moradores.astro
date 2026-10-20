@@ -1,0 +1,251 @@
+---
+/**
+ * Para moradores — reescreve /vantagens-para-moradores (301).
+ * Curadoria, como comprar, horários, pagamento, suporte e "Indique para o seu síndico".
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Section from '@components/ui/Section.astro';
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import SplitWords from '@components/ui/SplitWords.astro';
+import StickySteps from '@components/ui/StickySteps.astro';
+import Accordion from '@components/ui/Accordion.astro';
+import Button from '@components/ui/Button.astro';
+import Photo from '@components/ui/Photo.astro';
+import Icon from '@components/Icon.astro';
+import PageHero from '@components/site/PageHero.astro';
+import CtaFinal from '@components/site/CtaFinal.astro';
+import { BUY_STEPS } from '@lib/model';
+import { FACTS } from '@lib/site';
+import { getFaqs, getCuradoria } from '@lib/content';
+import { crumbs, faqPageSchema } from '@lib/schema';
+
+const faqs = await getFaqs();
+const universes = await getCuradoria();
+
+const moments = [
+  { icon: 'clock', title: 'O item que faltou', text: 'Ovos, manteiga, um tempero. O ingrediente que salva o jantar está a um elevador de distância.' },
+  { icon: 'wine', title: 'Um momento especial', text: 'Um vinho, um chocolate, um queijo. Qualquer noite vira ocasião, sem sair de casa.' },
+  { icon: 'users', title: 'A rotina da família', text: 'Leite, fralda, água, gelo — disponíveis a qualquer hora, inclusive de madrugada.' },
+  { icon: 'basket', title: 'Higiene e limpeza', text: 'Os itens que nunca podem faltar, sem precisar pegar o carro.' },
+] as const;
+
+const facts = [
+  { icon: 'clock', title: '24 horas', text: 'Todos os dias, inclusive feriados.' },
+  { icon: 'pay', title: 'Pix ou cartão', text: 'Crédito e débito, direto no totem. Sem dinheiro.' },
+  { icon: 'phone', title: 'Sem aplicativo', text: 'Para comprar, não é preciso baixar nada.' },
+  { icon: 'chat', title: 'Suporte pelo WhatsApp', text: 'Atendimento em tempo real, com estorno na hora.' },
+] as const;
+
+const shareText =
+  'Oi! Conheci a Just Go Market, um mercado autônomo 24h com curadoria premium que é instalado e operado sem custo para o condomínio. Que tal avaliarmos para o nosso prédio? https://justgomarket.com.br/para-sindicos';
+---
+
+<BaseLayout
+  title="Para moradores: mercado 24h no seu condomínio"
+  description="Conveniência 24 horas no térreo do seu prédio: adega, empório e o essencial do dia a dia, com pagamento por Pix ou cartão e sem aplicativo. Conheça a Just Go Market."
+  schemas={[faqPageSchema(faqs.morador), crumbs(['Para moradores', '/para-moradores'])]}
+>
+  <PageHero
+    eyebrow="Para moradores"
+    title="Tempo de sobra para o que <span class='hl'>importa.</span>"
+    lead="Leite às 23h, um vinho para o jantar, o ingrediente que faltou. Tudo no térreo do seu prédio, 24 horas por dia."
+    crumbs={[{ name: 'Para moradores', href: '/para-moradores' }]}
+    photo={{
+      name: 'morador-adega',
+      alt: 'Mão pegando uma garrafa de vinho em uma geladeira iluminada à noite',
+      placeholder: 'Mão pegando uma garrafa de vinho na geladeira, à noite',
+    }}
+  />
+
+  <Section theme="light">
+    <div class="container">
+      <div class="section-head split">
+        <div>
+          <Eyebrow>No dia a dia</Eyebrow>
+          <SplitWords tag="h2" class="mt-m">A conveniência que não dorme.</SplitWords>
+        </div>
+        <p class="lead" data-reveal>Situações comuns, resolvidas sem sair do condomínio — em menos de três minutos.</p>
+      </div>
+      <ul class="grid-2 moments">
+        {
+          moments.map((m) => (
+            <li class="card" data-reveal>
+              <span class="card-icon">
+                <Icon name={m.icon} draw />
+              </span>
+              <h3>{m.title}</h3>
+              <p>{m.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Section>
+
+  <Section theme="dark">
+    <div class="container">
+      <div class="section-head split">
+        <div>
+          <Eyebrow>Curadoria</Eyebrow>
+          <SplitWords tag="h2" class="mt-m">Do essencial ao especial.</SplitWords>
+        </div>
+        <a href="/curadoria" class="link-arrow" data-reveal>Conhecer a curadoria <Icon name="arrow-right" size={14} /></a>
+      </div>
+      <ul class="uni">
+        {
+          universes.map((u) => (
+            <li data-reveal>
+              <a href={`/curadoria#${u.photo.name.replace('curadoria-', '')}`} class="uni-card">
+                <Photo {...u.photo} ratio="4/5" sizes="(min-width: 1024px) 25vw, 50vw" />
+                <span class="uni-title">{u.title}</span>
+                <span class="uni-kicker">{u.kicker}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Section>
+
+  <Section theme="ink" id="como-comprar">
+    <div class="container">
+      <div class="section-head split">
+        <div>
+          <Eyebrow>Como comprar</Eyebrow>
+          <SplitWords tag="h2" class="mt-m">Entre. Escolha. Siga.</SplitWords>
+        </div>
+        <p class="lead" data-reveal>{FACTS.payment}. Sem fila, sem caixa, sem aplicativo.</p>
+      </div>
+      <StickySteps steps={BUY_STEPS} />
+    </div>
+  </Section>
+
+  <Section theme="paper">
+    <div class="container">
+      <ul class="facts">
+        {
+          facts.map((f) => (
+            <li data-reveal>
+              <Icon name={f.icon} size={26} draw />
+              <h3>{f.title}</h3>
+              <p>{f.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Section>
+
+  <Section theme="dark" id="indique">
+    <div class="container split">
+      <div class="split-copy">
+        <Eyebrow>Ainda não tem no seu prédio?</Eyebrow>
+        <SplitWords tag="h2">Indique para o seu síndico.</SplitWords>
+        <p class="lead" data-reveal>
+          Faça o diagnóstico em dois minutos ou envie a indicação pronta pelo WhatsApp. Para o condomínio, não há custo.
+        </p>
+        <div class="btn-row" data-reveal>
+          <Button href="/diagnostico-condominio?perfil=morador" icon="arrow-right" track="cta_indicar_sindico" origin="moradores_indique">
+            Fazer o diagnóstico
+          </Button>
+          <Button
+            href={`https://wa.me/?text=${encodeURIComponent(shareText)}`}
+            variant="secondary"
+            icon="whatsapp"
+            external
+            track="whatsapp_click"
+            origin="moradores_compartilhar"
+          >
+            Enviar para o síndico
+          </Button>
+        </div>
+      </div>
+      <div class="faq-col" data-reveal>
+        <Accordion items={faqs.morador} id="faq-moradores" />
+      </div>
+    </div>
+  </Section>
+
+  <CtaFinal
+    title="Leve a Just Go para o seu prédio."
+    origin="moradores_cta"
+    whatsappText="Olá! Sou morador(a) e gostaria de levar a Just Go Market para o meu condomínio."
+  />
+</BaseLayout>
+
+<style>
+  @layer components {
+    .moments {
+      display: grid;
+      gap: 16px;
+    }
+
+    .uni {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    @media (min-width: 1024px) {
+      .uni {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .uni-card {
+      display: grid;
+      gap: 6px;
+    }
+
+    .uni-card :global(.photo) {
+      margin-bottom: 12px;
+    }
+
+    .uni-card :global(.photo-img) {
+      transition: transform 1s var(--ease-out-expo);
+    }
+
+    @media (hover: hover) {
+      .uni-card:hover :global(.photo-img) {
+        transform: scale(1.04);
+      }
+    }
+
+    .uni-title {
+      font-family: var(--font-title);
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+    }
+
+    .uni-kicker {
+      font-size: var(--fs-small);
+      color: var(--fg-2);
+    }
+
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 40px 24px;
+    }
+
+    @media (min-width: 1024px) {
+      .facts {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .facts h3 {
+      margin-top: 20px;
+    }
+
+    .facts p {
+      margin-top: 6px;
+      font-size: var(--fs-small);
+    }
+
+    .faq-col {
+      align-self: start;
+    }
+  }
+</style>

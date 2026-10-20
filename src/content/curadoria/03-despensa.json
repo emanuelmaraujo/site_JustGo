@@ -1,0 +1,18 @@
+{
+  "order": 3,
+  "title": "Despensa 24h",
+  "kicker": "O essencial, a um passo",
+  "text": "Do café da manhã ao ingrediente que faltou no jantar — marcas que você conhece, a qualquer hora.",
+  "long": "Leite, ovos, pão, café, massas, molhos e temperos. Itens de higiene e limpeza. Congelados para os dias corridos. O essencial do dia a dia, organizado com o mesmo cuidado da adega.",
+  "items": [
+    "Café da manhã",
+    "Mercearia",
+    "Congelados",
+    "Higiene e limpeza"
+  ],
+  "photo": {
+    "name": "curadoria-despensa",
+    "alt": "Água mineral, café em grãos, mel e massa artesanal em prateleira de madeira escura",
+    "placeholder": "Despensa 24h — essenciais em prateleira de madeira escura"
+  }
+}
