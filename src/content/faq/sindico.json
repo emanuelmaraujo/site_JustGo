@@ -1,0 +1,41 @@
+{
+  "audience": "sindico",
+  "title": "Para síndicos",
+  "items": [
+    {
+      "question": "Quanto custa para o condomínio?",
+      "answer": "Nada. Nós investimos na estrutura, nos equipamentos, na tecnologia e no estoque, e cuidamos de toda a operação. O condomínio cede o espaço — cerca de 15 m² — e um ponto de energia, com o consumo reembolsado.",
+      "featured": true
+    },
+    {
+      "question": "Qual espaço é necessário?",
+      "answer": "Cerca de 15 a 18 m², com piso nivelado e um ponto de energia. Pode ser uma área interna — hall, salão, área gourmet — ou externa. O projeto é desenhado para a arquitetura do seu condomínio."
+    },
+    {
+      "question": "O condomínio assume alguma responsabilidade pela operação?",
+      "answer": "Nenhuma. Reposição, limpeza, manutenção e atendimento são nossos. Não há funcionários fixos no local nem vínculo trabalhista com o condomínio.",
+      "featured": true
+    },
+    {
+      "question": "Como funcionam a segurança e o controle de acesso?",
+      "answer": "Câmeras 24h em alta definição, acompanhadas remotamente pela nossa equipe. A entrada pode ser livre ou controlada por QR Code ou pelo aplicativo do condomínio. As geladeiras de bebidas alcoólicas têm trava com verificação de maioridade, e temos seguro próprio contra danos e furtos."
+    },
+    {
+      "question": "E se houver furto ou vandalismo?",
+      "answer": "O risco é nosso, não do condomínio. O monitoramento inibe a maioria das ocorrências e, quando algo acontece, nossa equipe trata diretamente, sem envolver a administração. O condomínio não arca com prejuízo.",
+      "featured": true
+    },
+    {
+      "question": "A conta de energia do condomínio aumenta?",
+      "answer": "Não. Instalamos um medidor individual e reembolsamos o consumo exato todos os meses — ou combinamos uma taxa fixa em contrato."
+    },
+    {
+      "question": "Qual é o prazo do contrato?",
+      "answer": "36 meses, o prazo necessário para amortizar o investimento em estrutura e tecnologia. A renovação é automática, salvo aviso com 90 dias de antecedência."
+    },
+    {
+      "question": "Quanto tempo leva a implantação?",
+      "answer": "Apresentamos o projeto personalizado em até 5 dias úteis após a visita técnica. Depois da aprovação em assembleia, a instalação leva de 15 a 30 dias, sem obra civil."
+    }
+  ]
+}

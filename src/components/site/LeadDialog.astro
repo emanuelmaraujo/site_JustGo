@@ -1,0 +1,108 @@
+---
+/**
+ * Painel "Agendar visita" (<dialog> nativo). Qualquer link com [data-lead-open]
+ * abre este painel quando há JS; sem JS, o link leva a /agendar-visita.
+ */
+import LeadForm from '@components/site/LeadForm.astro';
+import Icon from '@components/Icon.astro';
+import BrandSymbol from '@components/BrandSymbol.astro';
+import { CTA } from '@lib/site';
+---
+
+<dialog class="ld theme-dark" id="lead-dialog" aria-labelledby="ld-title" data-lead-dialog>
+  <div class="ld-panel">
+    <div class="ld-head">
+      <BrandSymbol class="ld-symbol" />
+      <button type="button" class="ld-close" aria-label="Fechar" data-lead-close>
+        <Icon name="close" size={20} />
+      </button>
+    </div>
+    <h2 id="ld-title" class="ld-title">{CTA.primary}</h2>
+    <p class="ld-text">
+      Conte um pouco sobre o seu condomínio. Uma pessoa do nosso time responde para combinar a visita técnica — sem
+      compromisso.
+    </p>
+    <LeadForm prefix="dlg" origin="dialog" />
+  </div>
+</dialog>
+
+<style>
+  @layer components {
+    .ld {
+      margin: 0 0 0 auto;
+      width: min(600px, 100%);
+      max-width: 100%;
+      height: 100%;
+      max-height: 100%;
+      padding: 0;
+      border: 0;
+      border-left: 1px solid var(--line);
+      background: var(--jg-ink-2);
+      color: var(--fg);
+      --bg: var(--jg-ink-2);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .ld::backdrop {
+      background: rgba(1, 5, 2, 0.6);
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+    }
+
+    .ld[open] {
+      animation: ld-in var(--dur-m) var(--ease-out-expo);
+    }
+
+    .ld[open]::backdrop {
+      animation: ld-fade var(--dur-s) var(--ease-soft);
+    }
+
+    @keyframes ld-in {
+      from {
+        transform: translateX(40px);
+        opacity: 0;
+      }
+    }
+
+    @keyframes ld-fade {
+      from {
+        opacity: 0;
+      }
+    }
+
+    .ld-panel {
+      padding: 24px clamp(20px, 4vw, 48px) 48px;
+    }
+
+    .ld-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 40px;
+    }
+
+    .ld-head :global(.ld-symbol) {
+      width: 32px;
+    }
+
+    .ld-close {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+    }
+
+    .ld-title {
+      font-size: clamp(2.25rem, 5vw, 3.25rem);
+      letter-spacing: var(--tracking-h1);
+    }
+
+    .ld-text {
+      margin: 16px 0 36px;
+      max-width: 44ch;
+    }
+  }
+</style>

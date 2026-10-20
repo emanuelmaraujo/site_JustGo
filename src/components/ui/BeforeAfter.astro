@@ -1,0 +1,156 @@
+---
+/**
+ * Slider antes/depois arrastável (hall vazio ↔ loja instalada).
+ * Acessível: role="slider", setas do teclado, Home/End, aria-valuenow.
+ * Sem JS, mostra a imagem "depois" inteira.
+ */
+import Photo from '@components/ui/Photo.astro';
+import Icon from '@components/Icon.astro';
+
+interface Shot {
+  name: string;
+  alt: string;
+  placeholder?: string;
+}
+
+interface Props {
+  before: Shot;
+  after: Shot;
+  ratio?: string;
+}
+
+const { before, after, ratio = '16/9' } = Astro.props;
+const sizes = '(min-width: 1320px) 1320px, 100vw';
+---
+
+<div class="ba" data-before-after style={`--ratio:${ratio}`}>
+  <div class="ba-layer ba-after">
+    <Photo {...after} ratio={ratio} rounded={false} sizes={sizes} illustrative />
+  </div>
+  <div class="ba-layer ba-before" aria-hidden="true">
+    <Photo {...before} ratio={ratio} rounded={false} sizes={sizes} illustrative />
+  </div>
+  <span class="ba-tag ba-tag-before" aria-hidden="true">Antes</span>
+  <span class="ba-tag ba-tag-after" aria-hidden="true">Depois</span>
+  <div
+    class="ba-handle"
+    role="slider"
+    tabindex="0"
+    aria-label="Comparar o espaço antes e depois da instalação"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="50"
+    aria-valuetext="Metade antes, metade depois"
+  >
+    <span class="ba-knob">
+      <Icon name="arrow-left" size={14} />
+      <Icon name="arrow-right" size={14} />
+    </span>
+  </div>
+</div>
+
+<style>
+  @layer components {
+    .ba {
+      --pos: 50%;
+      position: relative;
+      aspect-ratio: var(--ratio);
+      border-radius: var(--r-media);
+      overflow: hidden;
+      background: var(--jg-ink-2);
+      touch-action: pan-y;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .ba-layer {
+      position: absolute;
+      inset: 0;
+    }
+
+    .ba-layer :global(.photo) {
+      height: 100%;
+    }
+
+    .ba-before {
+      clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+    }
+
+    :global(html:not(.js)) .ba-before,
+    :global(html:not(.js)) .ba-handle,
+    :global(html:not(.js)) .ba-tag-before {
+      display: none;
+    }
+
+    .ba-tag {
+      position: absolute;
+      top: 18px;
+      z-index: 3;
+      padding: 6px 14px;
+      border-radius: var(--r-pill);
+      background: rgba(1, 5, 2, 0.6);
+      backdrop-filter: blur(10px);
+      color: var(--jg-offwhite);
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      letter-spacing: var(--tracking-label);
+      text-transform: uppercase;
+    }
+
+    .ba-tag-before {
+      left: 18px;
+    }
+
+    .ba-tag-after {
+      right: 18px;
+    }
+
+    .ba-handle {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: var(--pos);
+      z-index: 4;
+      width: 56px;
+      margin-left: -28px;
+      cursor: ew-resize;
+      display: grid;
+      place-items: center;
+      outline: none;
+    }
+
+    .ba-handle::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 1px;
+      background: var(--jg-offwhite);
+      opacity: 0.85;
+    }
+
+    .ba-knob {
+      position: relative;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      background: var(--jg-green);
+      color: var(--jg-black);
+      transition: transform var(--dur-s) var(--ease-out-expo);
+    }
+
+    .ba-handle:focus-visible .ba-knob {
+      outline: 2px solid var(--jg-offwhite);
+      outline-offset: 4px;
+    }
+
+    .ba.is-dragging .ba-knob {
+      transform: scale(0.92);
+    }
+  }
+</style>

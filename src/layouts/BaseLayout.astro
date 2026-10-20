@@ -1,93 +1,141 @@
 ---
+/**
+ * Layout base — Just Go Market
+ * - Ordem das camadas CSS declarada antes de qualquer folha de estilo.
+ * - Classes no <html> decididas antes da primeira pintura:
+ *     .js      → há JavaScript
+ *     .motion  → há JS e o usuário não pediu "reduzir movimento"
+ *     .intro-on / .intro-first → intro da home (só na 1ª visita da sessão)
+ * - Transição entre páginas: View Transitions nativas entre documentos (CSS),
+ *   sem roteador no cliente — o site continua estático, GTM/GA4 intactos.
+ */
 import SchemaOrg from '@components/SchemaOrg.astro';
 import Analytics from '@components/Analytics.astro';
+import AnalyticsNoscript from '@components/AnalyticsNoscript.astro';
+import Fonts from '@components/site/Fonts.astro';
+import Header from '@components/site/Header.astro';
+import Footer from '@components/site/Footer.astro';
+import Floating from '@components/site/Floating.astro';
+import LeadDialog from '@components/site/LeadDialog.astro';
+import Intro from '@components/site/Intro.astro';
+import FloorIndicator from '@components/site/FloorIndicator.astro';
 import { buildSEO, type SEOProps } from '@lib/seo';
-import { organizationSchema } from '@lib/schema';
+import { organizationSchema, websiteSchema } from '@lib/schema';
+
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/components.css';
 
 interface Props extends SEOProps {
   schemas?: Record<string, unknown>[];
-  headerDark?: boolean;
+  /** Intro do símbolo + portas (somente home). */
+  intro?: boolean;
+  /** Indicador de "andar" (somente home). */
+  floors?: boolean;
+  /** Oculta o painel de agendamento (ex.: na própria página de agendamento). */
+  leadDialog?: boolean;
+  /** Oculta a barra fixa de CTA no mobile. */
+  stickyCta?: boolean;
+  pageClass?: string;
 }
 
 const {
   schemas = [],
-  headerDark = false,
+  intro = false,
+  floors = false,
+  leadDialog = true,
+  stickyCta = true,
+  pageClass = '',
   ...seoProps
 } = Astro.props;
 
 const seo = buildSEO(seoProps, Astro.url.pathname);
-
-// Always include Organization schema globally
-const allSchemas = [organizationSchema(), ...schemas];
-
-// Import Global CSS
-import '../styles/global.css';
+const allSchemas = [organizationSchema(), websiteSchema(), ...schemas];
 ---
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!doctype html>
+<html lang="pt-BR" class:list={[pageClass]}>
+  <head>
+    <style is:inline>@layer reset, tokens, base, components, utilities;</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
-  <!-- SEO Core -->
-  <title>{seo.title}</title>
-  <meta name="description" content={seo.description} />
-  <link rel="canonical" href={seo.canonical} />
-  {seo.noindex
-    ? <meta name="robots" content="noindex, nofollow" />
-    : <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-  }
+    <script is:inline define:vars={{ intro }}>
+      (function (d, w) {
+        var c = d.documentElement.classList;
+        c.add('js');
+        var reduce = w.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!reduce) c.add('motion');
+        if (intro && !reduce) {
+          try {
+            if (!w.sessionStorage.getItem('jg-intro')) {
+              w.sessionStorage.setItem('jg-intro', '1');
+              c.add('intro-on', 'intro-first');
+            }
+          } catch (e) {}
+        }
+      })(document, window);
+    </script>
 
-  <!-- OpenGraph -->
-  <meta property="og:locale" content="pt_BR" />
-  <meta property="og:type" content={seo.ogType} />
-  <meta property="og:title" content={seo.title} />
-  <meta property="og:description" content={seo.description} />
-  <meta property="og:url" content={seo.canonical} />
-  <meta property="og:image" content={seo.ogImage} />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:site_name" content="Just Go Market — Mercado Autônomo para Condomínios" />
-
-  <!-- Twitter Cards -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content={seo.title} />
-  <meta name="twitter:description" content={seo.description} />
-  <meta name="twitter:image" content={seo.ogImage} />
-
-  <meta name="theme-color" content="#010502" />
-
-  <!-- Motion: ativa animações só se o usuário não pediu "reduzir movimento" -->
-  <script is:inline>
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      document.documentElement.classList.add('motion');
+    <title>{seo.title}</title>
+    <meta name="description" content={seo.description} />
+    <link rel="canonical" href={seo.canonical} />
+    {
+      seo.noindex ? (
+        <meta name="robots" content="noindex, follow" />
+      ) : (
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+      )
     }
-  </script>
 
-  <!-- Favicon -->
-  <link rel="icon" href="/assets/images/favicon.png" type="image/png" />
-  <link rel="apple-touch-icon" href="/assets/images/favicon.png" />
+    <!-- OpenGraph -->
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:type" content={seo.ogType} />
+    <meta property="og:title" content={seo.title} />
+    <meta property="og:description" content={seo.description} />
+    <meta property="og:url" content={seo.canonical} />
+    <meta property="og:image" content={seo.ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Just Go Market — O essencial, a um passo." />
+    <meta property="og:site_name" content="Just Go Market" />
 
-  <!-- Fonts (optimized) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700&family=Wix+Madefor+Display:wght@400;500;600;700&display=swap"
-    rel="stylesheet"
-  />
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={seo.title} />
+    <meta name="twitter:description" content={seo.description} />
+    <meta name="twitter:image" content={seo.ogImage} />
 
-  <!-- Schema.org -->
-  <SchemaOrg schemas={allSchemas} />
+    <meta name="theme-color" content="#010502" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="format-detection" content="telephone=no" />
 
-  <!-- Analytics -->
-  <Analytics />
-</head>
+    <link rel="icon" href="/assets/images/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/assets/images/favicon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
 
-<body>
-  <slot />
-  <script>
-    import '../scripts/motion';
-  </script>
-</body>
+    <Fonts />
+    <slot name="head" />
+
+    <SchemaOrg schemas={allSchemas} />
+    <Analytics />
+  </head>
+
+  <body>
+    <AnalyticsNoscript />
+    {intro && <Intro />}
+    <Header />
+    <main id="conteudo" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <Floating />
+    {floors && <FloorIndicator />}
+    {leadDialog && <LeadDialog />}
+    {!stickyCta && <style is:inline>.m-cta{display:none!important}</style>}
+
+    <script>
+      import '../scripts/site';
+    </script>
+  </body>
 </html>

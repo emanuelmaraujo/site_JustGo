@@ -1,0 +1,170 @@
+---
+/**
+ * Hero interno padrão: fundo preto, rótulo pequeno, H1 com máscara por palavra,
+ * um parágrafo e (opcional) uma imagem que expande com o scroll (media-expand).
+ */
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import SplitWords from '@components/ui/SplitWords.astro';
+import Photo from '@components/ui/Photo.astro';
+
+interface Crumb {
+  name: string;
+  href: string;
+}
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  lead?: string;
+  photo?: { name: string; alt: string; placeholder?: string; illustrative?: boolean; ratio?: string };
+  crumbs?: Crumb[];
+  floor?: string;
+}
+
+const { eyebrow, title, lead, photo, crumbs, floor } = Astro.props;
+---
+
+<section class="ph theme-dark" data-floor={floor} data-floor-label={floor ? eyebrow : undefined}>
+  <div class="container">
+    {
+      crumbs && (
+        <nav class="ph-crumbs" aria-label="Você está em">
+          <ol>
+            <li>
+              <a href="/">Início</a>
+            </li>
+            {crumbs.map((c, i) => (
+              <li>
+                {i === crumbs.length - 1 ? <span aria-current="page">{c.name}</span> : <a href={c.href}>{c.name}</a>}
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )
+    }
+    <div class="ph-grid">
+      <div>
+        <Eyebrow>{eyebrow}</Eyebrow>
+        <SplitWords tag="h1" immediate class="ph-title"><Fragment set:html={title} /></SplitWords>
+      </div>
+      {
+        (lead || Astro.slots.has('default')) && (
+          <div class="ph-side">
+            {lead && <p class="lead ph-lead">{lead}</p>}
+            <slot />
+          </div>
+        )
+      }
+    </div>
+  </div>
+  {
+    photo && (
+      <div class="ph-media" data-media-expand>
+        <Photo
+          {...photo}
+          ratio={photo.ratio ?? '21/9'}
+          sizes="100vw"
+          priority
+          rounded={false}
+          class="ph-photo"
+        />
+      </div>
+    )
+  }
+</section>
+
+<style>
+  @layer components {
+    .ph {
+      padding-top: calc(var(--header-h) + clamp(64px, 10vw, 136px));
+      padding-bottom: clamp(72px, 9vw, 120px);
+      overflow: clip;
+    }
+
+    .ph-crumbs ol {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 36px;
+      font-size: 0.8125rem;
+      color: var(--fg-3);
+    }
+
+    .ph-crumbs li + li::before {
+      content: '/';
+      margin-right: 8px;
+      opacity: 0.5;
+    }
+
+    .ph-crumbs a {
+      color: var(--fg-2);
+    }
+
+    .ph-crumbs [aria-current] {
+      color: var(--fg-2);
+    }
+
+    .ph-grid {
+      display: grid;
+      gap: 32px;
+    }
+
+    .ph-title {
+      margin-top: 28px;
+      font-size: var(--fs-h1-inner);
+      max-width: 14ch;
+    }
+
+    .ph-lead {
+      max-width: 42ch;
+    }
+
+    .ph-side {
+      display: grid;
+      gap: 32px;
+      align-content: end;
+    }
+
+    @media (min-width: 1024px) {
+      .ph-grid {
+        grid-template-columns: 7fr 4fr;
+        column-gap: 64px;
+        align-items: end;
+      }
+
+      .ph-side {
+        padding-bottom: 0.6em;
+      }
+    }
+
+    :global(.motion) .ph-side {
+      animation: ph-fade var(--dur-l) var(--ease-out-expo) 450ms both;
+    }
+
+    @keyframes ph-fade {
+      from {
+        opacity: 0;
+        transform: translateY(var(--reveal-distance));
+      }
+    }
+
+    .ph-media {
+      margin-top: clamp(56px, 8vw, 104px);
+      padding-inline: var(--gutter);
+    }
+
+    .ph-media :global(.ph-photo) {
+      border-radius: var(--r-media);
+    }
+
+    /* media-expand: começa como cartão e expande para a largura total (motion.ts) */
+    :global(.motion) .ph-media {
+      padding-inline: 0;
+      clip-path: inset(0 var(--gutter) round var(--r-media));
+    }
+
+    :global(.motion) .ph-media :global(.ph-photo) {
+      border-radius: 0;
+    }
+  }
+</style>

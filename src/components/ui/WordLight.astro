@@ -1,0 +1,26 @@
+---
+/**
+ * word-light: texto que "acende" com o scroll — cada palavra vai de 18% a 100%
+ * de opacidade conforme a leitura (motion.ts). Palavras divididas no servidor;
+ * sem JS ou com reduced-motion, o texto aparece normal.
+ */
+interface Props {
+  text: string;
+  tag?: 'p' | 'h2' | 'blockquote';
+  class?: string;
+  highlight?: string[];
+}
+
+const { text, tag: Tag = 'p', class: className = '', highlight = [] } = Astro.props as Props;
+const words: string[] = text.split(/\s+/).filter(Boolean);
+const clean = (w: string) => w.toLowerCase().replace(/[.,;:!?—]/g, '');
+const marks = new Set(highlight.map(clean));
+---
+
+<Tag class:list={['wl', className]} data-word-light>
+  {words.map((w: string, i: number) => (
+    <>
+      <span class:list={['wl-w', marks.has(clean(w)) && 'hl']}>{w}</span>{i < words.length - 1 ? ' ' : ''}
+    </>
+  ))}
+</Tag>

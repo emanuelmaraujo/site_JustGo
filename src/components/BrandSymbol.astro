@@ -1,31 +1,57 @@
 ---
 /**
- * Símbolo da Just Go Market (sacola + letra G, traço fluido),
- * desenhado em traço para poder ser animado.
- * draw = true → o traço se desenha quando entra na tela.
+ * Símbolo da Just Go Market — a sacola que é um "G", com o traço-sorriso.
+ * Linha central traçada sobre o arquivo oficial (apresentacao/logo.png):
+ * um único traço contínuo — contorno da sacola e, em seguida, o sorriso —
+ * o que permite desenhá-lo (draw-stroke) sem distorcer a marca.
+ *
+ * Regras do manual (6.3): não rotacionar, não distorcer, não recolorir.
+ * A espessura e a proporção são fixas; a cor padrão é o verde oficial.
+ * `tone` existe só para o grafismo tom sobre tom (background/pattern).
  */
+import { SYMBOL_PATH, SYMBOL_STROKE, SYMBOL_VIEWBOX } from '@lib/brand';
+
 interface Props {
   class?: string;
   draw?: boolean;
-  strokeWidth?: number;
+  tone?: 'green' | 'soft' | 'ink';
   label?: string;
+  id?: string;
 }
 
-const { class: className = '', draw = false, strokeWidth = 10, label } = Astro.props;
+const { class: className = '', draw = false, tone = 'green', label, id } = Astro.props;
+
+const colors = {
+  green: 'var(--jg-green)',
+  soft: 'var(--jg-green-soft)',
+  ink: 'var(--jg-ink-2)',
+};
+
 ---
 
 <svg
   class:list={['brand-symbol', className]}
-  viewBox="0 0 100 100"
+  id={id}
+  viewBox={SYMBOL_VIEWBOX}
   fill="none"
-  stroke="currentColor"
-  stroke-width={strokeWidth}
+  stroke={colors[tone]}
+  stroke-width={SYMBOL_STROKE}
   stroke-linejoin="round"
+  stroke-linecap="butt"
   data-draw={draw ? '' : undefined}
   role={label ? 'img' : undefined}
   aria-label={label}
   aria-hidden={label ? undefined : 'true'}
+  focusable="false"
 >
-  <path d="M81 30C79 18 70 12 60 12H40C30 12 22 19 20 29L13 75C12 83 17 89 25 89H75C83 89 88 83 87 75"></path>
-  <path d="M27 46C41 58 56 58 70 50C76 46 80 48 81 53L87 75"></path>
+  <path d={SYMBOL_PATH} pathLength="1"></path>
 </svg>
+
+<style>
+  @layer components {
+    .brand-symbol {
+      aspect-ratio: 1;
+      overflow: visible;
+    }
+  }
+</style>

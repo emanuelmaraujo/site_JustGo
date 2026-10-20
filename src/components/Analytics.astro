@@ -1,10 +1,15 @@
 ---
+/**
+ * Google Tag Manager (GTM-WXWBBVTR) — o GA4 (G-VTE2KWN948) é carregado pelo GTM.
+ * Eventos enviados ao dataLayer pelo site (src/scripts/site.ts):
+ * scroll_75, cta_agendar_visita, whatsapp_click, lead_submit, faq_open,
+ * diagnostico_start, diagnostico_step, diagnostico_submit, curadoria_view.
+ */
 interface Props {
   gtmId?: string;
-  ga4Id?: string;
 }
 
-const { gtmId = 'GTM-WXWBBVTR', ga4Id = 'G-VTE2KWN948' } = Astro.props;
+const { gtmId = 'GTM-WXWBBVTR' } = Astro.props;
 ---
 
 <!-- Google Tag Manager -->
@@ -32,9 +37,3 @@ const { gtmId = 'GTM-WXWBBVTR', ga4Id = 'G-VTE2KWN948' } = Astro.props;
     }, { passive: true });
   })();
 </script>
-
-<!-- GTM noscript fallback (place in body) -->
-<noscript>
-  <iframe src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
-    height="0" width="0" style="display:none;visibility:hidden"></iframe>
-</noscript>

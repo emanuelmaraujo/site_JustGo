@@ -1,0 +1,18 @@
+{
+  "order": 1,
+  "title": "Adega",
+  "kicker": "Para celebrar sem sair de casa",
+  "text": "Vinhos selecionados, espumantes e cervejas especiais, prontos para servir. A geladeira abre após uma verificação rápida de maioridade.",
+  "long": "Tintos, brancos e espumantes escolhidos para o jantar de terça e para a visita inesperada de sábado. Cervejas especiais e destilados completam a seleção. Tudo refrigerado e protegido: a geladeira de bebidas alcoólicas só abre depois de uma verificação de maioridade no totem ou no aplicativo.",
+  "items": [
+    "Vinhos tintos, brancos e rosés",
+    "Espumantes",
+    "Cervejas especiais",
+    "Destilados"
+  ],
+  "photo": {
+    "name": "curadoria-adega",
+    "alt": "Garrafas de vinho tinto e branco sobre pedra preta, com uma taça de cristal",
+    "placeholder": "Adega — garrafas de vinho sobre fundo preto, luz lateral suave"
+  }
+}

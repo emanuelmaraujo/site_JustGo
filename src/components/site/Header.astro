@@ -1,0 +1,350 @@
+---
+/**
+ * Header: transparente sobre o hero, vidro fosco (blur 14px) após 80px de scroll.
+ * Esconde ao descer e reaparece ao subir (site.ts).
+ * Menu mobile em tela cheia (<dialog> nativo: foco preso, Esc fecha).
+ */
+import Button from '@components/ui/Button.astro';
+import Icon from '@components/Icon.astro';
+import { NAV, CTA, SITE, whatsappUrl, WHATSAPP_DEFAULT_TEXT } from '@lib/site';
+
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = Astro.url.pathname } = Astro.props;
+const path = currentPath.replace(/\.html$/, '').replace(/\/$/, '') || '/';
+const isActive = (href: string) => path === href || (href !== '/' && path.startsWith(`${href}/`));
+---
+
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+<header class="hdr" data-header>
+  <div class="container hdr-inner">
+    <a href="/" class="hdr-logo" aria-label="Just Go Market — página inicial">
+      <img src="/assets/images/logo-negativo.png" alt="Just Go Market" width="640" height="92" />
+    </a>
+
+    <nav class="hdr-nav" aria-label="Navegação principal">
+      <ul>
+        {
+          NAV.map((item) => (
+            <li>
+              <a href={item.href} class="hdr-link" aria-current={isActive(item.href) ? 'page' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="hdr-actions">
+      <Button
+        href={CTA.primaryHref}
+        size="sm"
+        track="cta_agendar_visita"
+        origin="header"
+        data-lead-open
+        magnetic
+        class="hdr-cta"
+      >
+        {CTA.primary}
+      </Button>
+      <button
+        type="button"
+        class="hdr-burger"
+        aria-label="Abrir menu"
+        aria-controls="menu-mobile"
+        aria-expanded="false"
+        data-menu-open
+      >
+        <Icon name="menu" size={22} />
+      </button>
+    </div>
+  </div>
+</header>
+
+<dialog id="menu-mobile" class="mm" aria-label="Menu">
+  <div class="mm-inner">
+    <div class="mm-top">
+      <a href="/" class="hdr-logo" aria-label="Just Go Market — página inicial">
+        <img src="/assets/images/logo-negativo.png" alt="Just Go Market" width="640" height="92" loading="lazy" />
+      </a>
+      <button type="button" class="hdr-burger" aria-label="Fechar menu" data-menu-close>
+        <Icon name="close" size={22} />
+      </button>
+    </div>
+
+    <nav aria-label="Menu mobile">
+      <ul class="mm-list">
+        {
+          NAV.map((item, i) => (
+            <li style={`--i:${i}`}>
+              <a href={item.href} class="mm-link" aria-current={isActive(item.href) ? 'page' : undefined}>
+                <span class="mm-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="mm-foot" style={`--i:${NAV.length}`}>
+      <Button href={CTA.primaryHref} block track="cta_agendar_visita" origin="menu_mobile">
+        {CTA.primary}
+      </Button>
+      <div class="mm-contact">
+        <a href={whatsappUrl(WHATSAPP_DEFAULT_TEXT)} target="_blank" rel="noopener noreferrer" data-track="whatsapp_click" data-origin="menu_mobile">
+          <Icon name="whatsapp" size={18} /> {SITE.whatsappDisplay}
+        </a>
+        <a href={`mailto:${SITE.email}`}><Icon name="mail" size={18} /> {SITE.email}</a>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  @layer components {
+    .hdr {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 100;
+      height: var(--header-h);
+      color: var(--jg-offwhite);
+      transition:
+        transform var(--dur-m) var(--ease-out-expo),
+        background-color var(--dur-s) var(--ease-soft),
+        border-color var(--dur-s) var(--ease-soft);
+      border-bottom: 1px solid transparent;
+    }
+
+    .hdr.is-scrolled {
+      background: rgba(1, 5, 2, 0.72);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      backdrop-filter: blur(14px) saturate(140%);
+      border-bottom-color: rgba(255, 253, 252, 0.08);
+    }
+
+    .hdr.is-hidden {
+      transform: translateY(-100%);
+    }
+
+    .hdr-inner {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+    }
+
+    .hdr-logo {
+      display: block;
+      flex: none;
+      padding-block: 8px;
+    }
+
+    .hdr-logo img {
+      width: auto;
+      height: 24px;
+    }
+
+    .hdr-nav ul {
+      display: flex;
+      gap: clamp(20px, 2.6vw, 40px);
+    }
+
+    .hdr-link {
+      position: relative;
+      display: inline-block;
+      padding-block: 12px;
+      font-family: var(--font-display);
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--jg-mist);
+      transition: color var(--dur-xs) var(--ease-soft);
+    }
+
+    .hdr-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 6px;
+      height: 1px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform var(--dur-s) var(--ease-out-expo);
+    }
+
+    @media (hover: hover) {
+      .hdr-link:hover {
+        color: var(--jg-offwhite);
+      }
+
+      .hdr-link:hover::after {
+        transform: scaleX(1);
+        transform-origin: left;
+      }
+    }
+
+    .hdr-link[aria-current='page'] {
+      color: var(--jg-offwhite);
+    }
+
+    .hdr-link[aria-current='page']::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: -2px;
+      width: 4px;
+      height: 4px;
+      margin-left: -2px;
+      border-radius: 50%;
+      background: var(--jg-green);
+    }
+
+    .hdr-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hdr-burger {
+      display: none;
+      width: 48px;
+      height: 48px;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 253, 252, 0.18);
+      color: var(--jg-offwhite);
+    }
+
+    @media (max-width: 1023px) {
+      .hdr-nav,
+      .hdr-actions :global(.hdr-cta) {
+        display: none;
+      }
+
+      .hdr-burger {
+        display: grid;
+      }
+
+      .hdr-logo img {
+        height: 22px;
+      }
+    }
+
+    /* ---------- Menu mobile em tela cheia ---------- */
+    .mm {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      max-width: none;
+      height: 100%;
+      max-height: none;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: var(--jg-black);
+      color: var(--jg-offwhite);
+      --fg: var(--jg-offwhite);
+    }
+
+    .mm::backdrop {
+      background: var(--jg-black);
+    }
+
+    .mm[open] {
+      animation: mm-fade var(--dur-s) var(--ease-soft);
+    }
+
+    @keyframes mm-fade {
+      from { opacity: 0; }
+    }
+
+    .mm-inner {
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 0 var(--gutter) 32px;
+    }
+
+    .mm-top {
+      height: var(--header-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mm-top .hdr-burger {
+      display: grid;
+    }
+
+    .mm-list {
+      margin-top: 6vh;
+      display: grid;
+    }
+
+    .mm-list li,
+    .mm-foot {
+      animation: mm-in var(--dur-l) var(--ease-out-expo) both;
+      animation-delay: calc(var(--i) * 60ms + 120ms);
+    }
+
+    @keyframes mm-in {
+      from {
+        opacity: 0;
+        transform: translateY(28px);
+      }
+    }
+
+    .mm-link {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      padding-block: 14px;
+      border-bottom: 1px solid rgba(255, 253, 252, 0.1);
+      font-family: var(--font-title);
+      font-size: clamp(2rem, 9vw, 3rem);
+      font-weight: 500;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+    }
+
+    .mm-link[aria-current='page'] {
+      color: var(--jg-green);
+    }
+
+    .mm-num {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      color: var(--jg-ash);
+      transform: translateY(-0.6em);
+    }
+
+    .mm-foot {
+      margin-top: auto;
+      padding-top: 40px;
+      display: grid;
+      gap: 24px;
+    }
+
+    .mm-contact {
+      display: grid;
+      gap: 4px;
+      font-size: var(--fs-small);
+      color: var(--jg-mist);
+    }
+
+    .mm-contact a {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+    }
+  }
+</style>

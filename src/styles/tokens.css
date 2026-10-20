@@ -1,0 +1,135 @@
+/* =============================================================
+   JUST GO MARKET — Design tokens
+   Paleta oficial (Manual de Identidade Visual):
+     Preto #010502 (~55%) · Off-white #FFFDFC (~35%) · Verde #A0E261 (~10%)
+   Regra: nunca texto verde sobre fundo claro (contraste ~1,5:1).
+   ============================================================= */
+
+@layer tokens {
+  :root {
+    /* Marca */
+    --jg-black: #010502;
+    --jg-offwhite: #fffdfc;
+    --jg-green: #a0e261;
+
+    /* Derivados permitidos (neutros e tons do próprio verde) */
+    --jg-ink-2: #0b110c;      /* superfície elevada no escuro */
+    --jg-ink-3: #141b15;
+    --jg-paper: #f4f3ef;      /* superfície alternativa no claro */
+    --jg-mist: #b9bdb8;       /* texto secundário no escuro — 11:1 */
+    --jg-ash: #8a908a;        /* texto terciário no escuro — 6,2:1 */
+    --jg-stone: #5c615c;      /* texto secundário no claro — 6,1:1 */
+    --jg-green-soft: #b8ea86; /* tom sobre tom no verde */
+    --jg-green-deep: #8fcf52; /* tom sobre tom (fundo do símbolo) */
+
+    /* Tipografia */
+    --font-title: 'Alexandria', 'Alexandria Fallback', system-ui, sans-serif;
+    --font-display: 'Wix Madefor Display', 'Wix Madefor Fallback', system-ui, sans-serif;
+    --font-body: 'Wix Madefor Text', 'Wix Madefor Fallback', system-ui, sans-serif;
+
+    --fs-h1: clamp(3rem, 8vw, 7.5rem);
+    --fs-h1-inner: clamp(2.6rem, 6.4vw, 6rem);
+    --fs-h2: clamp(2.1rem, 4.6vw, 4.25rem);
+    --fs-h3: clamp(1.35rem, 2vw, 1.75rem);
+    --fs-statement: clamp(1.9rem, 4.2vw, 3.9rem);
+    --fs-lead: clamp(1.125rem, 1.6vw, 1.375rem);
+    --fs-body: 1.0625rem;
+    --fs-small: 0.9375rem;
+    --fs-label: 0.75rem;
+
+    --tracking-h1: -0.045em;
+    --tracking-h2: -0.04em;
+    --tracking-label: 0.12em;
+
+    /* Espaço e layout */
+    --container: 1320px;
+    --gutter: clamp(16px, 4vw, 48px);
+    --section-y: clamp(96px, 13vw, 200px);
+    --header-h: 80px;
+
+    /* Raios — coerentes com os cantos arredondados do símbolo */
+    --r-xs: 10px;
+    --r-card: 24px;
+    --r-media: 32px;
+    --r-pill: 999px;
+
+    /* Motion (§9.2) */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out: cubic-bezier(0.7, 0, 0.2, 1);
+    --ease-soft: cubic-bezier(0.2, 0.7, 0.1, 1);
+    --dur-xs: 200ms;
+    --dur-s: 400ms;
+    --dur-m: 700ms;
+    --dur-l: 1100ms;
+    --stagger: 80ms;
+    --reveal-distance: 32px;
+
+    /* Tema padrão: escuro */
+    --bg: var(--jg-black);
+    --fg: var(--jg-offwhite);
+    --fg-2: var(--jg-mist);
+    --fg-3: var(--jg-ash);
+    --line: rgba(255, 253, 252, 0.12);
+    --surface: var(--jg-ink-2);
+    --accent-text: var(--jg-green);
+  }
+
+  @media (max-width: 767px) {
+    :root {
+      --reveal-distance: 20px;
+      --dur-m: 500ms;
+      --header-h: 68px;
+    }
+  }
+
+  /* Temas de seção */
+  .theme-dark {
+    --bg: var(--jg-black);
+    --fg: var(--jg-offwhite);
+    --fg-2: var(--jg-mist);
+    --fg-3: var(--jg-ash);
+    --line: rgba(255, 253, 252, 0.12);
+    --surface: var(--jg-ink-2);
+    --accent-text: var(--jg-green);
+  }
+
+  .theme-ink {
+    --bg: var(--jg-ink-2);
+    --fg: var(--jg-offwhite);
+    --fg-2: var(--jg-mist);
+    --fg-3: var(--jg-ash);
+    --line: rgba(255, 253, 252, 0.12);
+    --surface: var(--jg-ink-3);
+    --accent-text: var(--jg-green);
+  }
+
+  .theme-light {
+    --bg: var(--jg-offwhite);
+    --fg: var(--jg-black);
+    --fg-2: var(--jg-stone);
+    --fg-3: var(--jg-stone);
+    --line: #e3e1dc;
+    --surface: var(--jg-paper);
+    --accent-text: var(--jg-black); /* verde nunca como texto no claro */
+  }
+
+  .theme-paper {
+    --bg: var(--jg-paper);
+    --fg: var(--jg-black);
+    --fg-2: var(--jg-stone);
+    --fg-3: var(--jg-stone);
+    --line: #dddbd5;
+    --surface: var(--jg-offwhite);
+    --accent-text: var(--jg-black);
+  }
+
+  .theme-green {
+    --bg: var(--jg-green);
+    --fg: var(--jg-black);
+    --fg-2: #1d2a12;
+    --fg-3: #1d2a12;
+    --line: rgba(1, 5, 2, 0.18);
+    --surface: var(--jg-green-soft);
+    --accent-text: var(--jg-black);
+  }
+}

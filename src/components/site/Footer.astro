@@ -1,0 +1,204 @@
+---
+/**
+ * Footer: logotipo, slogan, navegação enxuta, regiões atendidas (SEO local),
+ * contato e textos legais. O wordmark grande ao fundo revela-se com máscara
+ * de baixo para cima (sem distorção).
+ */
+import Icon from '@components/Icon.astro';
+import { SITE, FOOTER_NAV, REGIONS, LEGAL, whatsappUrl, WHATSAPP_DEFAULT_TEXT } from '@lib/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="ftr theme-dark" data-footer>
+  <div class="container">
+    <div class="ftr-grid">
+      <div class="ftr-brand">
+        <img src="/assets/images/logo-negativo.png" alt="Just Go Market" width="640" height="92" loading="lazy" />
+        <p class="ftr-slogan">{SITE.slogan}</p>
+        <p class="ftr-about">
+          Mercado autônomo de alto padrão para condomínios em Brasília. Instalado e operado por nós, sem custo para o
+          condomínio.
+        </p>
+      </div>
+
+      <nav class="ftr-col" aria-labelledby="ftr-nav-title">
+        <h2 id="ftr-nav-title" class="ftr-title">Navegue</h2>
+        <ul>
+          {FOOTER_NAV.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        </ul>
+      </nav>
+
+      <nav class="ftr-col" aria-labelledby="ftr-regions-title">
+        <h2 id="ftr-regions-title" class="ftr-title">Onde estamos</h2>
+        <ul>
+          {REGIONS.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        </ul>
+      </nav>
+
+      <div class="ftr-col">
+        <h2 class="ftr-title">Fale com a gente</h2>
+        <ul>
+          <li>
+            <a
+              href={whatsappUrl(WHATSAPP_DEFAULT_TEXT)}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-track="whatsapp_click"
+              data-origin="footer"
+            >
+              <Icon name="whatsapp" size={16} />
+              {SITE.whatsappDisplay}
+            </a>
+          </li>
+          <li>
+            <a href={`mailto:${SITE.email}`}>
+              <Icon name="mail" size={16} />
+              {SITE.email}
+            </a>
+          </li>
+          <li class="ftr-place"><Icon name="pin" size={16} /> {SITE.city}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ftr-bottom">
+      <p>© {year} Just Go Market</p>
+      <ul>
+        {LEGAL.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+      </ul>
+      <p>Feito em Brasília</p>
+    </div>
+  </div>
+
+  <div class="ftr-word" data-wordmark aria-hidden="true">
+    <img src="/assets/images/wordmark-negativo.png" alt="" width="1247" height="181" loading="lazy" decoding="async" />
+  </div>
+</footer>
+
+<style>
+  @layer components {
+    .ftr {
+      position: relative;
+      padding-top: clamp(88px, 10vw, 140px);
+      overflow: hidden;
+      border-top: 1px solid var(--line);
+    }
+
+    .ftr-grid {
+      display: grid;
+      gap: 48px;
+    }
+
+    @media (min-width: 768px) {
+      .ftr-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (min-width: 1100px) {
+      .ftr-grid {
+        grid-template-columns: 5fr 3fr 3fr 4fr;
+      }
+    }
+
+    .ftr-brand img {
+      height: 26px;
+      width: auto;
+    }
+
+    .ftr-slogan {
+      margin-top: 28px;
+      font-family: var(--font-title);
+      font-size: clamp(1.5rem, 2.4vw, 2rem);
+      font-weight: 500;
+      letter-spacing: -0.035em;
+      line-height: 1.1;
+      color: var(--fg);
+    }
+
+    .ftr-about {
+      margin-top: 16px;
+      max-width: 36ch;
+      font-size: var(--fs-small);
+    }
+
+    .ftr-title {
+      font-family: var(--font-display);
+      font-size: var(--fs-label);
+      font-weight: 500;
+      letter-spacing: var(--tracking-label);
+      text-transform: uppercase;
+      color: var(--fg-3);
+      margin-bottom: 16px;
+    }
+
+    .ftr-col li a,
+    .ftr-place {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 40px;
+      font-size: var(--fs-small);
+      color: var(--fg-2);
+      transition: color var(--dur-xs) var(--ease-soft);
+    }
+
+    @media (hover: hover) {
+      .ftr-col li a:hover {
+        color: var(--fg);
+      }
+    }
+
+    .ftr-bottom {
+      margin-top: clamp(64px, 8vw, 104px);
+      padding-block: 24px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 32px;
+      justify-content: space-between;
+      font-size: 0.8125rem;
+    }
+
+    .ftr-bottom p {
+      color: var(--fg-3);
+    }
+
+    .ftr-bottom ul {
+      display: flex;
+      gap: 24px;
+    }
+
+    .ftr-bottom a {
+      display: inline-block;
+      padding-block: 4px;
+      color: var(--fg-2);
+    }
+
+    .ftr-word {
+      padding: 0 var(--gutter);
+      margin-top: 8px;
+      line-height: 0;
+    }
+
+    .ftr-word img {
+      width: 100%;
+      height: auto;
+      opacity: 0.16;
+    }
+
+    :global(.motion) .ftr-word img {
+      clip-path: inset(100% 0 0 0);
+      transform: translateY(18%);
+      transition:
+        clip-path 1.4s var(--ease-in-out),
+        transform 1.6s var(--ease-out-expo);
+    }
+
+    :global(.motion) .ftr-word.is-in img {
+      clip-path: inset(0 0 0 0);
+      transform: none;
+    }
+  }
+</style>

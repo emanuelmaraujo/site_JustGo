@@ -1,0 +1,11 @@
+---
+/** Rótulo de seção: caixa alta pequena, Wix Madefor, com o ponto verde. */
+interface Props {
+  tag?: 'span' | 'p' | 'div';
+  plain?: boolean;
+  class?: string;
+}
+const { tag: Tag = 'span', plain = false, class: className = '' } = Astro.props as Props;
+---
+
+<Tag class:list={['eyebrow', plain && 'eyebrow-plain', className]}><slot /></Tag>

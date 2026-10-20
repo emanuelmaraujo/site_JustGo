@@ -1,0 +1,47 @@
+---
+/**
+ * split-words renderizado no servidor: envolve cada palavra numa máscara
+ * (.sw) para a revelação de baixo para cima. Funciona sem JS — o texto é
+ * HTML normal; a classe .motion no <html> é que ativa a animação.
+ *
+ * Preserva tags internas (ex.: <span class="hl">). Leitores de tela leem
+ * o texto normalmente (as máscaras são spans sem semântica).
+ *
+ * immediate → anima já no carregamento (hero), sem esperar o scroll
+ */
+interface Props {
+  tag?: 'h1' | 'h2' | 'h3' | 'p' | 'span' | 'div';
+  immediate?: boolean;
+  delay?: number;
+  class?: string;
+  id?: string;
+}
+
+const { tag: Tag = 'h2', immediate = false, delay = 0, class: className = '', id } = Astro.props as Props;
+
+const html = (await Astro.slots.render('default')).trim();
+
+let i = 0;
+const out = html
+  .split(/(<[^>]+>)/g)
+  .map((part) => {
+    if (!part || part.startsWith('<')) return part;
+    return part
+      .split(/(\s+)/)
+      .map((w) => {
+        if (!w) return '';
+        if (/^\s+$/.test(w)) return ' ';
+        return `<span class="sw"><span style="--i:${i++}">${w}</span></span>`;
+      })
+      .join('');
+  })
+  .join('');
+---
+
+<Tag
+  class:list={[className, immediate && 'split-now']}
+  id={id}
+  data-split={immediate ? undefined : ''}
+  style={delay ? `--split-delay:${delay}ms` : undefined}
+  set:html={out}
+/>

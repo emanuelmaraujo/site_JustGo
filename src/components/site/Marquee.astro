@@ -1,0 +1,54 @@
+---
+/**
+ * Faixa de marcas (marquee): CSS puro, translateX(-50%), pausa no hover,
+ * máscara nas bordas. Só aparece com marcas premium confirmadas (PREMIUM_BRANDS).
+ */
+interface Props {
+  brands: string[];
+}
+const { brands } = Astro.props;
+---
+
+<div class="mq" aria-label="Algumas marcas da curadoria">
+  <ul class="mq-track">
+    {brands.map((b) => <li>{b}</li>)}
+    {brands.map((b) => <li aria-hidden="true">{b}</li>)}
+  </ul>
+</div>
+
+<style>
+  @layer components {
+    .mq {
+      margin-top: 72px;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+      mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    }
+
+    .mq-track {
+      display: flex;
+      gap: clamp(40px, 6vw, 96px);
+      width: max-content;
+      animation: mq 40s linear infinite;
+    }
+
+    .mq:hover .mq-track {
+      animation-play-state: paused;
+    }
+
+    .mq-track li {
+      font-family: var(--font-display);
+      font-size: 1.125rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--fg-3);
+      white-space: nowrap;
+    }
+
+    @keyframes mq {
+      to {
+        transform: translateX(calc(-50% - clamp(20px, 3vw, 48px)));
+      }
+    }
+  }
+</style>

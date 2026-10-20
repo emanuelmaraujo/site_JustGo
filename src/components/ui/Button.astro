@@ -1,0 +1,74 @@
+---
+/**
+ * Botão pill (52–56px). Primário: verde com texto preto e a seta circular.
+ * Secundário: contorno fino. O mesmo componente serve para <a> e <button>.
+ *
+ * track → nome do evento no dataLayer disparado no clique (ex.: cta_agendar_visita)
+ * origin → seção de origem, enviada junto com o evento
+ */
+import Icon, { type IconName } from '@components/Icon.astro';
+
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary';
+  size?: 'md' | 'sm';
+  icon?: IconName | false;
+  type?: 'button' | 'submit';
+  external?: boolean;
+  block?: boolean;
+  track?: string;
+  origin?: string;
+  magnetic?: boolean;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  icon = 'arrow-up-right',
+  type = 'button',
+  external = false,
+  block = false,
+  track,
+  origin,
+  magnetic = false,
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const classes = [
+  'btn',
+  `btn-${variant}`,
+  size === 'sm' && 'btn-sm',
+  block && 'btn-block',
+  className,
+];
+
+const data = {
+  'data-track': track,
+  'data-origin': origin,
+  'data-magnetic': magnetic ? '' : undefined,
+};
+---
+
+{href ? (
+  <a
+    href={href}
+    class:list={classes}
+    target={external ? '_blank' : undefined}
+    rel={external ? 'noopener noreferrer' : undefined}
+    {...data}
+    {...rest}
+  >
+    <span class="btn-label"><slot /></span>
+    {icon && <span class="btn-icon" aria-hidden="true"><Icon name={icon} size={16} /></span>}
+    {external && <span class="sr-only">(abre em nova aba)</span>}
+  </a>
+) : (
+  <button type={type} class:list={classes} {...data} {...rest}>
+    <span class="btn-label"><slot /></span>
+    {icon && <span class="btn-icon" aria-hidden="true"><Icon name={icon} size={16} /></span>}
+  </button>
+)}

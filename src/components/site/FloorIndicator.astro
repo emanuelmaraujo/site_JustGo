@@ -1,0 +1,85 @@
+---
+/**
+ * Indicador de "andar" (assinatura da home, apenas desktop): um pequeno painel
+ * de elevador fixo no canto que mostra a seção atual — descendo até "T",
+ * o térreo onde fica a loja (o CTA final). Lê data-floor das seções.
+ */
+---
+
+<div class="floor" data-floor-indicator aria-hidden="true">
+  <span class="floor-arrows">
+    <svg viewBox="0 0 10 14" width="8" height="12"><path d="M5 1L9 5H1z" class="floor-up"></path><path d="M5 13L1 9h8z" class="floor-down"></path></svg>
+  </span>
+  <span class="floor-num" data-floor-num>—</span>
+  <span class="floor-label" data-floor-label></span>
+</div>
+
+<style>
+  @layer components {
+    .floor {
+      display: none;
+    }
+
+    @media (min-width: 1100px) and (hover: hover) {
+      :global(.js) .floor {
+        position: fixed;
+        left: 12px;
+        top: 50%;
+        z-index: 80;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        width: 36px;
+        padding: 12px 0;
+        border-radius: var(--r-pill);
+        border: 1px solid rgba(255, 253, 252, 0.14);
+        background: rgba(1, 5, 2, 0.66);
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+        color: var(--jg-offwhite);
+        font-family: var(--font-display);
+        font-size: 12px;
+        opacity: 0;
+        transform: translate(-8px, -50%);
+        transition:
+          opacity var(--dur-s) var(--ease-soft),
+          transform var(--dur-m) var(--ease-out-expo);
+      }
+
+      :global(.js) .floor.is-visible {
+        opacity: 1;
+        transform: translate(0, -50%);
+      }
+    }
+
+    .floor-arrows path {
+      fill: rgba(255, 253, 252, 0.25);
+      transition: fill var(--dur-s) var(--ease-soft);
+    }
+
+    .floor[data-dir='down'] .floor-down,
+    .floor[data-dir='up'] .floor-up {
+      fill: var(--jg-green);
+    }
+
+    .floor-num {
+      min-width: 2ch;
+      font-family: var(--font-title);
+      font-weight: 600;
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+      color: var(--jg-green);
+    }
+
+    .floor-label {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      color: var(--jg-mist);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-label);
+      font-size: 10px;
+      line-height: 1;
+    }
+  }
+</style>
