@@ -71,7 +71,8 @@ function mediaExpand() {
       gsap.fromTo(
         img,
         { scale: 1.12 },
-        { scale: 1, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true } },
+        // termina em 1.04 para sobrar margem ao paralaxe do ponteiro (heroPointer)
+        { scale: 1.04, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true } },
       );
     }
   });
@@ -250,6 +251,149 @@ function magnetic(mm: gsap.MatchMedia) {
   });
 }
 
+/* ---------------- store-tour: o scroll anda pela loja ---------------- */
+// Fachada aproxima → interior abre do centro (como uma porta) → balcão entra pela direita
+// (como quem vira o olhar). Palco fixo; scrub suave com snap nas três paradas.
+// Só transform/opacity (compositor): a "janela" cresce com a imagem contra-escalada e a
+// cortina entra com contra-translação — nada de clip-path em camada de tela cheia.
+function storeTour(mm: gsap.MatchMedia) {
+  mm.add(`${DESKTOP} and (min-height: 600px)`, () => {
+    const tours = Array.from(document.querySelectorAll<HTMLElement>('[data-tour]'));
+    const cleanups: (() => void)[] = [];
+    tours.forEach((tour) => {
+      const frames = Array.from(tour.querySelectorAll<HTMLElement>('.tour-frame'));
+      if (frames.length < 3) return;
+      tour.classList.add('is-pinned');
+      const stage = tour.querySelector<HTMLElement>('.tour-stage')!;
+      const img = (f: HTMLElement) => f.querySelector('.photo-img');
+      const media = (f: HTMLElement) => f.querySelector('.tour-media');
+      const copy = (f: HTMLElement) => f.querySelector('.tour-copy');
+      const ticks = Array.from(tour.querySelectorAll<HTMLElement>('[data-tick]'));
+      const setActive = (i: number) => {
+        ticks.forEach((t, k) => t.classList.toggle('is-active', k === i));
+        frames.forEach((f, k) => {
+          f.toggleAttribute('inert', k !== i);
+          f.setAttribute('aria-hidden', String(k !== i));
+        });
+        tour.classList.toggle('is-live', i === 1);
+      };
+      setActive(0);
+
+      const W = 0.32; // tamanho inicial da "janela" do interior
+      gsap.set(frames[1], { scale: W, borderRadius: 28 });
+      gsap.set(media(frames[1]), { scale: 1 / W });
+      gsap.set(frames[2], { xPercent: 100 });
+      gsap.set(media(frames[2]), { xPercent: -100 });
+      gsap.set([copy(frames[1]), copy(frames[2])], { autoAlpha: 0, y: 30 });
+
+      const tl = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: {
+          trigger: stage,
+          start: 'top top',
+          end: '+=260%',
+          pin: true,
+          scrub: 0.8,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          snap: { snapTo: [0, 0.5, 1], duration: { min: 0.2, max: 0.6 }, ease: 'power2.inOut', delay: 0.05 },
+          onUpdate: (st) => setActive(st.progress < 0.3 ? 0 : st.progress < 0.78 ? 1 : 2),
+        },
+      });
+
+      // 0 → 1: aproxima da fachada e "entra"
+      tl.fromTo(img(frames[0]), { scale: 1.08 }, { scale: 1.32, duration: 1 }, 0)
+        .to(copy(frames[0]), { autoAlpha: 0, y: -30, duration: 0.35 }, 0.25)
+        .to(frames[1], { scale: 1, borderRadius: 0, duration: 0.75 }, 0.25)
+        .to(media(frames[1]), { scale: 1, duration: 0.75 }, 0.25)
+        .fromTo(img(frames[1]), { scale: 1.2 }, { scale: 1.06, duration: 0.75 }, 0.25)
+        .to(copy(frames[1]), { autoAlpha: 1, y: 0, duration: 0.3 }, 0.7)
+        // 1 → 2: o olhar vira para o balcão
+        .to(img(frames[1]), { xPercent: -6, duration: 1 }, 1.1)
+        .to(copy(frames[1]), { autoAlpha: 0, y: -30, duration: 0.3 }, 1.25)
+        .to(frames[2], { xPercent: 0, duration: 0.75 }, 1.3)
+        .to(media(frames[2]), { xPercent: 0, duration: 0.75 }, 1.3)
+        .fromTo(img(frames[2]), { scale: 1.12 }, { scale: 1.02, duration: 0.9 }, 1.3)
+        .to(copy(frames[2]), { autoAlpha: 1, y: 0, duration: 0.3 }, 1.8)
+        .to({}, { duration: 0.2 });
+
+      cleanups.push(() => {
+        tour.classList.remove('is-pinned', 'is-live');
+        frames.forEach((f) => {
+          f.removeAttribute('inert');
+          f.removeAttribute('aria-hidden');
+        });
+        gsap.set([...frames, ...frames.map(img), ...frames.map(media), ...frames.map(copy)], { clearProps: 'all' });
+      });
+    });
+    return () => cleanups.forEach((c) => c());
+  });
+
+  // Sem palco fixo (celular/tablet): pulsos dos pontos só quando o interior está na tela
+  mm.add(`not all and ${DESKTOP}`, () => {
+    const triggers = Array.from(document.querySelectorAll<HTMLElement>('[data-tour]')).map((tour) =>
+      ScrollTrigger.create({
+        trigger: tour.querySelector('.tour-frame[data-frame="1"]') ?? tour,
+        start: 'top 80%',
+        end: 'bottom 20%',
+        toggleClass: { targets: tour, className: 'is-live' },
+      }),
+    );
+    return () => triggers.forEach((t) => t.kill());
+  });
+}
+
+/* ---------------- hero: a imagem acompanha o ponteiro (bem de leve) ---------------- */
+function heroPointer(mm: gsap.MatchMedia) {
+  mm.add(`${DESKTOP} and ${FINE}`, () => {
+    const media = document.querySelector<HTMLElement>('[data-hero-media]');
+    const photo = media?.querySelector<HTMLElement>('.photo-img');
+    if (!media || !photo) return;
+    const x = gsap.quickTo(photo, 'x', { duration: 1.2, ease: 'power3.out' });
+    const y = gsap.quickTo(photo, 'y', { duration: 1.2, ease: 'power3.out' });
+    const onMove = (e: PointerEvent) => {
+      const r = media.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > window.innerHeight) return;
+      x(((e.clientX / window.innerWidth) - 0.5) * -16);
+      y(((e.clientY / window.innerHeight) - 0.5) * -10);
+    };
+    window.addEventListener('pointermove', onMove, { passive: true });
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      gsap.set(photo, { clearProps: 'transform' });
+    };
+  });
+}
+
+/* ---------------- tilt: profundidade 3D nos cartões (só ponteiro fino) ---------------- */
+function tilt(mm: gsap.MatchMedia) {
+  mm.add(`${DESKTOP} and ${FINE}`, () => {
+    const items = Array.from(document.querySelectorAll<HTMLElement>('[data-tilt]'));
+    const offs = items.map((el) => {
+      gsap.set(el, { transformPerspective: 900, transformOrigin: 'center' });
+      const rx = gsap.quickTo(el, 'rotationX', { duration: 0.6, ease: 'power3.out' });
+      const ry = gsap.quickTo(el, 'rotationY', { duration: 0.6, ease: 'power3.out' });
+      const move = (e: PointerEvent) => {
+        const r = el.getBoundingClientRect();
+        ry(((e.clientX - r.left) / r.width - 0.5) * 7);
+        rx(((e.clientY - r.top) / r.height - 0.5) * -7);
+      };
+      const leave = () => {
+        rx(0);
+        ry(0);
+      };
+      el.addEventListener('pointermove', move, { passive: true });
+      el.addEventListener('pointerleave', leave);
+      return () => {
+        el.removeEventListener('pointermove', move);
+        el.removeEventListener('pointerleave', leave);
+        gsap.set(el, { clearProps: 'transform' });
+      };
+    });
+    return () => offs.forEach((o) => o());
+  });
+}
+
 export function initMotion() {
   document.documentElement.classList.add('motion-ready');
   initLenis();
@@ -260,6 +404,9 @@ export function initMotion() {
   horizontalGallery(mm);
   curtain();
   magnetic(mm);
+  storeTour(mm);
+  heroPointer(mm);
+  tilt(mm);
 
   // Pins dependem da ordem na página; recalcula após fontes e imagens
   ScrollTrigger.sort();

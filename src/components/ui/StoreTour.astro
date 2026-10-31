@@ -1,0 +1,458 @@
+---
+/**
+ * Tour pela loja (projeto conceitual premium).
+ *
+ * Base (celular, sem JS, "reduzir movimento"): três quadros empilhados, cada um com o seu texto,
+ * e os pontos interativos sempre visíveis no interior.
+ * Desktop com movimento (motion.ts → storeTour): a seção fica fixa e o scroll "anda" pela loja —
+ * a fachada aproxima, o interior se abre a partir do centro e o balcão entra como quem vira o olhar.
+ * Só transform, opacity e clip-path; scrub com snap nas três paradas.
+ *
+ * Pontos interativos: botões reais (teclado e toque); o texto aparece em hover, foco ou toque.
+ */
+import Photo from '@components/ui/Photo.astro';
+
+const frames = [
+  {
+    photo: 'premium-fachada',
+    alt: 'Projeto conceitual: loja Just Go integrada ao lobby de um condomínio, à noite, com fachada de vidro e madeira',
+    kicker: 'A chegada',
+    title: 'Integrada ao lobby, como parte da arquitetura.',
+    text: 'Vidro, madeira e luz quente. A loja conversa com a área comum em vez de parecer um módulo de franquia.',
+  },
+  {
+    photo: 'premium-interior',
+    alt: 'Projeto conceitual do interior: geladeiras de vidro, gôndola central em madeira, adega na parede e balcão de travertino',
+    kicker: 'Lá dentro',
+    title: 'Um empório compacto, organizado como boutique.',
+    text: 'Toque nos pontos para conhecer cada área.',
+    hotspots: [
+      { x: 18, y: 46, title: 'Geladeiras', text: 'Bebidas, laticínios e congelados com porta de vidro e luz interna.' },
+      { x: 52, y: 60, title: 'Gôndola de curadoria', text: 'Empório, café da manhã e frutas, reposto pela equipe Just Go.' },
+      { x: 87, y: 31, title: 'Adega', text: 'Vinhos e espumantes selecionados para o perfil do condomínio.' },
+      { x: 84, y: 57, title: 'Autoatendimento', text: 'O morador lê os códigos e paga por Pix no totem. Sem fila e sem caixa.' },
+    ],
+  },
+  {
+    photo: 'premium-adega',
+    alt: 'Projeto conceitual: balcão de travertino com dois totens ao lado de uma adega climatizada',
+    kicker: 'O balcão',
+    title: 'Adega climatizada e pagamento em segundos.',
+    text: 'Dois totens de autoatendimento, ao lado da adega. O morador pega, lê o código, paga e segue.',
+  },
+];
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<div class="tour" data-tour>
+  <div class="tour-stage">
+    {
+      frames.map((f, i) => (
+        <article class="tour-frame" data-frame={i} aria-label={`${pad(i + 1)} de ${pad(frames.length)}: ${f.kicker}`}>
+          <div class="tour-media">
+            <Photo
+              name={f.photo}
+              alt={f.alt}
+              ratio="16/9"
+              sizes="100vw"
+              rounded={false}
+              kind="concept"
+              class="tour-photo"
+            />
+            {f.hotspots && (
+              <ul class="tour-spots" aria-label="Áreas da loja">
+                {f.hotspots.map((h, k) => (
+                  <li class:list={['spot', h.y < 40 && 'spot-down']} style={`--x:${h.x}%;--y:${h.y}%`}>
+                    <button
+                      type="button"
+                      class="spot-btn"
+                      aria-expanded="false"
+                      aria-controls={`spot-${k}`}
+                      data-spot
+                    >
+                      <span class="spot-dot" aria-hidden="true" />
+                      <span class="sr-only">{h.title}</span>
+                    </button>
+                    <div class="spot-card" id={`spot-${k}`} role="tooltip">
+                      <strong>{h.title}</strong>
+                      <span>{h.text}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <div class="tour-copy">
+            <p class="tour-kicker">
+              <span class="tour-n">{pad(i + 1)}</span>
+              {f.kicker}
+            </p>
+            <h3 class="tour-title">{f.title}</h3>
+            <p class="tour-text">{f.text}</p>
+          </div>
+        </article>
+      ))
+    }
+    <ol class="tour-progress" aria-hidden="true">
+      {frames.map((f, i) => (
+        <li data-tick={i}>
+          <span class="tour-tick" />
+          <span class="tour-tick-label">{f.kicker}</span>
+        </li>
+      ))}
+    </ol>
+  </div>
+</div>
+
+<script>
+  // Pontos interativos: um aberto por vez; fecha com Esc ou toque fora.
+  document.querySelectorAll<HTMLElement>('[data-tour]').forEach((tour) => {
+    const buttons = Array.from(tour.querySelectorAll<HTMLButtonElement>('[data-spot]'));
+    const close = (except?: HTMLButtonElement) =>
+      buttons.forEach((b) => {
+        if (b === except) return;
+        b.setAttribute('aria-expanded', 'false');
+        b.closest('.spot')?.classList.remove('is-open');
+      });
+    buttons.forEach((b) => {
+      b.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const open = b.getAttribute('aria-expanded') !== 'true';
+        close(b);
+        b.setAttribute('aria-expanded', String(open));
+        b.closest('.spot')?.classList.toggle('is-open', open);
+      });
+    });
+    document.addEventListener('click', () => close());
+    tour.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') close();
+    });
+  });
+</script>
+
+<style>
+  @layer components {
+    .tour {
+      position: relative;
+      margin-top: clamp(40px, 6vw, 72px);
+    }
+
+    /* ---------- Base: quadros empilhados ---------- */
+    .tour-stage {
+      display: grid;
+      gap: clamp(32px, 5vw, 56px);
+      padding-inline: var(--gutter);
+    }
+
+    .tour-media {
+      position: relative;
+      border-radius: var(--r-media);
+      overflow: hidden;
+      background: var(--jg-ink-2);
+    }
+
+    .tour-copy {
+      margin-top: 18px;
+      max-width: 52ch;
+    }
+
+    .tour-kicker {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-display);
+      font-size: var(--fs-label);
+      letter-spacing: var(--tracking-label);
+      text-transform: uppercase;
+      color: var(--fg-2);
+    }
+
+    .tour-n {
+      color: var(--accent-text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tour-title {
+      margin-top: 10px;
+    }
+
+    .tour-text {
+      margin-top: 8px;
+    }
+
+    .tour-progress {
+      display: none;
+    }
+
+    /* ---------- Pontos interativos ---------- */
+    .tour-spots {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+    }
+
+    .spot {
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      transform: translate(-50%, -50%);
+    }
+
+    .spot-btn {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .spot-dot {
+      position: relative;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--jg-green);
+      box-shadow: 0 0 0 4px rgba(1, 5, 2, 0.45);
+      transition: transform var(--dur-s) var(--ease-out-expo);
+    }
+
+    /* Pulso: só transform/opacity, e só enquanto o quadro está visível (.is-live) */
+    .spot-dot::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 1.5px solid var(--jg-green);
+      opacity: 0;
+    }
+
+    :global(.motion) .tour.is-live .spot-dot::after {
+      animation: spot-pulse 2.4s var(--ease-out-expo) infinite;
+    }
+
+    .spot:nth-child(2) .spot-dot::after {
+      animation-delay: 0.4s !important;
+    }
+
+    .spot:nth-child(3) .spot-dot::after {
+      animation-delay: 0.8s !important;
+    }
+
+    .spot:nth-child(4) .spot-dot::after {
+      animation-delay: 1.2s !important;
+    }
+
+    @keyframes spot-pulse {
+      0% {
+        transform: scale(1);
+        opacity: 0.8;
+      }
+      100% {
+        transform: scale(2.6);
+        opacity: 0;
+      }
+    }
+
+    .spot-btn:hover .spot-dot,
+    .spot.is-open .spot-dot {
+      transform: scale(1.25);
+    }
+
+    .spot-btn:focus-visible {
+      outline: 2px solid var(--jg-offwhite);
+      outline-offset: 2px;
+    }
+
+    .spot-card {
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 6px);
+      width: max-content;
+      max-width: min(260px, 70vw);
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(1, 5, 2, 0.82);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 253, 252, 0.12);
+      color: var(--jg-mist);
+      font-size: 0.875rem;
+      line-height: 1.45;
+      display: grid;
+      gap: 4px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translate(-50%, 6px);
+      transition:
+        opacity var(--dur-xs) var(--ease-soft),
+        transform var(--dur-s) var(--ease-out-expo),
+        visibility 0s linear var(--dur-xs);
+      pointer-events: none;
+    }
+
+    /* Pontos no alto da imagem abrem o cartão para baixo (não é cortado pela moldura) */
+    .spot-down .spot-card {
+      bottom: auto;
+      top: calc(100% + 6px);
+    }
+
+    .spot-card strong {
+      color: var(--jg-offwhite);
+      font-family: var(--font-display);
+      font-weight: 500;
+    }
+
+    /* Pontos à direita abrem o cartão para a esquerda */
+    .spot:nth-child(3) .spot-card,
+    .spot:nth-child(4) .spot-card {
+      left: auto;
+      right: -8px;
+      transform: translate(0, 6px);
+    }
+
+    .spot-btn:hover + .spot-card,
+    .spot-btn:focus-visible + .spot-card,
+    .spot.is-open .spot-card {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, 0);
+      transition:
+        opacity var(--dur-xs) var(--ease-soft),
+        transform var(--dur-s) var(--ease-out-expo),
+        visibility 0s;
+    }
+
+    .spot:nth-child(3) .spot-btn:hover + .spot-card,
+    .spot:nth-child(4) .spot-btn:hover + .spot-card,
+    .spot:nth-child(3).is-open .spot-card,
+    .spot:nth-child(4).is-open .spot-card,
+    .spot:nth-child(3) .spot-btn:focus-visible + .spot-card,
+    .spot:nth-child(4) .spot-btn:focus-visible + .spot-card {
+      transform: translate(0, 0);
+    }
+
+    /* ---------- Desktop com movimento: palco fixo (ativado por motion.ts) ---------- */
+    .tour.is-pinned .tour-stage {
+      position: relative;
+      display: block;
+      height: 100vh;
+      padding: 0;
+      overflow: hidden;
+      background: var(--jg-black);
+    }
+
+    .tour.is-pinned .tour-frame {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      will-change: transform;
+    }
+
+    .tour.is-pinned .tour-media,
+    .tour.is-pinned :global(.photo-img) {
+      will-change: transform;
+    }
+
+    .tour.is-pinned .tour-media {
+      position: absolute;
+      inset: 0;
+      border-radius: 0;
+    }
+
+    .tour.is-pinned .tour-media :global(.photo) {
+      height: 100%;
+      aspect-ratio: auto;
+    }
+
+    /* Véu para leitura do texto sobre a imagem */
+    .tour.is-pinned .tour-media::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background:
+        linear-gradient(0deg, rgba(1, 5, 2, 0.82) 0%, rgba(1, 5, 2, 0.15) 42%, transparent 60%),
+        linear-gradient(90deg, rgba(1, 5, 2, 0.55) 0%, transparent 45%);
+    }
+
+    .tour.is-pinned .tour-copy {
+      position: absolute;
+      z-index: 4;
+      left: max(var(--gutter), calc((100vw - var(--container)) / 2));
+      bottom: clamp(48px, 9vh, 96px);
+      margin: 0;
+      max-width: 34rem;
+    }
+
+    .tour.is-pinned .tour-kicker {
+      color: var(--jg-mist);
+    }
+
+    .tour.is-pinned .tour-n {
+      color: var(--jg-green);
+    }
+
+    .tour.is-pinned .tour-title {
+      color: var(--jg-offwhite);
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+    }
+
+    .tour.is-pinned .tour-text {
+      color: var(--jg-mist);
+    }
+
+    .tour.is-pinned .tour-progress {
+      position: absolute;
+      z-index: 5;
+      right: max(var(--gutter), calc((100vw - var(--container)) / 2));
+      bottom: clamp(48px, 9vh, 96px);
+      display: grid;
+      gap: 14px;
+    }
+
+    .tour-progress li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: flex-end;
+      font-family: var(--font-display);
+      font-size: var(--fs-label);
+      letter-spacing: var(--tracking-label);
+      text-transform: uppercase;
+      color: rgba(255, 253, 252, 0.45);
+      transition: color var(--dur-s) var(--ease-soft);
+    }
+
+    .tour-progress li.is-active {
+      color: var(--jg-offwhite);
+    }
+
+    .tour-tick {
+      order: 2;
+      width: 28px;
+      height: 2px;
+      border-radius: 2px;
+      background: currentColor;
+      transform-origin: right;
+      transform: scaleX(0.5);
+      transition: transform var(--dur-m) var(--ease-out-expo);
+    }
+
+    .tour-progress li.is-active .tour-tick {
+      transform: scaleX(1.6);
+      background: var(--jg-green);
+    }
+
+    .tour.is-pinned .photo-note,
+    .tour.is-pinned :global(.photo-note) {
+      top: 24px;
+      bottom: auto;
+      right: 24px;
+    }
+  }
+</style>

@@ -15,6 +15,7 @@ import Photo from '@components/ui/Photo.astro';
 import HorizontalGallery from '@components/ui/HorizontalGallery.astro';
 import StickySteps from '@components/ui/StickySteps.astro';
 import StatCounter from '@components/ui/StatCounter.astro';
+import StoreTour from '@components/ui/StoreTour.astro';
 import Icon from '@components/Icon.astro';
 import Pattern from '@components/site/Pattern.astro';
 import FaqTabs from '@components/site/FaqTabs.astro';
@@ -239,20 +240,16 @@ const security = [
         </p>
       </div>
 
-      {/* O slider antes/depois (BeforeAfter) volta quando houver um par real de fotos do mesmo espaço */}
-      <figure class="project-concept" data-reveal>
-        <Photo
-          name="premium-interior"
-          alt="Projeto conceitual do interior de uma loja Just Go: geladeiras de vidro, gôndola central em madeira, adega na parede e balcão de travertino com dois totens"
-          ratio="16/9"
-          sizes="(min-width: 1320px) 1320px, 100vw"
-          kind="concept"
-        />
-        <figcaption class="project-concept-cap">
-          Projeto conceitual, desenvolvido a partir do projeto 3D da Just Go. Layout, acabamentos e mix são definidos
-          para cada condomínio.
-        </figcaption>
-      </figure>
+    </div>
+
+    {/* Tour pela loja: o scroll percorre fachada → interior → balcão (motion.ts › storeTour) */}
+    <StoreTour />
+    <p class="container project-concept-cap">
+      Projeto conceitual, desenvolvido a partir do projeto 3D da Just Go. Layout, acabamentos e mix são definidos
+      para cada condomínio.
+    </p>
+
+    <div class="container">
 
       <ol class="project-steps">
         <li data-reveal>
@@ -416,7 +413,37 @@ const security = [
     }
 
     .hero-media {
+      position: relative;
       margin-top: clamp(56px, 8vw, 104px);
+    }
+
+    /* Feixe de luz que atravessa a fachada uma vez, ao carregar (só transform) */
+    :global(.motion) .hero-media::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background: linear-gradient(
+        105deg,
+        transparent 38%,
+        rgba(255, 253, 252, 0.09) 46%,
+        rgba(160, 226, 97, 0.12) 50%,
+        rgba(255, 253, 252, 0.06) 54%,
+        transparent 62%
+      );
+      transform: translateX(-100%);
+      animation: hero-sweep 2.6s var(--ease-in-out) 0.9s 1 forwards;
+    }
+
+    :global(.intro-first) .hero-media::after {
+      animation-delay: 2.2s;
+    }
+
+    @keyframes hero-sweep {
+      to {
+        transform: translateX(100%);
+      }
     }
 
     :global(.motion) .hero-media {
