@@ -15,7 +15,6 @@ import Photo from '@components/ui/Photo.astro';
 import HorizontalGallery from '@components/ui/HorizontalGallery.astro';
 import StickySteps from '@components/ui/StickySteps.astro';
 import StatCounter from '@components/ui/StatCounter.astro';
-import BeforeAfter from '@components/ui/BeforeAfter.astro';
 import Icon from '@components/Icon.astro';
 import Pattern from '@components/site/Pattern.astro';
 import FaqTabs from '@components/site/FaqTabs.astro';
@@ -70,10 +69,11 @@ const security = [
   <!-- 7.1 Hero -->
   <section class="hero theme-dark" data-floor="08" data-floor-label="Entrada">
     <div class="container hero-top">
+      {/* Sem "Aberto agora": ainda não há loja inaugurada (docs/pendencias-conteudo.md) */}
       <p class="hero-status">
-        <span class="hero-live"><span class="hero-dot" aria-hidden="true"></span> Aberto agora</span>
+        <span class="hero-live"><span class="hero-dot" aria-hidden="true"></span> Mercado autônomo para condomínios</span>
         <span aria-hidden="true">·</span>
-        <time data-clock>24h</time>
+        <span>Operação 24h</span>
         <span aria-hidden="true">·</span>
         <span>Brasília</span>
       </p>
@@ -100,14 +100,12 @@ const security = [
 
     <div class="hero-media" data-hero-media>
       <Photo
-        name="hero-loja-noite"
-        alt="Loja Just Go integrada ao lobby de um condomínio de alto padrão, à noite"
-        placeholder="Loja integrada ao lobby do condomínio, à noite, luz quente, sem pessoas"
+        name="hero-cafe-manha"
+        alt="Café com leite e croissant sobre uma mesa de madeira, em luz quente"
         ratio="16/9"
         sizes="100vw"
         priority
         rounded={false}
-        illustrative
         class="hero-photo"
       />
     </div>
@@ -147,7 +145,6 @@ const security = [
           kicker: c.kicker,
           text: c.text,
           photo: c.photo,
-          note: c.confirm ? `[CONFIRMAR] ${c.confirm}` : undefined,
         }))}
       />
 
@@ -233,20 +230,20 @@ const security = [
         </p>
       </div>
 
-      <div data-reveal>
-        <BeforeAfter
-          before={{
-            name: 'projeto-antes',
-            alt: 'Nicho vazio no hall de um condomínio, antes da instalação',
-            placeholder: 'Antes — nicho vazio no hall do condomínio, mesmo enquadramento',
-          }}
-          after={{
-            name: 'projeto-depois',
-            alt: 'O mesmo nicho com a loja Just Go instalada',
-            placeholder: 'Depois — o mesmo nicho com a loja instalada',
-          }}
+      {/* O slider antes/depois (BeforeAfter) volta quando houver um par real de fotos do mesmo espaço */}
+      <figure class="project-concept" data-reveal>
+        <Photo
+          name="conceito-interior"
+          alt="Projeto conceitual em 3D do interior de uma loja Just Go: geladeiras, gôndola central e totens de autoatendimento"
+          ratio="16/9"
+          sizes="(min-width: 1320px) 1320px, 100vw"
+          kind="concept"
         />
-      </div>
+        <figcaption class="project-concept-cap">
+          Projeto conceitual em 3D. Layout, acabamentos e mix são definidos para cada condomínio; produtos e
+          embalagens na imagem são ilustrativos.
+        </figcaption>
+      </figure>
 
       <ol class="project-steps">
         <li data-reveal>
@@ -349,26 +346,6 @@ const security = [
       height: 8px;
       border-radius: 50%;
       background: var(--jg-green);
-    }
-
-    .hero-dot::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background: var(--jg-green);
-      animation: live 2.4s var(--ease-out-expo) infinite;
-    }
-
-    @keyframes live {
-      0% {
-        transform: scale(1);
-        opacity: 0.7;
-      }
-      100% {
-        transform: scale(3.2);
-        opacity: 0;
-      }
     }
 
     .hero-grid {
@@ -581,6 +558,13 @@ const security = [
     }
 
     /* ---------- Projeto ---------- */
+    .project-concept-cap {
+      margin-top: 16px;
+      max-width: 70ch;
+      font-size: var(--fs-small);
+      color: var(--fg-2);
+    }
+
     .project-steps {
       margin-top: 48px;
       display: grid;

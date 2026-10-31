@@ -18,7 +18,8 @@ export default defineConfig({
     },
     integrations: [
         sitemap({
-            filter: (page) => !page.includes('/404'),
+            // /apresentacao é noindex (material comercial): fica fora do sitemap
+            filter: (page) => !page.includes('/404') && !page.includes('/apresentacao'),
         }),
     ],
     image: {

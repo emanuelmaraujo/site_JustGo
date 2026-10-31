@@ -48,7 +48,7 @@ O ápice de como um modelo autônomo opera na prática está na experiência de 
 O fluxo de compra comum segue estes passos essenciais:
 * **Entrada e Escolha:** O morador acessa o espaço do mercado, escolhe os produtos desejados diretamente das geladeiras ou gôndolas. O conceito de "pegue e pague" é levado à risca.
 * **Escaneamento (Scan & Go):** Através do totem de autoatendimento instalado no local, ou escaneando os códigos de barras pela câmera do celular utilizando o aplicativo do próprio mercado autônomo.
-* **Pagamento:** O morador finaliza o pagamento via cartão de crédito, débito, Pix ou cartão de benefícios, através do totem ou direto pelo app do celular.
+* **Pagamento:** O morador finaliza a compra no próprio totem. Na Just Go Market, o pagamento é feito por Pix.
 * **Segurança e Monitoramento:** O ambiente possui câmeras internas para acompanhamento do ambiente, minimizando erros não intencionais e garantindo transparência nas ações. 
 
 A comodidade de não precisar trocar de roupa à noite, de não precisar dirigir e encontrar um estacionamento no comércio vizinho para buscar um único item faltante para o jantar, gera um valor imensurável para o morador.

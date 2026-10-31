@@ -16,7 +16,15 @@ interface Props {
   eyebrow: string;
   title: string;
   lead?: string;
-  photo?: { name: string; alt: string; placeholder?: string; illustrative?: boolean; ratio?: string };
+  photo?: {
+    name: string;
+    alt: string;
+    placeholder?: string;
+    illustrative?: boolean;
+    kind?: 'photo' | 'illustrative' | 'concept';
+    ratio?: string;
+    position?: string;
+  };
   crumbs?: Crumb[];
   floor?: string;
 }

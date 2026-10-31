@@ -75,6 +75,7 @@ export const FACTS = {
   installDays: '15 a 30 dias',
   totalDays: '30 a 60 dias',
   replyHours: 'até 24 horas',
-  // Pix confirmado em todos os totens. Aproximação: [CONFIRMAR] antes de citar.
-  payment: 'Pix ou cartão de crédito e débito',
+  // Pix é a única forma confirmada (e a única no escopo do MVP da plataforma — justgo-plataform).
+  // Cartão de crédito/débito e aproximação: pendentes; só citar após confirmação.
+  payment: 'Pix',
 } as const;

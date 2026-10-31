@@ -1,0 +1,44 @@
+---
+/**
+ * Um slide da apresentação. Sem JS (ou na impressão), os slides viram uma página
+ * contínua e todo o conteúdo fica visível; com JS, deck.ts mostra um por vez.
+ *
+ * theme    → um dos temas de seção do design system (tokens.css)
+ * layout   → 'center' (padrão) ou 'top' (conteúdo alto, alinhado ao topo)
+ */
+import { SLIDES, type SlideId } from '@lib/presentation';
+
+interface Props {
+  id: SlideId;
+  theme?: 'dark' | 'ink' | 'light' | 'paper' | 'green';
+  layout?: 'center' | 'top';
+  class?: string;
+}
+
+const { id, theme = 'dark', layout = 'center', class: className = '' } = Astro.props;
+const index = SLIDES.findIndex((s) => s.id === id);
+const n = index + 1;
+const total = SLIDES.length;
+const label = SLIDES[index].label;
+const tone = theme === 'dark' || theme === 'ink' ? 'dark' : 'light';
+const pad = (v: number) => String(v).padStart(2, '0');
+---
+
+<section
+  id={id}
+  class:list={['slide', `theme-${theme}`, `slide-${layout}`, className]}
+  data-slide={n}
+  data-slide-id={id}
+  data-tone={tone}
+  aria-roledescription="slide"
+  aria-label={`${n} de ${total}: ${label}`}
+>
+  <div class="slide-inner">
+    <p class="slide-index" aria-hidden="true">
+      <span class="slide-index-n">{pad(n)}</span>
+      <span class="slide-index-sep"></span>
+      <span>{label}</span>
+    </p>
+    <slot />
+  </div>
+</section>

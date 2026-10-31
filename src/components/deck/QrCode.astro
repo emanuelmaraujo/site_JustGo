@@ -1,0 +1,51 @@
+---
+/**
+ * QR Code real, gerado no build (SVG estático, zero JavaScript no cliente).
+ * Um único <path> com os módulos; zona de silêncio de 4 módulos (padrão ISO/IEC 18004).
+ * Sempre escuro sobre claro, que é o que os leitores de câmera esperam.
+ */
+import QRCode from 'qrcode';
+
+interface Props {
+  value: string;
+  label: string;
+  class?: string;
+}
+
+const { value, label, class: className = '' } = Astro.props;
+
+const qr = QRCode.create(value, { errorCorrectionLevel: 'M' });
+const size = qr.modules.size;
+const data = qr.modules.data;
+const quiet = 4;
+const total = size + quiet * 2;
+
+let d = '';
+for (let y = 0; y < size; y++) {
+  for (let x = 0; x < size; x++) {
+    if (data[y * size + x]) d += `M${x + quiet} ${y + quiet}h1v1h-1z`;
+  }
+}
+---
+
+<svg
+  class:list={['qr', className]}
+  viewBox={`0 0 ${total} ${total}`}
+  role="img"
+  aria-label={label}
+  shape-rendering="crispEdges"
+  data-qr-value={value}
+>
+  <rect width={total} height={total} fill="#fffdfc"></rect>
+  <path d={d} fill="#010502"></path>
+</svg>
+
+<style>
+  .qr {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    border-radius: 12px;
+  }
+</style>

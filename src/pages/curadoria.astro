@@ -49,7 +49,6 @@ const universes = await getCuradoria();
               <ul class="list-check" data-reveal>
                 {u.items.map((item) => <li>{item}</li>)}
               </ul>
-              {u.confirm && <p class="todo">[CONFIRMAR] {u.confirm}</p>}
             </div>
           </div>
         </Section>
@@ -80,11 +79,7 @@ const universes = await getCuradoria();
       </div>
       <div class="mix-note" data-reveal>
         {
-          PREMIUM_BRANDS.length > 0 ? (
-            <Marquee brands={PREMIUM_BRANDS} />
-          ) : (
-            <p class="todo">[CONFIRMAR] Lista de marcas premium efetivamente vendidas, para a faixa de marcas.</p>
-          )
+          PREMIUM_BRANDS.length > 0 && <Marquee brands={PREMIUM_BRANDS} />
         }
       </div>
     </div>
