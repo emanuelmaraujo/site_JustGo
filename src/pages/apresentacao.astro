@@ -208,7 +208,7 @@ const phoneHref = `tel:+${SITE.whatsappNumber}`;
           <p class="deck-lead" data-a>O padrão da curadoria em cada categoria, do espumante ao café da manhã.</p>
         </div>
         <div class="brand-strip" data-a-brand>
-          <Marquee brands={ALL_BRANDS} size="lg" rows={2} />
+          <Marquee brands={ALL_BRANDS} size="lg" />
         </div>
         <p class="deck-foot" data-a>{BRANDS_DISCLAIMER}</p>
       </Slide>
@@ -554,8 +554,12 @@ const phoneHref = `tel:+${SITE.whatsappNumber}`;
       margin-inline: calc(var(--gutter) * -1);
     }
 
+    .brand-strip {
+      margin-block: clamp(16px, 4svh, 48px);
+    }
+
     .brand-strip :global(.mq-lg .mq-track li) {
-      font-size: clamp(1.9rem, min(5vw, 8.5svh), 5rem);
+      font-size: clamp(1rem, min(1.6vw, 2.8svh), 1.6rem);
     }
 
     /* ---------- Serviços exclusivos ---------- */

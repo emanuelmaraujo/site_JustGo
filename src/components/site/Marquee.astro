@@ -4,8 +4,8 @@
  * CSS puro (translateX), pausa ao passar o mouse ou focar, máscara suave nas bordas.
  * Só nomes, em tipografia da Just Go — nunca logotipos de terceiros.
  *
- * size  → 'md' (faixa discreta) ou 'lg' (destaque editorial)
- * rows  → 1 ou 2 (a segunda linha corre no sentido oposto)
+ * size  → 'md' ou 'lg' (mesmo conceito, corpo maior)
+ * rows  → 1 (padrão) ou 2 (mesmo sentido e velocidade, para listas longas)
  * Com "reduzir movimento" ou na impressão, a faixa para e as marcas aparecem em linha.
  * Marcas de referência: src/lib/brands.ts (PREMIUM_BRANDS).
  */
@@ -25,8 +25,8 @@ const lines = rows === 2 ? [brands.slice(0, half), brands.slice(half)] : [brands
 <div class:list={['mq', `mq-${size}`, className]} role="region" aria-label={label}>
   {
     lines.map((line, r) => (
-      <div class:list={['mq-row', r === 1 && 'mq-reverse']}>
-        <ul class="mq-track" style={`--dur:${Math.max(36, line.length * 4)}s`}>
+      <div class="mq-row" data-row={r}>
+        <ul class="mq-track" style={`--dur:${Math.max(48, line.length * 2.4)}s`}>
           {line.map((b) => (
             <li>{b}</li>
           ))}
@@ -41,13 +41,21 @@ const lines = rows === 2 ? [brands.slice(0, half), brands.slice(half)] : [brands
 
 <style>
   @layer components {
+    /*
+     * Conceito: uma linha só, ritmo constante. Todas as marcas no mesmo corpo,
+     * caixa alta espaçada, peso leve e baixa opacidade — a faixa "respira" atrás do
+     * conteúdo; a marca sob o cursor ganha opacidade total.
+     */
     .mq {
-      --gap: clamp(28px, 4vw, 64px);
+      --gap: clamp(40px, 5vw, 88px);
+      --ink: color-mix(in srgb, var(--fg) 48%, transparent); /* ≈4,6:1 sobre o preto (WCAG AA) */
       display: grid;
-      gap: clamp(8px, 1.6vw, 20px);
+      gap: clamp(10px, 1.4vw, 18px);
       overflow: hidden;
-      -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
-      mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+      padding-block: clamp(18px, 2.4vw, 32px);
+      border-block: 1px solid var(--line);
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+      mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
     }
 
     .mq-md {
@@ -63,11 +71,7 @@ const lines = rows === 2 ? [brands.slice(0, half), brands.slice(half)] : [brands
       align-items: center;
       gap: var(--gap);
       width: max-content;
-      animation: mq var(--dur, 48s) linear infinite;
-    }
-
-    .mq-reverse .mq-track {
-      animation-direction: reverse;
+      animation: mq var(--dur, 60s) linear infinite;
     }
 
     .mq:hover .mq-track,
@@ -76,45 +80,24 @@ const lines = rows === 2 ? [brands.slice(0, half), brands.slice(half)] : [brands
     }
 
     .mq-track li {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--gap);
       white-space: nowrap;
       font-family: var(--font-display);
-      font-size: 1.125rem;
-      letter-spacing: 0.08em;
+      font-size: 0.9375rem;
+      font-weight: 400;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--fg-3);
+      line-height: 1;
+      color: var(--ink);
+      transition: color var(--dur-s) var(--ease-soft);
     }
 
-    /* Separador discreto: ponto verde da marca */
-    .mq-track li::after {
-      content: '';
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--jg-green);
-      opacity: 0.7;
-    }
-
-    .theme-light .mq-track li::after,
-    .theme-paper .mq-track li::after {
-      background: var(--fg-3);
-    }
-
-    /* Destaque editorial: nomes grandes, em caixa normal, alternando peso visual */
-    .mq-lg .mq-track li {
-      font-family: var(--font-title);
-      font-size: clamp(1.75rem, 4.2vw, 3.6rem);
-      font-weight: 500;
-      letter-spacing: -0.035em;
-      text-transform: none;
+    .mq-track li:hover {
       color: var(--fg);
-      line-height: 1.15;
     }
 
-    .mq-lg .mq-reverse .mq-track li {
-      color: var(--fg-3);
+    .mq-lg .mq-track li {
+      font-size: clamp(1rem, 1.5vw, 1.375rem);
+      letter-spacing: 0.24em;
     }
 
     @keyframes mq {
@@ -128,7 +111,7 @@ const lines = rows === 2 ? [brands.slice(0, half), brands.slice(half)] : [brands
         animation: none;
         flex-wrap: wrap;
         width: auto;
-        row-gap: 8px;
+        row-gap: 14px;
       }
 
       .mq-track li[aria-hidden] {
@@ -146,7 +129,11 @@ const lines = rows === 2 ? [brands.slice(0, half), brands.slice(half)] : [brands
         animation: none;
         flex-wrap: wrap;
         width: auto;
-        row-gap: 4px;
+        row-gap: 8px;
+      }
+
+      .mq-track li {
+        color: var(--fg-2);
       }
 
       .mq-track li[aria-hidden] {
