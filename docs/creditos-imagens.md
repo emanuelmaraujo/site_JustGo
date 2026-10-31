@@ -11,7 +11,6 @@ sem interior de lojas (nenhuma imagem simula uma unidade Just Go).
 
 | Arquivo | Pexels | Autor (conforme a página) | Uso |
 |---|---|---|---|
-| `hero-cafe-manha.jpg` | https://www.pexels.com/photo/13689950/ | — conferir na página | Hero da home |
 | `curadoria-adega.jpg` | https://www.pexels.com/photo/34387955/ | Valentin Ivantsov | Curadoria (site e apresentação) |
 | `curadoria-emporio.jpg` | https://www.pexels.com/photo/3186254/ | José Antonio Rivera Vallejo | Curadoria |
 | `curadoria-despensa.jpg` | https://www.pexels.com/photo/13787585/ | O'NEIL GONZALES | Curadoria |
@@ -22,24 +21,34 @@ sem interior de lojas (nenhuma imagem simula uma unidade Just Go).
 Baixadas pelo CDN do Pexels em 31/10/2026. Antes de publicar, vale abrir cada página e registrar o nome do autor que
 falta (a busca automatizada não exibiu todos os créditos).
 
-## Projeto conceitual — renders 3D (Google Drive › JUST GO MARKET › IMAGENS 3D)
+## Projeto conceitual premium — gerado a partir do projeto 3D (31/10/2026)
 
-Material próprio da Just Go Market. Arquivos de origem com 1006 × 583 px; foram ampliados 2× (Lanczos + nitidez leve).
+Pedido da Just Go Market: refazer o modelo 3D com uma visão premium. Os renders originais do Drive
+(`IMAGENS 3D/FACHADA.jpg`, `INTERIOR 2.jpg`, `INTERIOR 8.jpg`) serviram de **referência de layout**; as imagens finais
+foram geradas com IA (Higgsfield · modelo Nano Banana 2.1, 2752 × 1536 px, conta da Just Go), com acabamentos de
+alto padrão: laca preta fosca, madeira ripada, travertino, luz quente 2700 K e uma única linha de LED verde da marca.
 
-| Arquivo | Origem | Tratamento |
+| Arquivo | Referência | Uso |
 |---|---|---|
-| `conceito-fachada.jpg` | `FACHADA.jpg` | Interior da vitrine desfocado |
-| `conceito-interior.jpg` | `INTERIOR 2.jpg` | Gôndola central e balcão desfocados |
-| `conceito-totem.jpg` | `INTERIOR 8.jpg` | Prateleiras, doces e telas dos totens desfocados |
+| `premium-fachada.jpg` | `FACHADA.jpg` | Hero da home, Para incorporadoras, abertura e projeto da apresentação |
+| `premium-interior.jpg` | `INTERIOR 2.jpg` | Home › Projeto integrado, slide de projeto |
+| `premium-adega.jpg` | `INTERIOR 8.jpg` | Hero de Como funciona, slide de serviços e de projeto |
 
-Por que o desfoque: as cenas 3D usam embalagens reais de terceiros (Nesquik, Kellogg's, Snickers, Hershey's etc.),
-legíveis na resolução original. Mostrá-las sugeriria um sortimento e uma relação com marcas que não estão confirmados.
-Os renders aparecem sempre com o selo **"Projeto conceitual"** e a nota "produtos e embalagens são ilustrativos".
+Regras aplicadas: embalagens sem marca e sem texto legível (nenhuma marca de terceiro aparece nas imagens);
+sempre com o selo **"Projeto conceitual"** e a nota de que não representam uma loja instalada.
+Os renders antigos (estilo SketchUp, com embalagens reais) saíram do site.
 
-Também ficaram de fora: `INTERIOR 1, 3, 4, 5, 6, 7` e `FACHADA 2` (muitas marcas legíveis ou ângulos repetidos) e
-o texto da fachada "Baixe o app, entre e finalize sua compra", que contradiz o "sem aplicativo" do site (pendência aberta).
+## Identidade visual oficial (Drive › 4. Marketing e Design › Design › IDENTIDADE VISUAL)
 
-**Ideal:** renderizar novas vistas em alta resolução (≥ 2400 px) com embalagens genéricas.
+Convertidos de `LOGOTIPO/VETORES/VETORES(AI).ai` e `ELEMENTOS COMPLEMENTARES/VETORES/VETORES.pdf` para SVG
+(recorte justo, cores da paleta oficial), em `public/assets/brand/`:
+
+- `logo-horizontal-negativo.svg` (header, rodapé, apresentação em fundo escuro)
+- `logo-horizontal-positivo.svg` (apresentação em fundo claro) · `logo-horizontal-preto.svg` (sobre o verde)
+- `simbolo.svg`, `selo-tempo.svg` e `selo-tempo-preto.svg` ("A gente devolve o seu tempo"),
+  `icone-relogio.svg`, `icone-seta.svg`, `icone-cesta.svg`
+
+O ícone "Aberto 24h" do pack não foi usado (não há loja aberta).
 
 ## Foto real que já existia
 

@@ -1,4 +1,5 @@
 // Configuração central do site — Just Go Market
+import { ALL_BRANDS } from './brands';
 
 export const SITE = {
   name: 'Just Go Market',
@@ -60,10 +61,10 @@ export const LEGAL: NavItem[] = [
 ];
 
 /**
- * Marcas premium efetivamente vendidas — [CONFIRMAR].
- * Enquanto a lista estiver vazia, a faixa de marcas não é exibida.
+ * Marcas de referência da curadoria (definidas pela Just Go Market em 31/10/2026).
+ * Fonte única: src/lib/brands.ts — exibidas só como nomes, com a ressalva de disponibilidade.
  */
-export const PREMIUM_BRANDS: string[] = [];
+export const PREMIUM_BRANDS: string[] = ALL_BRANDS;
 
 /** Fatos verificáveis usados em todo o site. Alterar aqui atualiza todas as páginas. */
 export const FACTS = {

@@ -11,9 +11,10 @@ import Photo from '@components/ui/Photo.astro';
 import Button from '@components/ui/Button.astro';
 import PageHero from '@components/site/PageHero.astro';
 import CtaFinal from '@components/site/CtaFinal.astro';
-import Marquee from '@components/site/Marquee.astro';
+import BrandWall from '@components/ui/BrandWall.astro';
 import { getCuradoria } from '@lib/content';
-import { PREMIUM_BRANDS, whatsappUrl } from '@lib/site';
+import { whatsappUrl } from '@lib/site';
+import { SERVICES } from '@lib/services';
 import { crumbs } from '@lib/schema';
 
 const universes = await getCuradoria();
@@ -56,6 +57,50 @@ const universes = await getCuradoria();
     }
   </div>
 
+  <!-- Marcas de referência -->
+  <Section theme="dark" id="marcas">
+    <div class="container">
+      <div class="section-head split">
+        <div>
+          <Eyebrow>Marcas de referência</Eyebrow>
+          <SplitWords tag="h2" class="mt-m">Marcas que você já escolhe em casa.</SplitWords>
+        </div>
+        <p class="lead" data-reveal>
+          O padrão da curadoria: rótulos e fabricantes reconhecidos em cada categoria, do espumante ao café da manhã.
+        </p>
+      </div>
+      <div data-reveal>
+        <BrandWall />
+      </div>
+    </div>
+  </Section>
+
+  <!-- Serviços exclusivos -->
+  <Section theme="paper" id="servicos">
+    <div class="container">
+      <div class="section-head split">
+        <div>
+          <Eyebrow>Serviços exclusivos</Eyebrow>
+          <SplitWords tag="h2" class="mt-m">Além da prateleira.</SplitWords>
+        </div>
+        <p class="lead" data-reveal>
+          O que diferencia uma loja de conveniência de uma experiência pensada para o condomínio.
+        </p>
+      </div>
+      <ol class="svc">
+        {
+          SERVICES.map((s, i) => (
+            <li class="svc-item" data-reveal>
+              <span class="index-num">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{s.title}</h3>
+              <p>{s.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </Section>
+
   <Section theme="light">
     <div class="container split">
       <div class="split-copy">
@@ -78,9 +123,14 @@ const universes = await getCuradoria();
         </div>
       </div>
       <div class="mix-note" data-reveal>
-        {
-          PREMIUM_BRANDS.length > 0 && <Marquee brands={PREMIUM_BRANDS} />
-        }
+        <img
+          src="/assets/brand/selo-tempo-preto.svg"
+          alt="Selo Just Go Market: A gente devolve o seu tempo"
+          width="320"
+          height="320"
+          loading="lazy"
+          class="mix-seal"
+        />
       </div>
     </div>
   </Section>
@@ -92,6 +142,43 @@ const universes = await getCuradoria();
   @layer components {
     .mix-note {
       align-self: center;
+      justify-self: center;
+    }
+
+    .mix-seal {
+      width: clamp(180px, 22vw, 300px);
+      height: auto;
+    }
+
+    .svc {
+      display: grid;
+      gap: 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .svc-item {
+      padding: 32px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .svc-item h3 {
+      margin-top: 12px;
+    }
+
+    .svc-item p {
+      margin-top: 10px;
+      max-width: 38ch;
+    }
+
+    @media (min-width: 900px) {
+      .svc {
+        grid-template-columns: repeat(3, 1fr);
+        column-gap: 48px;
+      }
+
+      .svc-item {
+        border-bottom: 0;
+      }
     }
   }
 </style>

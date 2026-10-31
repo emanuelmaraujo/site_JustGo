@@ -17,10 +17,9 @@ Os nomes dos arquivos esperados estão em `docs/prompts-fotos.md`. Basta salvar 
 
 | Arquivo | Onde aparece | Situação |
 |---|---|---|
-| `hero-cafe-manha` | Hero da home | Foto editorial licenciada (Pexels) |
-| `conceito-totem` | Hero de Como funciona | Render 3D do Drive, selo "Projeto conceitual" |
-| `conceito-fachada` | Hero de Para incorporadoras | Render 3D do Drive, selo "Projeto conceitual" |
-| `conceito-interior` | Home › Projeto integrado (no lugar do slider antes/depois) | Render 3D do Drive, selo "Projeto conceitual" |
+| `premium-adega` | Hero de Como funciona | Projeto conceitual premium (gerado a partir do 3D) |
+| `premium-fachada` | Hero da home e de Para incorporadoras | Projeto conceitual premium (gerado a partir do 3D) |
+| `premium-interior` | Home › Projeto integrado (no lugar do slider antes/depois) | Projeto conceitual premium (gerado a partir do 3D) |
 | `curadoria-adega`, `-emporio`, `-despensa` | Curadoria (home, Curadoria, Para moradores) | Fotos editoriais licenciadas (Pexels) |
 | `curadoria-bem-estar` | — | Foto pronta; a categoria fica oculta até ser confirmada |
 | `produto-vinho` | Hero de Para moradores | Foto editorial licenciada (Pexels) |
@@ -47,8 +46,8 @@ por IA e simula uma loja real — **foi retirada** do site.
       Qual é o correto hoje? Se o app for obrigatório em algum condomínio, ajusto os textos.
 - [ ] **Cartão de crédito/débito e aproximação** — fora do MVP; citar só após confirmação.
 - [ ] **"Aberto agora"** foi retirado do hero (não há loja inaugurada). Voltar só com uma loja real em operação.
-- [ ] **Marcas premium** efetivamente vendidas — para a faixa de marcas (`PREMIUM_BRANDS` em `src/lib/site.ts`;
-      com a lista vazia, a faixa não aparece).
+- [x] **Marcas de referência** definidas pela Just Go (`src/lib/brands.ts`): faixa na home, parede na Curadoria e
+      slide na apresentação. Só nomes, sem logotipos, com ressalva de disponibilidade.
 - [ ] **Categoria Bem-estar** existe no mix atual? Hoje fica **oculta**; para publicar, remova `confirm` de
       `src/content/curadoria/04-bem-estar.json`.
 - [ ] **Prazo de instalação** — o site usa "15 a 30 dias, sem obra civil" e "projeto em até 5 dias úteis"

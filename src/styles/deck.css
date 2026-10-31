@@ -73,7 +73,9 @@
     height: auto;
   }
 
+  /* Versões oficiais do logotipo (Drive › Identidade visual › Logotipo › Vetores) */
   .deck-logo-light,
+  .deck-logo-mono,
   .deck[data-tone='light'] .deck-logo-dark {
     display: none;
   }
@@ -82,9 +84,13 @@
     display: block;
   }
 
-  /* Sobre o verde o símbolo some (e não pode ser recolorido): o logo sai de cena */
-  .deck[data-theme='green'] .deck-logo {
-    visibility: hidden;
+  /* Sobre o verde: a versão monocromática preta do manual */
+  .deck[data-theme='green'] .deck-logo-light {
+    display: none;
+  }
+
+  .deck[data-theme='green'] .deck-logo-mono {
+    display: block;
   }
 
   .deck-counter {
@@ -344,7 +350,7 @@
     inset: 0;
     background: var(--jg-green);
     transform-origin: left;
-    transform: scaleX(0.083);
+    transform: scaleX(0.071);
     transition: transform 500ms var(--ease-out-expo);
   }
 
@@ -538,6 +544,11 @@
         [data-a-road],
         [data-a-qa],
         [data-a-qr],
+        [data-a-hero],
+        [data-a-brand],
+        [data-a-svc],
+        .open-seal,
+        .photo-img,
         .photo,
         .road-fill,
         .resp-axis,

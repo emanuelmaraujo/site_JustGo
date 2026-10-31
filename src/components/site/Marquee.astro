@@ -1,7 +1,7 @@
 ---
 /**
  * Faixa de marcas (marquee): CSS puro, translateX(-50%), pausa no hover,
- * máscara nas bordas. Só aparece com marcas premium confirmadas (PREMIUM_BRANDS).
+ * máscara nas bordas. Marcas de referência em src/lib/brands.ts (PREMIUM_BRANDS).
  */
 interface Props {
   brands: string[];
@@ -34,6 +34,18 @@ const { brands } = Astro.props;
 
     .mq:hover .mq-track {
       animation-play-state: paused;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .mq-track {
+        animation: none;
+        flex-wrap: wrap;
+        width: auto;
+      }
+
+      .mq-track li[aria-hidden] {
+        display: none;
+      }
     }
 
     .mq-track li {

@@ -164,17 +164,27 @@ function initDeck(deck: HTMLElement) {
     if (base.length) t.from(base, { autoAlpha: 0, y: 24, stagger: 0.07 }, '<0.05');
 
     switch (slide.id) {
-      case 'abertura': {
-        const path = slide.querySelector('.open-symbol path');
-        if (path)
-          t.fromTo(
-            path,
-            { strokeDasharray: 1, strokeDashoffset: 1 },
-            { strokeDashoffset: 0, duration: 1.1, ease: 'power2.inOut' },
-            0.1,
-          );
+      case 'abertura':
+        // O render se revela por máscara; o selo entra por último
+        t.fromTo(
+          q('[data-a-hero] .photo'),
+          { clipPath: 'inset(0% 0% 100% 0% round 32px)' },
+          { clipPath: 'inset(0% 0% 0% 0% round 32px)', duration: 0.9, ease: 'power3.inOut' },
+          0.1,
+        )
+          .from(q('[data-a-hero] .photo-img'), { scale: 1.08, duration: 1.2, ease: 'power2.out' }, 0.1)
+          .from(q('.open-seal'), { autoAlpha: 0, scale: 0.8, duration: 0.5, ease: 'power3.out' }, 0.8);
         break;
-      }
+      case 'marcas':
+        t.from(q('[data-a-brand]'), { autoAlpha: 0, y: 16, stagger: 0.06, duration: 0.45 }, 0.2);
+        break;
+      case 'servicos':
+        t.from(q('[data-a-svc]'), { autoAlpha: 0, x: -20, stagger: 0.1, duration: 0.45 }, 0.25).from(
+          q('[data-a-render]'),
+          { autoAlpha: 0, scale: 0.97, duration: 0.6 },
+          0.2,
+        );
+        break;
       case 'oportunidade':
         t.from(q('[data-a-moment]'), { autoAlpha: 0, x: 28, stagger: 0.12, duration: 0.5 }, 0.25);
         break;

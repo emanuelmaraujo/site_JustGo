@@ -12,8 +12,9 @@ import DeckLayout from '@layouts/DeckLayout.astro';
 import Slide from '@components/deck/Slide.astro';
 import JourneyDemo from '@components/deck/JourneyDemo.astro';
 import QrCode from '@components/deck/QrCode.astro';
+import BrandWall from '@components/ui/BrandWall.astro';
+import { SERVICES } from '@lib/services';
 import Photo from '@components/ui/Photo.astro';
-import BrandSymbol from '@components/BrandSymbol.astro';
 import Icon from '@components/Icon.astro';
 import Pattern from '@components/site/Pattern.astro';
 import { CTA, FACTS, SITE } from '@lib/site';
@@ -45,8 +46,9 @@ const phoneHref = `tel:+${SITE.whatsappNumber}`;
 
     <header class="deck-bar">
       <a href="/" class="deck-logo" aria-label="Just Go Market — voltar ao site">
-        <img src="/assets/images/logo-negativo.png" alt="" width="640" height="92" class="deck-logo-dark" />
-        <img src="/assets/images/logo-positivo.png" alt="" width="640" height="92" class="deck-logo-light" />
+        <img src="/assets/brand/logo-horizontal-negativo.svg" alt="" width="800" height="142" class="deck-logo-dark" />
+        <img src="/assets/brand/logo-horizontal-positivo.svg" alt="" width="800" height="142" class="deck-logo-light" />
+        <img src="/assets/brand/logo-horizontal-preto.svg" alt="" width="800" height="142" class="deck-logo-mono" />
       </a>
       <p class="deck-counter" aria-hidden="true">
         <span data-deck-current>01</span><span class="deck-counter-sep">/</span><span>{total}</span>
@@ -68,11 +70,11 @@ const phoneHref = `tel:+${SITE.whatsappNumber}`;
         <Pattern id="deck-pattern-open" opacity={0.04} size={180} drift={false} />
         <div class="open-grid">
           <div class="open-copy">
-            <p class="eyebrow" data-a>Mercado autônomo para condomínios · Brasília</p>
+            <p class="eyebrow" data-a>Conveniência premium para condomínios · Brasília</p>
             <h1 class="deck-h1" data-a>O essencial, <span class="hl">a um passo</span> de casa.</h1>
             <p class="deck-lead" data-a>
-              Um mercado de autoatendimento, aberto 24 horas, dentro do condomínio. A Just Go Market investe, instala e
-              opera. O condomínio cede o espaço.
+              Um mercado autônomo 24 horas, com curadoria premium, dentro do condomínio. A Just Go Market investe, instala
+              e opera. O condomínio cede o espaço.
             </p>
             <ul class="open-facts" data-a>
               <li><strong>≈{FACTS.area}</strong> de área comum</li>
@@ -80,9 +82,19 @@ const phoneHref = `tel:+${SITE.whatsappNumber}`;
               <li><strong>{FACTS.investment}</strong> de investimento do condomínio</li>
             </ul>
           </div>
-          <div class="open-mark" aria-hidden="true">
-            <BrandSymbol class="open-symbol" />
-          </div>
+          <figure class="open-media" data-a-hero>
+            <Photo
+              name="premium-fachada"
+              alt="Projeto conceitual: loja Just Go integrada ao lobby de um condomínio, à noite"
+              ratio="4/5"
+              position="72% center"
+              sizes="(min-width: 900px) 40vw, 100vw"
+              priority
+              kind="concept"
+              class="open-photo"
+            />
+            <img src="/assets/brand/selo-tempo.svg" alt="" width="320" height="320" class="open-seal" aria-hidden="true" />
+          </figure>
         </div>
         <p class="deck-hint" data-a aria-hidden="true">
           <span class="hint-keys">← →</span> ou deslize para navegar
@@ -188,6 +200,45 @@ const phoneHref = `tel:+${SITE.whatsappNumber}`;
         </p>
       </Slide>
 
+      <!-- Marcas de referência -->
+      <Slide id="marcas" theme="ink" layout="top">
+        <div class="slide-head split-head">
+          <h2 class="deck-h2" data-a>Marcas que o morador já escolhe em casa.</h2>
+          <p class="deck-lead" data-a>O padrão da curadoria em cada categoria, do espumante ao café da manhã.</p>
+        </div>
+        <BrandWall compact itemAttr="data-a-brand" />
+      </Slide>
+
+      <!-- Serviços exclusivos -->
+      <Slide id="servicos" theme="dark" class="s-svc">
+        <div class="svc-grid">
+          <div>
+            <h2 class="deck-h2" data-a>Além da prateleira.</h2>
+            <ol class="svc-list">
+              {
+                SERVICES.map((x, i) => (
+                  <li class="svc-item" data-a-svc>
+                    <span class="svc-n">{String(i + 1).padStart(2, '0')}</span>
+                    <h3>{x.title}</h3>
+                    <p>{x.text}</p>
+                  </li>
+                ))
+              }
+            </ol>
+          </div>
+          <div class="svc-media" data-a-render>
+            <Photo
+              name="premium-adega"
+              alt="Projeto conceitual: adega climatizada em madeira escura ao lado do balcão de autoatendimento"
+              ratio="4/5"
+              position="18% center"
+              sizes="(min-width: 900px) 40vw, 100vw"
+              kind="concept"
+            />
+          </div>
+        </div>
+      </Slide>
+
       <!-- 06 — Integração ao espaço -->
       <Slide id="projeto" theme="light" layout="top">
         <div class="proj-grid">
@@ -200,8 +251,8 @@ const phoneHref = `tel:+${SITE.whatsappNumber}`;
           <div class="proj-media">
             <div class="proj-main" data-a-render>
               <Photo
-                name="conceito-fachada"
-                alt="Projeto conceitual em 3D da fachada de uma loja Just Go, com vitrine e a marca iluminada"
+                name="premium-interior"
+                alt="Projeto conceitual do interior: geladeiras de vidro, gôndola central em madeira, adega e balcão de travertino"
                 ratio="16/9"
                 sizes="(min-width: 1024px) 55vw, 100vw"
                 kind="concept"
@@ -210,8 +261,8 @@ const phoneHref = `tel:+${SITE.whatsappNumber}`;
             <div class="proj-thumbs">
               <div data-a-render>
                 <Photo
-                  name="conceito-interior"
-                  alt="Projeto conceitual do interior: geladeiras à esquerda e gôndola central"
+                  name="premium-adega"
+                  alt="Projeto conceitual do balcão de autoatendimento ao lado da adega climatizada"
                   ratio="16/9"
                   sizes="(min-width: 1024px) 27vw, 50vw"
                   kind="concept"
@@ -219,8 +270,8 @@ const phoneHref = `tel:+${SITE.whatsappNumber}`;
               </div>
               <div data-a-render>
                 <Photo
-                  name="conceito-totem"
-                  alt="Projeto conceitual do balcão de autoatendimento com dois totens"
+                  name="premium-fachada"
+                  alt="Projeto conceitual da fachada de vidro integrada ao lobby"
                   ratio="16/9"
                   sizes="(min-width: 1024px) 27vw, 50vw"
                   kind="concept"
@@ -228,7 +279,7 @@ const phoneHref = `tel:+${SITE.whatsappNumber}`;
               </div>
             </div>
             <p class="deck-foot" data-a>
-              Renders conceituais. Não representam uma loja instalada; produtos e embalagens são ilustrativos.
+              Projeto conceitual, desenvolvido a partir do projeto 3D da Just Go. Não representa uma loja instalada; acabamentos e produtos variam conforme o espaço.
             </p>
           </div>
         </div>
@@ -455,23 +506,111 @@ const phoneHref = `tel:+${SITE.whatsappNumber}`;
       margin-right: 4px;
     }
 
-    .open-mark {
-      display: grid;
-      place-items: center;
+    /* Render premium em destaque, com o selo oficial sobreposto */
+    .open-media {
+      position: relative;
+      justify-self: end;
+      width: min(100%, 52svh, 520px);
     }
 
-    .open-mark :global(.open-symbol) {
-      width: min(100%, 38svh, 360px);
+    .open-media :global(.open-photo) {
+      border-radius: var(--r-media);
+    }
+
+    .open-seal {
+      position: absolute;
+      left: -14%;
+      bottom: 8%;
+      width: 30%;
+      height: auto;
+      filter: drop-shadow(0 12px 30px rgba(1, 5, 2, 0.5));
     }
 
     @media (max-width: 899px) {
-      .open-mark {
-        order: -1;
-        justify-items: start;
+      .open-media {
+        justify-self: stretch;
+        width: 100%;
       }
 
-      .open-mark :global(.open-symbol) {
-        width: 72px;
+      .open-media :global(.open-photo) {
+        aspect-ratio: 16 / 10;
+      }
+
+      .open-seal {
+        left: auto;
+        right: 4%;
+        top: -9%;
+        bottom: auto;
+        width: 24%;
+      }
+    }
+
+    /* ---------- Marcas ---------- */
+    :global(#marcas) :global(.bw-names li) {
+      color: var(--fg);
+    }
+
+    /* ---------- Serviços exclusivos ---------- */
+    .svc-grid {
+      display: grid;
+      gap: clamp(24px, 4vw, 64px);
+      align-items: center;
+    }
+
+    @media (min-width: 900px) {
+      .svc-grid {
+        grid-template-columns: 1.15fr 0.85fr;
+      }
+    }
+
+    .svc-list {
+      margin-top: clamp(20px, 4svh, 40px);
+      display: grid;
+      border-top: 1px solid var(--line);
+    }
+
+    .svc-item {
+      display: grid;
+      grid-template-columns: 2.4em 1fr;
+      column-gap: 12px;
+      padding: clamp(12px, 2.2svh, 22px) 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .svc-n {
+      grid-row: span 2;
+      font-family: var(--font-title);
+      font-size: 0.875rem;
+      color: var(--jg-green);
+      padding-top: 0.35em;
+    }
+
+    .svc-item h3 {
+      font-size: var(--deck-h3);
+    }
+
+    .svc-item p {
+      margin-top: 4px;
+      font-size: var(--deck-small);
+      max-width: 52ch;
+    }
+
+    .svc-media {
+      justify-self: end;
+      width: min(100%, 56svh, 480px);
+    }
+
+    .svc-media :global(.photo) {
+      border-radius: var(--r-media);
+    }
+
+    @media (max-width: 899px) {
+      .svc-media {
+        width: 100%;
+      }
+
+      .svc-media :global(.photo) {
+        aspect-ratio: 16 / 10;
       }
     }
 
@@ -1077,13 +1216,16 @@ const phoneHref = `tel:+${SITE.whatsappNumber}`;
         grid-template-columns: 0.8fr 1.2fr;
       }
 
-      .open-mark {
-        order: 0;
-        justify-items: center;
+      .open-media {
+        width: 92mm;
       }
 
-      .open-mark :global(.open-symbol) {
-        width: 60mm;
+      .svc-grid {
+        grid-template-columns: 1.15fr 0.85fr;
+      }
+
+      .svc-media {
+        width: 82mm;
       }
 
       .opp-grid,

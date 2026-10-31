@@ -26,6 +26,8 @@ export const SLIDES = [
   { id: 'solucao', label: 'A solução' },
   { id: 'jornada', label: 'Jornada de compra' },
   { id: 'curadoria', label: 'Curadoria' },
+  { id: 'marcas', label: 'Marcas de referência' },
+  { id: 'servicos', label: 'Serviços exclusivos' },
   { id: 'projeto', label: 'Integração ao espaço' },
   { id: 'modelo', label: 'Modelo operacional' },
   { id: 'seguranca', label: 'Segurança e suporte' },
@@ -70,7 +72,8 @@ export const CURATION = [
   { title: 'Adega', text: 'Vinhos e espumantes selecionados.', photo: 'curadoria-adega', alt: 'Silhuetas de garrafas de vinho sobre fundo preto' },
 ];
 
-// 06 — projeto. "Sem obra civil" é afirmado no site; aqui fica condicionado à visita [C5].
+// 08 — projeto. "Sem obra civil" é afirmado no site; aqui fica condicionado à visita [C5].
+// Imagens: projeto conceitual gerado a partir do projeto 3D da Just Go (docs/creditos-imagens.md).
 export const PROJECT_POINTS = [
   'Layout desenhado para a área disponível e a circulação do prédio.',
   'Estrutura modular. A necessidade de adequações é avaliada na visita técnica.',

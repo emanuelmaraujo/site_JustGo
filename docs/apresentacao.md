@@ -30,10 +30,14 @@ Documento interno. Não publicado.
 `apresentacao/apresentacao.html` e `apresentacao/apresentacaoblack.html` ficam como **referência histórica** (não
 são publicadas: a pasta está fora de `public/`). Podem ser removidas quando a nova versão for aprovada.
 
-## Narrativa (12 slides)
+## Narrativa (14 slides)
 
-01 Abertura · 02 A oportunidade · 03 A solução · 04 Jornada de compra · 05 Curadoria · 06 Integração ao espaço ·
-07 Modelo operacional · 08 Segurança e suporte · 09 Condições comerciais · 10 Implantação · 11 Perguntas · 12 Próximo passo
+01 Abertura · 02 A oportunidade · 03 A solução · 04 Jornada de compra · 05 Curadoria · 06 Marcas de referência ·
+07 Serviços exclusivos · 08 Integração ao espaço · 09 Modelo operacional · 10 Segurança e suporte ·
+11 Condições comerciais · 12 Implantação · 13 Perguntas · 14 Próximo passo
+
+Identidade: logotipos e selo oficiais em SVG (Drive). Tom de voz e manifesto seguem a *Estratégia de Marca*
+(Drive › JUST GO MARKET › DOCUMENTOS): moderno e claro, elegante e confiável, próximo, inspirador.
 
 ## Motion
 
@@ -78,6 +82,16 @@ Não existe loja em operação, então nada na apresentação é "implementado e
 **Fora da apresentação, de propósito:** "risco zero", "controle absoluto", biometria/reconhecimento facial (fora do MVP),
 cartão de crédito/débito (fora do MVP), seguro contra furtos, trava da adega com verificação de maioridade, monitoramento
 24h com central, estorno na hora, relatório mensal, valorização do imóvel, números de produtos e clientes, depoimentos.
+
+## Marcas de referência e serviços exclusivos (31/10/2026)
+
+- **Marcas** (`src/lib/brands.ts`): definidas pela Just Go Market como padrão da curadoria. Aparecem só como nomes,
+  em tipografia própria — **nunca com logotipos**, que exigem autorização de cada fabricante — e sempre com a
+  ressalva "o mix de cada loja depende da disponibilidade dos distribuidores".
+  Antes de divulgar amplamente, vale confirmar com os distribuidores que cada marca está acessível.
+- **Serviços** (`src/lib/services.ts`): adega personalizada, mix sob medida e consultoria de curadoria.
+  A mensagem original foi cortada em "consultoria com…": se a consultoria for com um especialista (ex.: sommelier),
+  basta ajustar o texto nesse arquivo.
 
 ## Pendências comerciais (confirmar antes de usar a apresentação com clientes)
 

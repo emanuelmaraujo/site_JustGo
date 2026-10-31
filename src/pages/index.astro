@@ -100,12 +100,13 @@ const security = [
 
     <div class="hero-media" data-hero-media>
       <Photo
-        name="hero-cafe-manha"
-        alt="Café com leite e croissant sobre uma mesa de madeira, em luz quente"
+        name="premium-fachada"
+        alt="Projeto conceitual: loja Just Go integrada ao lobby de um condomínio de alto padrão, à noite, com fachada de vidro, madeira e travertino"
         ratio="16/9"
         sizes="100vw"
         priority
         rounded={false}
+        kind="concept"
         class="hero-photo"
       />
     </div>
@@ -121,6 +122,14 @@ const security = [
         highlight={['tempo.']}
       />
       <p class="manifesto-sign">Tempo de sobra para o que importa.</p>
+      <img
+        src="/assets/brand/selo-tempo.svg"
+        alt="Selo Just Go Market: A gente devolve o seu tempo"
+        width="320"
+        height="320"
+        loading="lazy"
+        class="manifesto-seal"
+      />
     </div>
   </Section>
 
@@ -233,15 +242,15 @@ const security = [
       {/* O slider antes/depois (BeforeAfter) volta quando houver um par real de fotos do mesmo espaço */}
       <figure class="project-concept" data-reveal>
         <Photo
-          name="conceito-interior"
-          alt="Projeto conceitual em 3D do interior de uma loja Just Go: geladeiras, gôndola central e totens de autoatendimento"
+          name="premium-interior"
+          alt="Projeto conceitual do interior de uma loja Just Go: geladeiras de vidro, gôndola central em madeira, adega na parede e balcão de travertino com dois totens"
           ratio="16/9"
           sizes="(min-width: 1320px) 1320px, 100vw"
           kind="concept"
         />
         <figcaption class="project-concept-cap">
-          Projeto conceitual em 3D. Layout, acabamentos e mix são definidos para cada condomínio; produtos e
-          embalagens na imagem são ilustrativos.
+          Projeto conceitual, desenvolvido a partir do projeto 3D da Just Go. Layout, acabamentos e mix são definidos
+          para cada condomínio.
         </figcaption>
       </figure>
 
@@ -448,6 +457,28 @@ const security = [
       margin-top: 48px;
       font-family: var(--font-display);
       color: var(--fg-2);
+    }
+
+    /* Selo oficial da marca (Drive › Identidade visual › Elementos complementares) */
+    .manifesto-seal {
+      display: block;
+      width: 120px;
+      height: auto;
+      margin-top: 40px;
+    }
+
+    @media (min-width: 1024px) {
+      .manifesto > .container {
+        position: relative;
+      }
+
+      .manifesto-seal {
+        position: absolute;
+        right: var(--gutter);
+        bottom: 0;
+        width: clamp(180px, 16vw, 240px);
+        margin: 0;
+      }
     }
 
     @media (min-width: 1024px) {
