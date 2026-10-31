@@ -46,7 +46,7 @@ por IA e simula uma loja real — **foi retirada** do site.
       Qual é o correto hoje? Se o app for obrigatório em algum condomínio, ajusto os textos.
 - [ ] **Cartão de crédito/débito e aproximação** — fora do MVP; citar só após confirmação.
 - [ ] **"Aberto agora"** foi retirado do hero (não há loja inaugurada). Voltar só com uma loja real em operação.
-- [x] **Marcas de referência** definidas pela Just Go (`src/lib/brands.ts`): faixa na home, parede na Curadoria e
+- [x] **Marcas de referência** definidas pela Just Go (`src/lib/brands.ts`): faixa horizontal em movimento na home, na Curadoria e na
       slide na apresentação. Só nomes, sem logotipos, com ressalva de disponibilidade.
 - [ ] **Categoria Bem-estar** existe no mix atual? Hoje fica **oculta**; para publicar, remova `confirm` de
       `src/content/curadoria/04-bem-estar.json`.

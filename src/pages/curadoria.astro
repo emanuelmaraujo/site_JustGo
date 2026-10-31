@@ -11,9 +11,10 @@ import Photo from '@components/ui/Photo.astro';
 import Button from '@components/ui/Button.astro';
 import PageHero from '@components/site/PageHero.astro';
 import CtaFinal from '@components/site/CtaFinal.astro';
-import BrandWall from '@components/ui/BrandWall.astro';
+import Marquee from '@components/site/Marquee.astro';
 import { getCuradoria } from '@lib/content';
-import { whatsappUrl } from '@lib/site';
+import { PREMIUM_BRANDS, whatsappUrl } from '@lib/site';
+import { BRANDS_DISCLAIMER } from '@lib/brands';
 import { SERVICES } from '@lib/services';
 import { crumbs } from '@lib/schema';
 
@@ -69,9 +70,12 @@ const universes = await getCuradoria();
           O padrão da curadoria: rótulos e fabricantes reconhecidos em cada categoria, do espumante ao café da manhã.
         </p>
       </div>
-      <div data-reveal>
-        <BrandWall />
-      </div>
+    </div>
+    <div class="brands-strip" data-reveal>
+      <Marquee brands={PREMIUM_BRANDS} size="lg" rows={2} />
+    </div>
+    <div class="container">
+      <p class="brands-note">{BRANDS_DISCLAIMER}</p>
     </div>
   </Section>
 
@@ -140,6 +144,18 @@ const universes = await getCuradoria();
 
 <style>
   @layer components {
+    .brands-strip {
+      margin-top: clamp(40px, 6vw, 80px);
+    }
+
+    .brands-note {
+      margin-top: clamp(32px, 4vw, 48px);
+      max-width: 90ch;
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      color: var(--fg-3);
+    }
+
     .mix-note {
       align-self: center;
       justify-self: center;

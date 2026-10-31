@@ -157,7 +157,7 @@ const security = [
         }))}
       />
 
-      {PREMIUM_BRANDS.length > 0 && <Marquee brands={PREMIUM_BRANDS} />}
+      {PREMIUM_BRANDS.length > 0 && <Marquee brands={PREMIUM_BRANDS} size="lg" class="home-brands" />}
 
       <div class="container curadoria-foot">
         <a href="/curadoria" class="link-arrow">Conhecer a curadoria <Icon name="arrow-right" size={14} /></a>
@@ -496,6 +496,10 @@ const security = [
     /* ---------- Curadoria ---------- */
     .curadoria-wrap {
       padding-block: var(--section-y);
+    }
+
+    .curadoria-wrap :global(.home-brands) {
+      margin-top: clamp(56px, 7vw, 96px);
     }
 
     .curadoria-foot {

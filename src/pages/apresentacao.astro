@@ -12,7 +12,8 @@ import DeckLayout from '@layouts/DeckLayout.astro';
 import Slide from '@components/deck/Slide.astro';
 import JourneyDemo from '@components/deck/JourneyDemo.astro';
 import QrCode from '@components/deck/QrCode.astro';
-import BrandWall from '@components/ui/BrandWall.astro';
+import Marquee from '@components/site/Marquee.astro';
+import { ALL_BRANDS, BRANDS_DISCLAIMER } from '@lib/brands';
 import { SERVICES } from '@lib/services';
 import Photo from '@components/ui/Photo.astro';
 import Icon from '@components/Icon.astro';
@@ -201,12 +202,15 @@ const phoneHref = `tel:+${SITE.whatsappNumber}`;
       </Slide>
 
       <!-- Marcas de referência -->
-      <Slide id="marcas" theme="ink" layout="top">
+      <Slide id="marcas" theme="ink">
         <div class="slide-head split-head">
           <h2 class="deck-h2" data-a>Marcas que o morador já escolhe em casa.</h2>
           <p class="deck-lead" data-a>O padrão da curadoria em cada categoria, do espumante ao café da manhã.</p>
         </div>
-        <BrandWall compact itemAttr="data-a-brand" />
+        <div class="brand-strip" data-a-brand>
+          <Marquee brands={ALL_BRANDS} size="lg" rows={2} />
+        </div>
+        <p class="deck-foot" data-a>{BRANDS_DISCLAIMER}</p>
       </Slide>
 
       <!-- Serviços exclusivos -->
@@ -545,9 +549,13 @@ const phoneHref = `tel:+${SITE.whatsappNumber}`;
       }
     }
 
-    /* ---------- Marcas ---------- */
-    :global(#marcas) :global(.bw-names li) {
-      color: var(--fg);
+    /* ---------- Marcas: a faixa ocupa a largura toda do slide ---------- */
+    .brand-strip {
+      margin-inline: calc(var(--gutter) * -1);
+    }
+
+    .brand-strip :global(.mq-lg .mq-track li) {
+      font-size: clamp(1.9rem, min(5vw, 8.5svh), 5rem);
     }
 
     /* ---------- Serviços exclusivos ---------- */
