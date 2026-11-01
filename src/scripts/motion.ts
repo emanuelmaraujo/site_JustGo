@@ -279,9 +279,12 @@ function storeTour(mm: gsap.MatchMedia) {
       };
       setActive(0);
 
-      const W = 0.32; // tamanho inicial da "janela" do interior
-      gsap.set(frames[1], { scale: W, borderRadius: 28 });
-      gsap.set(media(frames[1]), { scale: 1 / W });
+      // Porta de vidro da loja no render da fachada (≈ centro da vitrine)
+      const DOOR = '68% 58%';
+      const W = 0.24; // tamanho da "janela" do interior quando ela surge na porta
+      gsap.set(img(frames[0]), { transformOrigin: DOOR });
+      gsap.set(frames[1], { autoAlpha: 0, scale: W, borderRadius: 40, transformOrigin: DOOR });
+      gsap.set(media(frames[1]), { scale: 1 / W, transformOrigin: DOOR });
       gsap.set(frames[2], { xPercent: 100 });
       gsap.set(media(frames[2]), { xPercent: -100 });
       gsap.set([copy(frames[1]), copy(frames[2])], { autoAlpha: 0, y: 30 });
@@ -291,31 +294,34 @@ function storeTour(mm: gsap.MatchMedia) {
         scrollTrigger: {
           trigger: stage,
           start: 'top top',
-          end: '+=260%',
+          end: '+=280%',
           pin: true,
-          scrub: 0.8,
+          scrub: 0.9,
           anticipatePin: 1,
           invalidateOnRefresh: true,
-          snap: { snapTo: [0, 0.5, 1], duration: { min: 0.2, max: 0.6 }, ease: 'power2.inOut', delay: 0.05 },
-          onUpdate: (st) => setActive(st.progress < 0.3 ? 0 : st.progress < 0.78 ? 1 : 2),
+          snap: { snapTo: [0, 0.5, 1], duration: { min: 0.25, max: 0.7 }, ease: 'power2.inOut', delay: 0.05 },
+          onUpdate: (st) => setActive(st.progress < 0.4 ? 0 : st.progress < 0.8 ? 1 : 2),
         },
       });
 
-      // 0 → 1: aproxima da fachada e "entra"
-      tl.fromTo(img(frames[0]), { scale: 1.08 }, { scale: 1.32, duration: 1 }, 0)
-        .to(copy(frames[0]), { autoAlpha: 0, y: -30, duration: 0.35 }, 0.25)
-        .to(frames[1], { scale: 1, borderRadius: 0, duration: 0.75 }, 0.25)
-        .to(media(frames[1]), { scale: 1, duration: 0.75 }, 0.25)
-        .fromTo(img(frames[1]), { scale: 1.2 }, { scale: 1.06, duration: 0.75 }, 0.25)
-        .to(copy(frames[1]), { autoAlpha: 1, y: 0, duration: 0.3 }, 0.7)
-        // 1 → 2: o olhar vira para o balcão
-        .to(img(frames[1]), { xPercent: -6, duration: 1 }, 1.1)
-        .to(copy(frames[1]), { autoAlpha: 0, y: -30, duration: 0.3 }, 1.25)
-        .to(frames[2], { xPercent: 0, duration: 0.75 }, 1.3)
-        .to(media(frames[2]), { xPercent: 0, duration: 0.75 }, 1.3)
-        .fromTo(img(frames[2]), { scale: 1.12 }, { scale: 1.02, duration: 0.9 }, 1.3)
-        .to(copy(frames[2]), { autoAlpha: 1, y: 0, duration: 0.3 }, 1.8)
-        .to({}, { duration: 0.2 });
+      // 0 → 1 (tempo 0–1): a fachada fica sozinha; a câmera caminha até a porta e o interior
+      // nasce de dentro dela, já perto, e se abre até ocupar a tela.
+      tl.fromTo(img(frames[0]), { scale: 1.04 }, { scale: 2.6, duration: 0.95, ease: 'power1.in' }, 0.06)
+        .to(copy(frames[0]), { autoAlpha: 0, y: -24, duration: 0.25 }, 0.1)
+        .to(frames[0], { autoAlpha: 0.2, duration: 0.4 }, 0.62)
+        .to(frames[1], { autoAlpha: 1, duration: 0.2, ease: 'power1.out' }, 0.48)
+        .to(frames[1], { scale: 1, borderRadius: 0, duration: 0.52, ease: 'power2.inOut' }, 0.48)
+        .to(media(frames[1]), { scale: 1, duration: 0.52, ease: 'power2.inOut' }, 0.48)
+        .fromTo(img(frames[1]), { scale: 1.18 }, { scale: 1.04, duration: 0.55, ease: 'power2.out' }, 0.5)
+        .to(copy(frames[1]), { autoAlpha: 1, y: 0, duration: 0.15 }, 0.85)
+        // 1 → 2 (tempo 1.1–2): o olhar vira para o balcão
+        .to(img(frames[1]), { xPercent: -6, duration: 0.9 }, 1.1)
+        .to(copy(frames[1]), { autoAlpha: 0, y: -24, duration: 0.2 }, 1.2)
+        .to(frames[2], { xPercent: 0, duration: 0.6, ease: 'power2.inOut' }, 1.25)
+        .to(media(frames[2]), { xPercent: 0, duration: 0.6, ease: 'power2.inOut' }, 1.25)
+        .fromTo(img(frames[2]), { scale: 1.12 }, { scale: 1.02, duration: 0.7 }, 1.25)
+        .to(copy(frames[2]), { autoAlpha: 1, y: 0, duration: 0.15 }, 1.78)
+        .to({}, { duration: 0.07 }, 1.93);
 
       cleanups.push(() => {
         tour.classList.remove('is-pinned', 'is-live');
