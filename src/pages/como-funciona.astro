@@ -15,7 +15,7 @@ import { FACTS } from '@lib/site';
 import { crumbs, serviceSchema } from '@lib/schema';
 
 const tech = [
-  { title: 'Totem Scan & Go', text: 'Leitor de código de barras e tela de pagamento com Pix e cartão.' },
+  { title: 'Totem Scan & Go', text: 'Leitor de código de barras e tela de pagamento por Pix.' },
   { title: 'Inventário inteligente', text: 'Estoque acompanhado em tempo real, com alertas automáticos de reposição.' },
   { title: 'Câmeras em nuvem', text: 'Monitoramento 24h com acesso remoto da nossa equipe.' },
   { title: 'Aplicativo do condomínio', text: 'Acesso controlado e verificação de maioridade, quando o condomínio escolhe.' },
@@ -33,10 +33,9 @@ const tech = [
     lead={`Uma implantação de ${FACTS.totalDays}, conduzida do início ao fim por nós. Depois, uma operação que o condomínio não precisa acompanhar.`}
     crumbs={[{ name: 'Como funciona', href: '/como-funciona' }]}
     photo={{
-      name: 'projeto-interior',
-      alt: 'Interior de uma loja Just Go: prateleiras de madeira, geladeiras e totem de autoatendimento',
-      placeholder: 'Projeto 3D — interior da loja (render do projeto)',
-      illustrative: true,
+      name: 'premium-adega',
+      alt: 'Projeto conceitual: balcão de travertino com dois totens de autoatendimento, ao lado de uma adega climatizada',
+      kind: 'concept',
     }}
   />
 

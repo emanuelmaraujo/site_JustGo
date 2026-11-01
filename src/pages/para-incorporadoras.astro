@@ -72,10 +72,9 @@ const specs = [
     lead="Leve a Just Go para o projeto ainda na planta: conveniência de alto padrão integrada à arquitetura, entregue pronta para os novos moradores."
     crumbs={[{ name: 'Para incorporadoras', href: '/para-incorporadoras' }]}
     photo={{
-      name: 'projeto-fachada',
-      alt: 'Fachada de uma loja Just Go integrada à área comum de um condomínio',
-      placeholder: 'Projeto 3D — fachada da loja (render do projeto)',
-      illustrative: true,
+      name: 'premium-fachada',
+      alt: 'Projeto conceitual: loja Just Go integrada ao lobby de um condomínio, com fachada de vidro, madeira e travertino',
+      kind: 'concept',
     }}
   />
 
@@ -114,7 +113,7 @@ const specs = [
         <div class="card specs" data-reveal>
           <h3>Para o caderno técnico</h3>
           <ul class="list-check">{specs.map((s) => <li>{s}</li>)}</ul>
-          <p class="todo">[CONFIRMAR] Especificações técnicas detalhadas e modelo comercial para incorporadoras.</p>
+          <p class="specs-note">Especificações técnicas detalhadas e condições comerciais são enviadas junto com a proposta.</p>
         </div>
       </div>
       <ol class="timeline" data-scroll-progress>
@@ -156,8 +155,10 @@ const specs = [
       margin-top: 40px;
     }
 
-    .specs .todo {
+    .specs-note {
       margin-top: 20px;
+      font-size: var(--fs-small);
+      color: var(--fg-2);
     }
   }
 </style>

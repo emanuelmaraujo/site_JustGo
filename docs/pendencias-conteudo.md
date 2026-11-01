@@ -1,11 +1,14 @@
 # Pendências de conteúdo — redesign premium
 
-Itens que **não foram inventados** e precisam de confirmação ou material do time Just Go Market
-antes do merge. No site, aparecem marcados com `[CONFIRMAR]` ou como placeholder `[FOTO: …]`.
+Itens que **não foram inventados** e precisam de confirmação ou material do time Just Go Market.
+Nada disso aparece mais na interface: não há `[CONFIRMAR]` nem `[FOTO: …]` visíveis ao público.
+Uma foto ausente vira uma composição gráfica da marca (o nome esperado fica em `data-photo-missing` no HTML).
+Pendências da apresentação comercial: `docs/apresentacao.md`. Origem das imagens: `docs/creditos-imagens.md`.
 
 ## Confirmado durante o projeto
 
 - **Pix** é aceito em todos os totens. Já aplicado em todo o site (FAQ, Termos, Schema).
+- **Cartão** não está confirmado e está fora do MVP da plataforma (`justgo-plataform`): o site passou a citar só Pix.
 
 ## Fotografia
 
@@ -14,13 +17,13 @@ Os nomes dos arquivos esperados estão em `docs/prompts-fotos.md`. Basta salvar 
 
 | Arquivo | Onde aparece | Situação |
 |---|---|---|
-| `hero-loja-noite` | Hero da home | Placeholder. Pode vir dos renders 3D do Drive (FACHADA / INTERIOR) |
-| `projeto-interior` | Hero de Como funciona | Placeholder. Sugestão: INTERIOR 1–8 (Drive › IMAGENS 3D) |
-| `projeto-fachada` | Hero de Para incorporadoras | Placeholder. Sugestão: FACHADA / FACHADA 2 (Drive) |
-| `projeto-antes` / `projeto-depois` | Slider antes/depois (home) | Placeholder. Foto real de um hall antes e depois, ou par de renders |
-| `curadoria-adega`, `-emporio`, `-despensa`, `-bem-estar` | Curadoria (home, Curadoria, Para moradores) | Placeholder. Prompts prontos em `docs/prompts-fotos.md` |
-| `morador-adega` | Hero de Para moradores | Placeholder |
-| `totem-scan` | (reserva) | Placeholder |
+| `premium-adega` | Hero de Como funciona | Projeto conceitual premium (gerado a partir do 3D) |
+| `premium-fachada` | Hero da home e de Para incorporadoras | Projeto conceitual premium (gerado a partir do 3D) |
+| `premium-interior` | Home › Projeto integrado (no lugar do slider antes/depois) | Projeto conceitual premium (gerado a partir do 3D) |
+| `curadoria-adega`, `-emporio`, `-despensa` | Curadoria (home, Curadoria, Para moradores) | Fotos editoriais licenciadas (Pexels) |
+| `curadoria-bem-estar` | — | Foto pronta; a categoria fica oculta até ser confirmada |
+| `produto-vinho` | Hero de Para moradores | Foto editorial licenciada (Pexels) |
+| `projeto-antes` / `projeto-depois` | — | O slider `BeforeAfter` volta quando houver um par real do mesmo espaço |
 | `brasilia-noite` | Sobre | **Foto real** (já existia no site) |
 
 Fotos da loja geradas por IA ou renders aparecem com a legenda **"Imagem ilustrativa"**.
@@ -41,10 +44,12 @@ por IA e simula uma loja real — **foi retirada** do site.
 - [ ] **Aplicativo:** o render da fachada diz "Baixe o app, entre e finalize sua compra", mas o site e o
       FAQ afirmam que **não é preciso aplicativo para comprar** (diferencial frente às concorrentes).
       Qual é o correto hoje? Se o app for obrigatório em algum condomínio, ajusto os textos.
-- [ ] **Pagamento por aproximação** (NFC) — citar ou não.
-- [ ] **Marcas premium** efetivamente vendidas — para a faixa de marcas (`PREMIUM_BRANDS` em `src/lib/site.ts`;
-      com a lista vazia, a faixa não aparece).
-- [ ] **Categoria Bem-estar** existe no mix atual? (`src/content/curadoria/04-bem-estar.json`)
+- [ ] **Cartão de crédito/débito e aproximação** — fora do MVP; citar só após confirmação.
+- [ ] **"Aberto agora"** foi retirado do hero (não há loja inaugurada). Voltar só com uma loja real em operação.
+- [x] **Marcas de referência** definidas pela Just Go (`src/lib/brands.ts`): faixa horizontal em movimento na home, na Curadoria e na
+      slide na apresentação. Só nomes, sem logotipos, com ressalva de disponibilidade.
+- [ ] **Categoria Bem-estar** existe no mix atual? Hoje fica **oculta**; para publicar, remova `confirm` de
+      `src/content/curadoria/04-bem-estar.json`.
 - [ ] **Prazo de instalação** — o site usa "15 a 30 dias, sem obra civil" e "projeto em até 5 dias úteis"
       (vindos do site anterior). Confirmar.
 - [ ] **Retorno em até 24 horas** com estudo de viabilidade (texto do CTA final, vindo do site anterior).

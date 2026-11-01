@@ -15,7 +15,15 @@ export async function getFaqs() {
     };
 }
 
+/**
+ * Universos da curadoria publicados. Um universo com `confirm` (pendente de
+ * confirmação comercial) não aparece no site até a pendência ser resolvida —
+ * basta remover o campo `confirm` do JSON para publicá-lo.
+ */
 export async function getCuradoria() {
     const items = await getCollection('curadoria');
-    return items.map((i) => i.data).sort((a, b) => a.order - b.order);
+    return items
+        .map((i) => i.data)
+        .filter((u) => !u.confirm)
+        .sort((a, b) => a.order - b.order);
 }

@@ -1,0 +1,599 @@
+/* =============================================================
+   Apresentação comercial — sistema de slides
+   Três modos, decididos só por CSS:
+     · sem JS ............ página contínua, um slide abaixo do outro
+     · .js (deck-ready) .. um slide por vez, em tela cheia (deck.ts)
+     · impressão ......... 1 slide por página 16:9, sem animação
+   Tipografia proporcional à menor dimensão útil, para caber em
+   notebook, TV e projetor sem rolagem; no celular, cada slide rola.
+   ============================================================= */
+
+@layer tokens {
+  .deck-page {
+    --bar-h: 64px;
+    --nav-h: 68px;
+    /* Escala do slide: largura OU altura, a que for mais restritiva */
+    --deck-h1: clamp(2.3rem, min(6.4vw, 10.5svh), 7rem);
+    --deck-h2: clamp(1.9rem, min(4.4vw, 7.4svh), 4.9rem);
+    --deck-h3: clamp(1.15rem, min(1.7vw, 3svh), 1.85rem);
+    --deck-h4: clamp(1.05rem, min(1.35vw, 2.5svh), 1.45rem);
+    --deck-lead: clamp(1.05rem, min(1.45vw, 2.6svh), 1.55rem);
+    --deck-body: clamp(1rem, min(1.15vw, 2.15svh), 1.3rem);
+    --deck-small: clamp(0.9375rem, min(1vw, 1.9svh), 1.125rem);
+    --deck-num: clamp(2.8rem, min(6vw, 11svh), 7.5rem);
+  }
+
+  @media (max-width: 599px) {
+    .deck-page {
+      --bar-h: 56px;
+      --nav-h: 64px;
+    }
+  }
+}
+
+@layer components {
+  .deck-page body {
+    background: var(--jg-black);
+  }
+
+  /* ---------- Barra superior ---------- */
+  .deck-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    height: var(--bar-h);
+    padding-inline: var(--gutter);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    color: var(--jg-offwhite);
+    pointer-events: none;
+    transition: color var(--dur-s) var(--ease-soft);
+  }
+
+  .deck-bar > * {
+    pointer-events: auto;
+  }
+
+  .deck[data-tone='light'] .deck-bar,
+  .deck[data-tone='light'] .deck-nav {
+    color: var(--jg-black);
+  }
+
+  .deck-logo {
+    display: block;
+    width: clamp(120px, 12vw, 168px);
+  }
+
+  .deck-logo img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* Versões oficiais do logotipo (Drive › Identidade visual › Logotipo › Vetores) */
+  .deck-logo-light,
+  .deck-logo-mono,
+  .deck[data-tone='light'] .deck-logo-dark {
+    display: none;
+  }
+
+  .deck[data-tone='light'] .deck-logo-light {
+    display: block;
+  }
+
+  /* Sobre o verde: a versão monocromática preta do manual */
+  .deck[data-theme='green'] .deck-logo-light {
+    display: none;
+  }
+
+  .deck[data-theme='green'] .deck-logo-mono {
+    display: block;
+  }
+
+  .deck-counter {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
+    color: inherit;
+    opacity: 0.8;
+  }
+
+  .deck-counter-sep {
+    margin-inline: 6px;
+    opacity: 0.5;
+  }
+
+  .deck-tools {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .deck-tool {
+    display: inline-grid;
+    place-items: center;
+    min-width: 44px;
+    height: 44px;
+    padding-inline: 12px;
+    border-radius: var(--r-pill);
+    border: 1px solid color-mix(in srgb, currentColor 24%, transparent);
+    color: inherit;
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    transition: border-color var(--dur-xs) var(--ease-soft);
+  }
+
+  .deck-tool:hover {
+    border-color: color-mix(in srgb, currentColor 60%, transparent);
+  }
+
+  .deck-tool .fs-exit,
+  .is-fullscreen .deck-tool .fs-enter {
+    display: none;
+  }
+
+  .is-fullscreen .deck-tool .fs-exit {
+    display: inline;
+  }
+
+  .deck[data-tone='light'] :focus-visible {
+    outline-color: var(--jg-black);
+  }
+
+  /* ---------- Slides (base = página contínua) ---------- */
+  .slide {
+    position: relative;
+    min-height: 100svh;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .slide-inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    /* Mais largo que o site: em TVs e projetores o slide ocupa a tela */
+    max-width: calc(1560px + var(--gutter) * 2);
+    min-height: 100svh;
+    margin-inline: auto;
+    padding: calc(var(--bar-h) + clamp(12px, 3svh, 40px)) var(--gutter) calc(var(--nav-h) + clamp(12px, 3svh, 40px));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(20px, 4svh, 48px);
+  }
+
+  .slide-top .slide-inner {
+    justify-content: flex-start;
+  }
+
+  @media (min-height: 700px) {
+    .slide-top .slide-inner {
+      justify-content: center;
+    }
+  }
+
+  .slide-index {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-display);
+    font-size: var(--fs-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--fg-3);
+  }
+
+  .slide-index-n {
+    color: var(--fg);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .slide-index-sep {
+    width: 28px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.6;
+  }
+
+  .theme-green .slide-index,
+  .theme-green .slide-index-n {
+    color: var(--jg-black);
+  }
+
+  .slide .pattern {
+    z-index: 0;
+  }
+
+  /* Tipografia do deck */
+  .deck-h1 {
+    font-size: var(--deck-h1);
+    line-height: 0.98;
+    letter-spacing: var(--tracking-h1);
+    max-width: 15ch;
+  }
+
+  .deck-h2 {
+    font-size: var(--deck-h2);
+    line-height: 1.04;
+    max-width: 20ch;
+  }
+
+  .deck-lead {
+    font-size: var(--deck-lead);
+    line-height: 1.5;
+    max-width: 46ch;
+    color: var(--fg-2);
+  }
+
+  .slide-head > * + * {
+    margin-top: clamp(12px, 2.4svh, 24px);
+  }
+
+  @media (min-width: 1024px) {
+    .split-head {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 48px;
+      align-items: end;
+    }
+
+    .split-head > * + * {
+      margin-top: 0;
+    }
+  }
+
+  .deck-foot {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--fg-3);
+    max-width: 80ch;
+  }
+
+  .theme-green .deck-foot {
+    color: #1d2a12;
+  }
+
+  .deck-hint {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    color: var(--fg-3);
+  }
+
+  .hint-keys {
+    display: inline-block;
+    padding: 2px 8px;
+    margin-right: 6px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    letter-spacing: 0.2em;
+  }
+
+  /* ---------- Navegação inferior ---------- */
+  .deck-nav {
+    display: none;
+  }
+
+  /* ============ Modo apresentação (com JS) ============ */
+  .js.deck-page,
+  .js.deck-page body {
+    overflow: hidden;
+    height: 100%;
+  }
+
+  .js .deck-slides {
+    position: fixed;
+    inset: 0;
+    outline: none;
+  }
+
+  .js .slide {
+    position: absolute;
+    inset: 0;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    visibility: hidden;
+    opacity: 0;
+    transition:
+      opacity 420ms var(--ease-soft),
+      visibility 0s linear 420ms;
+  }
+
+  .js .slide.is-active {
+    visibility: visible;
+    opacity: 1;
+    z-index: 2;
+    transition:
+      opacity 420ms var(--ease-soft),
+      visibility 0s;
+  }
+
+  .js .slide-inner {
+    min-height: 100%;
+  }
+
+  .js .deck-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    height: var(--nav-h);
+    padding: 0 var(--gutter) env(safe-area-inset-bottom);
+    display: grid;
+    grid-template-columns: 48px 1fr 48px;
+    align-items: center;
+    gap: 12px;
+    color: var(--jg-offwhite);
+    transition: color var(--dur-s) var(--ease-soft);
+  }
+
+  .deck-progress {
+    position: absolute;
+    top: 0;
+    left: var(--gutter);
+    right: var(--gutter);
+    height: 2px;
+    background: color-mix(in srgb, currentColor 16%, transparent);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .deck-progress-bar {
+    position: absolute;
+    inset: 0;
+    background: var(--jg-green);
+    transform-origin: left;
+    transform: scaleX(0.071);
+    transition: transform 500ms var(--ease-out-expo);
+  }
+
+  .deck[data-tone='light'] .deck-progress-bar,
+  .deck[data-theme='green'] .deck-progress-bar {
+    background: var(--jg-black);
+  }
+
+  .deck-arrow {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, currentColor 28%, transparent);
+    color: inherit;
+    transition:
+      background-color var(--dur-xs) var(--ease-soft),
+      border-color var(--dur-xs) var(--ease-soft),
+      opacity var(--dur-xs) var(--ease-soft);
+  }
+
+  .deck-arrow:hover:not(:disabled) {
+    border-color: currentColor;
+    background: color-mix(in srgb, currentColor 8%, transparent);
+  }
+
+  .deck-arrow:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+
+  .deck-label {
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: inherit;
+    opacity: 0.75;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* No celular o rótulo do slide já aparece no topo do conteúdo */
+  @media (max-width: 599px) {
+    .deck-counter {
+      display: none;
+    }
+  }
+
+  /* Em telas baixas (notebook 768px de altura, projetor 720p) a dica some */
+  @media (max-height: 760px) {
+    .deck-hint {
+      display: none;
+    }
+  }
+
+  /* Fundo do nav sobre o conteúdo que rola (celular) */
+  @media (max-width: 899px), (max-height: 640px) {
+    .js .deck-nav::before,
+    .js .deck-bar::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: color-mix(in srgb, var(--deck-chrome-bg, var(--jg-black)) 88%, transparent);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .deck[data-theme='light'] {
+      --deck-chrome-bg: var(--jg-offwhite);
+    }
+
+    .deck[data-theme='paper'] {
+      --deck-chrome-bg: var(--jg-paper);
+    }
+
+    .deck[data-theme='green'] {
+      --deck-chrome-bg: var(--jg-green);
+    }
+
+    .deck[data-theme='ink'] {
+      --deck-chrome-bg: var(--jg-ink-2);
+    }
+  }
+
+  .js .slide {
+    touch-action: pan-y;
+  }
+
+  .deck.is-instant .slide {
+    transition: none !important;
+  }
+
+  /* Imagem que falhou: a moldura escura permanece, sem ícone quebrado */
+  .photo.is-broken img {
+    opacity: 0;
+  }
+
+  /* Movimento reduzido: troca de slide instantânea */
+  html:not(.motion) .slide,
+  html:not(.motion) .deck-progress-bar {
+    transition: none !important;
+  }
+
+  /* ============ Impressão / PDF ============ */
+  @media print {
+    @page {
+      size: 338.67mm 190.5mm; /* 16:9 (13,33 × 7,5 pol.) */
+      margin: 0;
+    }
+
+    .deck-page {
+      --bar-h: 0px;
+      --nav-h: 0px;
+      --deck-h1: 4.6rem;
+      --deck-h2: 3.1rem;
+      --deck-h3: 1.3rem;
+      --deck-h4: 1.1rem;
+      --deck-lead: 1.15rem;
+      --deck-body: 1rem;
+      --deck-small: 0.875rem;
+      --deck-num: 4.6rem;
+    }
+
+    html,
+    body,
+    .js.deck-page,
+    .js.deck-page body {
+      height: auto !important;
+      overflow: visible !important;
+      background: var(--jg-black);
+    }
+
+    * {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .deck-bar,
+    .deck-nav,
+    .deck-hint,
+    .skip-link {
+      display: none !important;
+    }
+
+    .deck-slides,
+    .js .deck-slides {
+      position: static !important;
+    }
+
+    .slide,
+    .js .slide {
+      position: relative !important;
+      inset: auto !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      transform: none !important;
+      height: 190.5mm;
+      min-height: 0;
+      overflow: hidden !important;
+      break-after: page;
+      break-inside: avoid;
+    }
+
+    .slide-inner,
+    .js .slide-inner {
+      height: 100%;
+      min-height: 0;
+      padding: 14mm 16mm;
+      justify-content: center !important;
+      gap: 7mm;
+    }
+
+    /* Nada fica escondido por uma animação interrompida (só os elementos animados) */
+    .slide
+      :is(
+        .slide-index,
+        [data-a],
+        [data-a-moment],
+        [data-a-pillar],
+        [data-a-tile],
+        [data-a-render],
+        [data-a-left],
+        [data-a-right],
+        [data-a-safe],
+        [data-a-term],
+        [data-a-road],
+        [data-a-qa],
+        [data-a-qr],
+        [data-a-hero],
+        [data-a-brand],
+        [data-a-svc],
+        .open-seal,
+        .photo-img,
+        .photo,
+        .road-fill,
+        .resp-axis,
+        .resp-title,
+        .open-symbol path,
+        .plan-walls path,
+        .plan-store rect,
+        .plan-labels text,
+        .plan-tag
+      ) {
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: none !important;
+      clip-path: none !important;
+      stroke-dashoffset: 0 !important;
+    }
+
+    .slide {
+      width: 338.67mm;
+    }
+
+    .slide:last-child {
+      break-after: auto;
+    }
+
+    /* O Chrome avalia as media queries de largura com o tamanho de página padrão,
+       não com o @page: o layout de impressão é declarado aqui, independente da largura */
+    .split-head {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 12mm;
+      align-items: end;
+    }
+
+    .split-head > * + * {
+      margin-top: 0;
+    }
+
+    .deck-foot {
+      font-size: 0.75rem;
+    }
+
+    .slide .photo,
+    .slide .photo :is(img, picture) {
+      break-inside: avoid;
+    }
+  }
+}

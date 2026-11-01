@@ -93,7 +93,7 @@ export function localBusinessSchema(city?: string, coords?: { lat: number; lng: 
             opens: '00:00',
             closes: '23:59',
         },
-        paymentAccepted: 'Pix, cartão de crédito, cartão de débito',
+        paymentAccepted: 'Pix',
         priceRange: '$$',
     };
 }

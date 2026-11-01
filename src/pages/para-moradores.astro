@@ -31,7 +31,7 @@ const moments = [
 
 const facts = [
   { icon: 'clock', title: '24 horas', text: 'Todos os dias, inclusive feriados.' },
-  { icon: 'pay', title: 'Pix ou cartão', text: 'Crédito e débito, direto no totem. Sem dinheiro.' },
+  { icon: 'pay', title: 'Pagamento por Pix', text: 'Direto no totem, em poucos segundos. Sem dinheiro.' },
   { icon: 'phone', title: 'Sem aplicativo', text: 'Para comprar, não é preciso baixar nada.' },
   { icon: 'chat', title: 'Suporte pelo WhatsApp', text: 'Atendimento em tempo real, com estorno na hora.' },
 ] as const;
@@ -42,7 +42,7 @@ const shareText =
 
 <BaseLayout
   title="Para moradores: mercado 24h no seu condomínio"
-  description="Conveniência 24 horas no térreo do seu prédio: adega, empório e o essencial do dia a dia, com pagamento por Pix ou cartão e sem aplicativo. Conheça a Just Go Market."
+  description="Conveniência 24 horas no térreo do seu prédio: adega, empório e o essencial do dia a dia, com pagamento por Pix direto no totem. Conheça a Just Go Market."
   schemas={[faqPageSchema(faqs.morador), crumbs(['Para moradores', '/para-moradores'])]}
 >
   <PageHero
@@ -51,9 +51,9 @@ const shareText =
     lead="Leite às 23h, um vinho para o jantar, o ingrediente que faltou. Tudo no térreo do seu prédio, 24 horas por dia."
     crumbs={[{ name: 'Para moradores', href: '/para-moradores' }]}
     photo={{
-      name: 'morador-adega',
-      alt: 'Mão pegando uma garrafa de vinho em uma geladeira iluminada à noite',
-      placeholder: 'Mão pegando uma garrafa de vinho na geladeira, à noite',
+      name: 'produto-vinho',
+      alt: 'Taça de vinho tinto sobre fundo preto, com reflexos de luz',
+      position: '60% center',
     }}
   />
 
@@ -91,7 +91,7 @@ const shareText =
         </div>
         <a href="/curadoria" class="link-arrow" data-reveal>Conhecer a curadoria <Icon name="arrow-right" size={14} /></a>
       </div>
-      <ul class="uni">
+      <ul class="uni" style={`--n:${universes.length}`}>
         {
           universes.map((u) => (
             <li data-reveal>
@@ -186,9 +186,22 @@ const shareText =
       gap: 16px;
     }
 
+    /* Número ímpar de universos no celular: o último fica centralizado */
+    .uni > li:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+      justify-self: center;
+      width: calc(50% - 8px);
+    }
+
     @media (min-width: 1024px) {
       .uni {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(var(--n, 4), 1fr);
+      }
+
+      .uni > li:last-child:nth-child(odd) {
+        grid-column: auto;
+        justify-self: stretch;
+        width: auto;
       }
     }
 

@@ -1,0 +1,85 @@
+---
+/**
+ * Layout da apresentação comercial (/apresentacao).
+ * Reaproveita tokens, fontes, base e componentes do site, o GTM/GA4 e o Schema da
+ * organização — mas sem header, rodapé, intro ou CTA flutuante: é uma experiência
+ * em tela cheia, também usada em TVs e projetores.
+ *
+ * noindex: é material de apoio comercial, não uma página de busca.
+ */
+import SchemaOrg from '@components/SchemaOrg.astro';
+import Analytics from '@components/Analytics.astro';
+import AnalyticsNoscript from '@components/AnalyticsNoscript.astro';
+import Fonts from '@components/site/Fonts.astro';
+import { buildSEO } from '@lib/seo';
+import { organizationSchema } from '@lib/schema';
+
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/components.css';
+import '../styles/deck.css';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const seo = buildSEO({ fullTitle: title, description, noindex: true }, Astro.url.pathname);
+---
+
+<!doctype html>
+<html lang="pt-BR" class="deck-page">
+  <head>
+    <style is:inline>@layer reset, tokens, base, components, utilities;</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <script is:inline>
+      (function (d, w) {
+        var c = d.documentElement.classList;
+        c.add('js');
+        if (!w.matchMedia('(prefers-reduced-motion: reduce)').matches) c.add('motion');
+      })(document, window);
+    </script>
+
+    <title>{seo.title}</title>
+    <meta name="description" content={seo.description} />
+    <link rel="canonical" href={seo.canonical} />
+    <meta name="robots" content="noindex, follow" />
+
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={seo.title} />
+    <meta property="og:description" content={seo.description} />
+    <meta property="og:url" content={seo.canonical} />
+    <meta property="og:image" content={seo.ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="Just Go Market" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="theme-color" content="#010502" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="icon" href="/assets/images/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/assets/images/favicon.png" />
+
+    <Fonts />
+    <SchemaOrg schemas={[organizationSchema()]} />
+    <Analytics />
+  </head>
+
+  <body>
+    <AnalyticsNoscript />
+    <slot />
+    <!-- Se o script da apresentação não carregar, volta para a página contínua (todo o conteúdo visível) -->
+    <script is:inline>
+      setTimeout(function () {
+        if (!document.querySelector('.deck.is-ready')) document.documentElement.classList.remove('js', 'motion');
+      }, 3000);
+    </script>
+    <script>
+      import '../scripts/deck';
+    </script>
+  </body>
+</html>

@@ -71,7 +71,8 @@ function mediaExpand() {
       gsap.fromTo(
         img,
         { scale: 1.12 },
-        { scale: 1, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true } },
+        // termina em 1.04 para sobrar margem ao paralaxe do ponteiro (heroPointer)
+        { scale: 1.04, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true } },
       );
     }
   });
@@ -250,6 +251,152 @@ function magnetic(mm: gsap.MatchMedia) {
   });
 }
 
+/* ---------------- store-tour: o scroll anda pela loja ---------------- */
+// Fachada aproxima → interior abre do centro (como uma porta) → balcão entra pela direita
+// (como quem vira o olhar). Palco fixo; scrub suave com snap nas três paradas.
+// Só transform/opacity (compositor): dissolução com zooms opostos entre fachada e interior e
+// cortina com contra-translação para o balcão — nada de clip-path em camada de tela cheia.
+function storeTour(mm: gsap.MatchMedia) {
+  mm.add(`${DESKTOP} and (min-height: 600px)`, () => {
+    const tours = Array.from(document.querySelectorAll<HTMLElement>('[data-tour]'));
+    const cleanups: (() => void)[] = [];
+    tours.forEach((tour) => {
+      const frames = Array.from(tour.querySelectorAll<HTMLElement>('.tour-frame'));
+      if (frames.length < 3) return;
+      tour.classList.add('is-pinned');
+      const stage = tour.querySelector<HTMLElement>('.tour-stage')!;
+      const img = (f: HTMLElement) => f.querySelector('.photo-img');
+      const media = (f: HTMLElement) => f.querySelector('.tour-media');
+      const copy = (f: HTMLElement) => f.querySelector('.tour-copy');
+      const ticks = Array.from(tour.querySelectorAll<HTMLElement>('[data-tick]'));
+      const setActive = (i: number) => {
+        ticks.forEach((t, k) => t.classList.toggle('is-active', k === i));
+        frames.forEach((f, k) => {
+          f.toggleAttribute('inert', k !== i);
+          f.setAttribute('aria-hidden', String(k !== i));
+        });
+        tour.classList.toggle('is-live', i === 1);
+      };
+      setActive(0);
+
+      // Porta de vidro da loja no render da fachada (≈ centro da vitrine)
+      const DOOR = '68% 58%';
+      gsap.set([img(frames[0]), img(frames[1])], { transformOrigin: DOOR });
+      gsap.set(frames[1], { autoAlpha: 0 });
+      gsap.set(frames[2], { xPercent: 100 });
+      gsap.set(media(frames[2]), { xPercent: -100 });
+      gsap.set([copy(frames[1]), copy(frames[2])], { autoAlpha: 0, y: 30 });
+
+      const tl = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: {
+          trigger: stage,
+          start: 'top top',
+          end: '+=280%',
+          pin: true,
+          scrub: 0.9,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          snap: { snapTo: [0, 0.5, 1], duration: { min: 0.25, max: 0.7 }, ease: 'power2.inOut', delay: 0.05 },
+          onUpdate: (st) => setActive(st.progress < 0.4 ? 0 : st.progress < 0.8 ? 1 : 2),
+        },
+      });
+
+      // 0 → 1 (tempo 0–1): a fachada fica sozinha; a câmera caminha até a porta e, sem cortes
+      // nem molduras, o interior se dissolve por cima em tela cheia — vindo de um zoom maior
+      // e recuando — como quem atravessa a porta.
+      tl.fromTo(img(frames[0]), { scale: 1.04 }, { scale: 2.4, duration: 0.95, ease: 'power1.in' }, 0.05)
+        .to(copy(frames[0]), { autoAlpha: 0, y: -24, duration: 0.25 }, 0.1)
+        .to(frames[0], { autoAlpha: 0.45, duration: 0.4, ease: 'sine.inOut' }, 0.42)
+        .to(frames[1], { autoAlpha: 1, duration: 0.5, ease: 'sine.inOut' }, 0.4)
+        .fromTo(img(frames[1]), { scale: 1.75 }, { scale: 1.04, duration: 0.62, ease: 'power2.out' }, 0.4)
+        .to(copy(frames[1]), { autoAlpha: 1, y: 0, duration: 0.15 }, 0.85)
+        // 1 → 2 (tempo 1.1–2): o olhar vira para o balcão
+        .to(img(frames[1]), { xPercent: -6, duration: 0.9 }, 1.1)
+        .to(copy(frames[1]), { autoAlpha: 0, y: -24, duration: 0.2 }, 1.2)
+        .to(frames[2], { xPercent: 0, duration: 0.6, ease: 'power2.inOut' }, 1.25)
+        .to(media(frames[2]), { xPercent: 0, duration: 0.6, ease: 'power2.inOut' }, 1.25)
+        .fromTo(img(frames[2]), { scale: 1.12 }, { scale: 1.02, duration: 0.7 }, 1.25)
+        .to(copy(frames[2]), { autoAlpha: 1, y: 0, duration: 0.15 }, 1.78)
+        .to({}, { duration: 0.07 }, 1.93);
+
+      cleanups.push(() => {
+        tour.classList.remove('is-pinned', 'is-live');
+        frames.forEach((f) => {
+          f.removeAttribute('inert');
+          f.removeAttribute('aria-hidden');
+        });
+        gsap.set([...frames, ...frames.map(img), ...frames.map(media), ...frames.map(copy)], { clearProps: 'all' });
+      });
+    });
+    return () => cleanups.forEach((c) => c());
+  });
+
+  // Sem palco fixo (celular/tablet): pulsos dos pontos só quando o interior está na tela
+  mm.add(`not all and ${DESKTOP}`, () => {
+    const triggers = Array.from(document.querySelectorAll<HTMLElement>('[data-tour]')).map((tour) =>
+      ScrollTrigger.create({
+        trigger: tour.querySelector('.tour-frame[data-frame="1"]') ?? tour,
+        start: 'top 80%',
+        end: 'bottom 20%',
+        toggleClass: { targets: tour, className: 'is-live' },
+      }),
+    );
+    return () => triggers.forEach((t) => t.kill());
+  });
+}
+
+/* ---------------- hero: a imagem acompanha o ponteiro (bem de leve) ---------------- */
+function heroPointer(mm: gsap.MatchMedia) {
+  mm.add(`${DESKTOP} and ${FINE}`, () => {
+    const media = document.querySelector<HTMLElement>('[data-hero-media]');
+    const photo = media?.querySelector<HTMLElement>('.photo-img');
+    if (!media || !photo) return;
+    const x = gsap.quickTo(photo, 'x', { duration: 1.2, ease: 'power3.out' });
+    const y = gsap.quickTo(photo, 'y', { duration: 1.2, ease: 'power3.out' });
+    const onMove = (e: PointerEvent) => {
+      const r = media.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > window.innerHeight) return;
+      x(((e.clientX / window.innerWidth) - 0.5) * -16);
+      y(((e.clientY / window.innerHeight) - 0.5) * -10);
+    };
+    window.addEventListener('pointermove', onMove, { passive: true });
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      gsap.set(photo, { clearProps: 'transform' });
+    };
+  });
+}
+
+/* ---------------- tilt: profundidade 3D nos cartões (só ponteiro fino) ---------------- */
+function tilt(mm: gsap.MatchMedia) {
+  mm.add(`${DESKTOP} and ${FINE}`, () => {
+    const items = Array.from(document.querySelectorAll<HTMLElement>('[data-tilt]'));
+    const offs = items.map((el) => {
+      gsap.set(el, { transformPerspective: 900, transformOrigin: 'center' });
+      const rx = gsap.quickTo(el, 'rotationX', { duration: 0.6, ease: 'power3.out' });
+      const ry = gsap.quickTo(el, 'rotationY', { duration: 0.6, ease: 'power3.out' });
+      const move = (e: PointerEvent) => {
+        const r = el.getBoundingClientRect();
+        ry(((e.clientX - r.left) / r.width - 0.5) * 7);
+        rx(((e.clientY - r.top) / r.height - 0.5) * -7);
+      };
+      const leave = () => {
+        rx(0);
+        ry(0);
+      };
+      el.addEventListener('pointermove', move, { passive: true });
+      el.addEventListener('pointerleave', leave);
+      return () => {
+        el.removeEventListener('pointermove', move);
+        el.removeEventListener('pointerleave', leave);
+        gsap.set(el, { clearProps: 'transform' });
+      };
+    });
+    return () => offs.forEach((o) => o());
+  });
+}
+
 export function initMotion() {
   document.documentElement.classList.add('motion-ready');
   initLenis();
@@ -260,6 +407,9 @@ export function initMotion() {
   horizontalGallery(mm);
   curtain();
   magnetic(mm);
+  storeTour(mm);
+  heroPointer(mm);
+  tilt(mm);
 
   // Pins dependem da ordem na página; recalcula após fontes e imagens
   ScrollTrigger.sort();

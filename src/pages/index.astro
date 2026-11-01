@@ -15,7 +15,7 @@ import Photo from '@components/ui/Photo.astro';
 import HorizontalGallery from '@components/ui/HorizontalGallery.astro';
 import StickySteps from '@components/ui/StickySteps.astro';
 import StatCounter from '@components/ui/StatCounter.astro';
-import BeforeAfter from '@components/ui/BeforeAfter.astro';
+import StoreTour from '@components/ui/StoreTour.astro';
 import Icon from '@components/Icon.astro';
 import Pattern from '@components/site/Pattern.astro';
 import FaqTabs from '@components/site/FaqTabs.astro';
@@ -70,10 +70,11 @@ const security = [
   <!-- 7.1 Hero -->
   <section class="hero theme-dark" data-floor="08" data-floor-label="Entrada">
     <div class="container hero-top">
+      {/* Sem "Aberto agora": ainda não há loja inaugurada (docs/pendencias-conteudo.md) */}
       <p class="hero-status">
-        <span class="hero-live"><span class="hero-dot" aria-hidden="true"></span> Aberto agora</span>
+        <span class="hero-live"><span class="hero-dot" aria-hidden="true"></span> Mercado autônomo para condomínios</span>
         <span aria-hidden="true">·</span>
-        <time data-clock>24h</time>
+        <span>Operação 24h</span>
         <span aria-hidden="true">·</span>
         <span>Brasília</span>
       </p>
@@ -100,14 +101,13 @@ const security = [
 
     <div class="hero-media" data-hero-media>
       <Photo
-        name="hero-loja-noite"
-        alt="Loja Just Go integrada ao lobby de um condomínio de alto padrão, à noite"
-        placeholder="Loja integrada ao lobby do condomínio, à noite, luz quente, sem pessoas"
+        name="premium-fachada"
+        alt="Projeto conceitual: loja Just Go integrada ao lobby de um condomínio de alto padrão, à noite, com fachada de vidro, madeira e travertino"
         ratio="16/9"
         sizes="100vw"
         priority
         rounded={false}
-        illustrative
+        kind="concept"
         class="hero-photo"
       />
     </div>
@@ -123,6 +123,14 @@ const security = [
         highlight={['tempo.']}
       />
       <p class="manifesto-sign">Tempo de sobra para o que importa.</p>
+      <img
+        src="/assets/brand/selo-tempo.svg"
+        alt="Selo Just Go Market: A gente devolve o seu tempo"
+        width="320"
+        height="320"
+        loading="lazy"
+        class="manifesto-seal"
+      />
     </div>
   </Section>
 
@@ -147,11 +155,10 @@ const security = [
           kicker: c.kicker,
           text: c.text,
           photo: c.photo,
-          note: c.confirm ? `[CONFIRMAR] ${c.confirm}` : undefined,
         }))}
       />
 
-      {PREMIUM_BRANDS.length > 0 && <Marquee brands={PREMIUM_BRANDS} />}
+      {PREMIUM_BRANDS.length > 0 && <Marquee brands={PREMIUM_BRANDS} size="lg" class="home-brands" />}
 
       <div class="container curadoria-foot">
         <a href="/curadoria" class="link-arrow">Conhecer a curadoria <Icon name="arrow-right" size={14} /></a>
@@ -233,20 +240,16 @@ const security = [
         </p>
       </div>
 
-      <div data-reveal>
-        <BeforeAfter
-          before={{
-            name: 'projeto-antes',
-            alt: 'Nicho vazio no hall de um condomínio, antes da instalação',
-            placeholder: 'Antes — nicho vazio no hall do condomínio, mesmo enquadramento',
-          }}
-          after={{
-            name: 'projeto-depois',
-            alt: 'O mesmo nicho com a loja Just Go instalada',
-            placeholder: 'Depois — o mesmo nicho com a loja instalada',
-          }}
-        />
-      </div>
+    </div>
+
+    {/* Tour pela loja: o scroll percorre fachada → interior → balcão (motion.ts › storeTour) */}
+    <StoreTour />
+    <p class="container project-concept-cap">
+      Projeto conceitual, desenvolvido a partir do projeto 3D da Just Go. Layout, acabamentos e mix são definidos
+      para cada condomínio.
+    </p>
+
+    <div class="container">
 
       <ol class="project-steps">
         <li data-reveal>
@@ -351,26 +354,6 @@ const security = [
       background: var(--jg-green);
     }
 
-    .hero-dot::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background: var(--jg-green);
-      animation: live 2.4s var(--ease-out-expo) infinite;
-    }
-
-    @keyframes live {
-      0% {
-        transform: scale(1);
-        opacity: 0.7;
-      }
-      100% {
-        transform: scale(3.2);
-        opacity: 0;
-      }
-    }
-
     .hero-grid {
       margin-top: clamp(28px, 4vw, 48px);
       display: grid;
@@ -430,7 +413,37 @@ const security = [
     }
 
     .hero-media {
+      position: relative;
       margin-top: clamp(56px, 8vw, 104px);
+    }
+
+    /* Feixe de luz que atravessa a fachada uma vez, ao carregar (só transform) */
+    :global(.motion) .hero-media::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background: linear-gradient(
+        105deg,
+        transparent 38%,
+        rgba(255, 253, 252, 0.09) 46%,
+        rgba(160, 226, 97, 0.12) 50%,
+        rgba(255, 253, 252, 0.06) 54%,
+        transparent 62%
+      );
+      transform: translateX(-100%);
+      animation: hero-sweep 2.6s var(--ease-in-out) 0.9s 1 forwards;
+    }
+
+    :global(.intro-first) .hero-media::after {
+      animation-delay: 2.2s;
+    }
+
+    @keyframes hero-sweep {
+      to {
+        transform: translateX(100%);
+      }
     }
 
     :global(.motion) .hero-media {
@@ -473,6 +486,28 @@ const security = [
       color: var(--fg-2);
     }
 
+    /* Selo oficial da marca (Drive › Identidade visual › Elementos complementares) */
+    .manifesto-seal {
+      display: block;
+      width: 120px;
+      height: auto;
+      margin-top: 40px;
+    }
+
+    @media (min-width: 1024px) {
+      .manifesto > .container {
+        position: relative;
+      }
+
+      .manifesto-seal {
+        position: absolute;
+        right: var(--gutter);
+        bottom: 0;
+        width: clamp(180px, 16vw, 240px);
+        margin: 0;
+      }
+    }
+
     @media (min-width: 1024px) {
       .manifesto {
         min-height: 100vh;
@@ -488,6 +523,10 @@ const security = [
     /* ---------- Curadoria ---------- */
     .curadoria-wrap {
       padding-block: var(--section-y);
+    }
+
+    .curadoria-wrap :global(.home-brands) {
+      margin-top: clamp(56px, 7vw, 96px);
     }
 
     .curadoria-foot {
@@ -581,6 +620,13 @@ const security = [
     }
 
     /* ---------- Projeto ---------- */
+    .project-concept-cap {
+      margin-top: 16px;
+      max-width: 70ch;
+      font-size: var(--fs-small);
+      color: var(--fg-2);
+    }
+
     .project-steps {
       margin-top: 48px;
       display: grid;
