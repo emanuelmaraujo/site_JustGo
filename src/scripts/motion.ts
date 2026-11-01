@@ -254,8 +254,8 @@ function magnetic(mm: gsap.MatchMedia) {
 /* ---------------- store-tour: o scroll anda pela loja ---------------- */
 // Fachada aproxima → interior abre do centro (como uma porta) → balcão entra pela direita
 // (como quem vira o olhar). Palco fixo; scrub suave com snap nas três paradas.
-// Só transform/opacity (compositor): a "janela" cresce com a imagem contra-escalada e a
-// cortina entra com contra-translação — nada de clip-path em camada de tela cheia.
+// Só transform/opacity (compositor): dissolução com zooms opostos entre fachada e interior e
+// cortina com contra-translação para o balcão — nada de clip-path em camada de tela cheia.
 function storeTour(mm: gsap.MatchMedia) {
   mm.add(`${DESKTOP} and (min-height: 600px)`, () => {
     const tours = Array.from(document.querySelectorAll<HTMLElement>('[data-tour]'));
@@ -281,10 +281,8 @@ function storeTour(mm: gsap.MatchMedia) {
 
       // Porta de vidro da loja no render da fachada (≈ centro da vitrine)
       const DOOR = '68% 58%';
-      const W = 0.24; // tamanho da "janela" do interior quando ela surge na porta
-      gsap.set(img(frames[0]), { transformOrigin: DOOR });
-      gsap.set(frames[1], { autoAlpha: 0, scale: W, borderRadius: 40, transformOrigin: DOOR });
-      gsap.set(media(frames[1]), { scale: 1 / W, transformOrigin: DOOR });
+      gsap.set([img(frames[0]), img(frames[1])], { transformOrigin: DOOR });
+      gsap.set(frames[1], { autoAlpha: 0 });
       gsap.set(frames[2], { xPercent: 100 });
       gsap.set(media(frames[2]), { xPercent: -100 });
       gsap.set([copy(frames[1]), copy(frames[2])], { autoAlpha: 0, y: 30 });
@@ -304,15 +302,14 @@ function storeTour(mm: gsap.MatchMedia) {
         },
       });
 
-      // 0 → 1 (tempo 0–1): a fachada fica sozinha; a câmera caminha até a porta e o interior
-      // nasce de dentro dela, já perto, e se abre até ocupar a tela.
-      tl.fromTo(img(frames[0]), { scale: 1.04 }, { scale: 2.6, duration: 0.95, ease: 'power1.in' }, 0.06)
+      // 0 → 1 (tempo 0–1): a fachada fica sozinha; a câmera caminha até a porta e, sem cortes
+      // nem molduras, o interior se dissolve por cima em tela cheia — vindo de um zoom maior
+      // e recuando — como quem atravessa a porta.
+      tl.fromTo(img(frames[0]), { scale: 1.04 }, { scale: 2.4, duration: 0.95, ease: 'power1.in' }, 0.05)
         .to(copy(frames[0]), { autoAlpha: 0, y: -24, duration: 0.25 }, 0.1)
-        .to(frames[0], { autoAlpha: 0.2, duration: 0.4 }, 0.62)
-        .to(frames[1], { autoAlpha: 1, duration: 0.2, ease: 'power1.out' }, 0.48)
-        .to(frames[1], { scale: 1, borderRadius: 0, duration: 0.52, ease: 'power2.inOut' }, 0.48)
-        .to(media(frames[1]), { scale: 1, duration: 0.52, ease: 'power2.inOut' }, 0.48)
-        .fromTo(img(frames[1]), { scale: 1.18 }, { scale: 1.04, duration: 0.55, ease: 'power2.out' }, 0.5)
+        .to(frames[0], { autoAlpha: 0.45, duration: 0.4, ease: 'sine.inOut' }, 0.42)
+        .to(frames[1], { autoAlpha: 1, duration: 0.5, ease: 'sine.inOut' }, 0.4)
+        .fromTo(img(frames[1]), { scale: 1.75 }, { scale: 1.04, duration: 0.62, ease: 'power2.out' }, 0.4)
         .to(copy(frames[1]), { autoAlpha: 1, y: 0, duration: 0.15 }, 0.85)
         // 1 → 2 (tempo 1.1–2): o olhar vira para o balcão
         .to(img(frames[1]), { xPercent: -6, duration: 0.9 }, 1.1)
